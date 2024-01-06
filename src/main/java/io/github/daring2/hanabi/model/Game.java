@@ -11,7 +11,7 @@ public class Game {
 
     public static final int MAX_CARD_VALUE = 5;
     public static final int MAX_BLUE_TOKENS = 8;
-    public static final int MAX_RED_TOKENS = 8;
+    public static final int MAX_RED_TOKENS = 3;
     public static final int MAX_FIREWORKS = 8;
 
     final Deck deck;
@@ -86,6 +86,19 @@ public class Game {
         });
     }
 
+    public void shareInfo() {
+        //TODO implement
+    }
+
+    void performPlayerAction(Player player, Runnable action) {
+        checkActive();
+        checkCurrentPlayer(player);
+        action.run();
+        if (result != null)
+            return;
+        startNextTurn();
+    }
+
     void addCardToTable(Card card) {
         table.get(card.color()).add(card);
         if (card.value() == MAX_CARD_VALUE) {
@@ -104,19 +117,6 @@ public class Game {
         if (redTokens <= 0) {
             result = GameResult.LOSS;
         }
-    }
-
-    public void shareInfo() {
-        //TODO implement
-    }
-
-    void performPlayerAction(Player player, Runnable action) {
-        checkActive();
-        checkCurrentPlayer(player);
-        action.run();
-        if (result != null)
-            return;
-        startNextTurn();
     }
 
     void takeCard(Player player) {

@@ -5,7 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Consumer;
 
+import static io.github.daring2.hanabi.model.Game.MAX_BLUE_TOKENS;
+import static io.github.daring2.hanabi.model.Game.MAX_FIREWORKS;
+import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -50,6 +54,71 @@ class GameTest {
     @Test
     void testPlayCard() {
         //TODO implement
+    }
+
+    @Test
+    void testPerformPlayerAction() {
+        //TODO implement
+    }
+
+    @Test
+    void testAddCardToTable() {
+        var cards = rangeClosed(0, 5)
+                .mapToObj(i -> new Card(Color.WHITE, i))
+                .toList();
+        checkAddCardToTable(game -> {
+            game.addCardToTable(cards.get(1));
+            assertThat(game.table.get(Color.WHITE)).isEqualTo(cards.subList(0, 2));
+            assertThat(game.fireworks).isEqualTo(0);
+            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.result).isNull();
+
+            game.addCardToTable(cards.get(2));
+            assertThat(game.table.get(Color.WHITE)).isEqualTo(cards.subList(0, 3));
+            assertThat(game.fireworks).isEqualTo(0);
+            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.result).isNull();
+        });
+        checkAddCardToTable(game -> {
+            game.addCardToTable(cards.get(5));
+            assertThat(game.table.get(Color.WHITE))
+                    .containsExactly(cards.get(0), cards.get(5));
+            assertThat(game.fireworks).isEqualTo(1);
+            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.result).isNull();
+        });
+        checkAddCardToTable(game -> {
+            game.fireworks = MAX_FIREWORKS - 1;
+            game.addCardToTable(cards.get(5));
+            assertThat(game.table.get(Color.WHITE))
+                    .containsExactly(cards.get(0), cards.get(5));
+            assertThat(game.fireworks).isEqualTo(MAX_FIREWORKS);
+            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.result).isEqualTo(GameResult.WIN);
+        });
+
+    }
+
+    void checkAddCardToTable(Consumer<Game> action) {
+        var game = newGame();
+        game.start();
+        action.accept(game);
+    }
+
+    @Test
+    void testDiscardRedToken() {
+        var game = newGame();
+        assertThat(game.redTokens).isEqualTo(3);
+        assertThat(game.result).isNull();
+
+        game.discardRedToken();
+        assertThat(game.redTokens).isEqualTo(2);
+        assertThat(game.result).isNull();
+
+        game.discardRedToken();
+        game.discardRedToken();
+        assertThat(game.redTokens).isEqualTo(0);
+        assertThat(game.result).isEqualTo(GameResult.LOSS);
     }
 
     @Test
