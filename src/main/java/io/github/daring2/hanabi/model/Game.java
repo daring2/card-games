@@ -66,7 +66,7 @@ public class Game {
                 "No blue tokens are available"
         );
         performPlayerAction(player, () -> {
-            var card = player.cards.get(cardIndex);
+            var card = player.cards.remove(cardIndex);
             discard.add(card);
             takeCard(player);
         });
@@ -74,7 +74,7 @@ public class Game {
 
     public void playCard(Player player, int cardIndex) {
         performPlayerAction(player, () -> {
-            var card = player.cards.get(cardIndex);
+            var card = player.cards.remove(cardIndex);
             var tableCards = table.get(card.color());
             var lastValue = tableCards.getLast().value();
             if (card.value() == lastValue + 1) {
@@ -137,18 +137,18 @@ public class Game {
     }
 
     void checkNotStarted() {
-        Validate.validState(!started, "game is started");
+        Validate.validState(!started, "Game is started");
     }
 
     void checkActive() {
-        Validate.validState(started, "game is not started");
-        Validate.validState(result == null, "game is finished");
+        Validate.validState(started, "Game is not started");
+        Validate.validState(result == null, "Game is finished");
     }
 
     void checkCurrentPlayer(Player player) {
         Validate.isTrue(
                 player == getCurrentPlayer(),
-                "player '%s' is not current", player
+                "Player '%s' is not current", player
         );
     }
 

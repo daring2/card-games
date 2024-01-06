@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import static io.github.daring2.hanabi.model.Game.MAX_BLUE_TOKENS;
 import static io.github.daring2.hanabi.model.Game.MAX_FIREWORKS;
+import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,14 +21,10 @@ class GameTest {
     void testStart() {
         var game = newGame();
         game.players.clear();
-        assertThatThrownBy(game::start)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Invalid players count: 0");
+        checkPlayersCountError(game::start, 0);
 
         game.join(new Player("p0"));
-        assertThatThrownBy(game::start)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Invalid players count: 1");
+        checkPlayersCountError(game::start, 1);
 
         game.join(new Player("p1"));
         game.start();
@@ -42,14 +39,46 @@ class GameTest {
         assertThat(game.turn).isEqualTo(1);
         assertThat(game.started).isTrue();
 
-        assertThatThrownBy(game::start)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("game is started");
+        checkGameStartedError(game::start);
     }
 
     @Test
     void testDiscardCard() {
-        //TODO implement
+        var game = newGame();
+
+        var cards = new ArrayList<Card>();
+        range(0, 20).mapToObj(i -> new Card(Color.WHITE, i))
+                .forEach(cards::add);
+        game.deck.cards.clear();
+        game.deck.cards.addAll(cards.reversed());
+
+        game.start();
+        assertThat(game.discard).isEmpty();
+
+        var player0 = game.players.get(0);
+        assertThatThrownBy(() -> game.discardCard(player0, 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("No blue tokens are available");
+        assertThat(game.discard).isEmpty();
+
+        game.blueTokens = 1;
+        game.started = false;
+        checkGameNotStartedError(() -> game.discardCard(player0, 0));
+        assertThat(game.discard).isEmpty();
+
+        game.started = true;
+        game.discardCard(player0, 0);
+        assertThat(player0.cards).map(Card::value)
+                .containsExactly(2, 4, 6, 8, 10);
+        assertThat(game.discard).map(Card::value)
+                .containsExactly(0);
+
+        var player1 = game.players.get(1);
+        game.discardCard(player1, 0);
+        assertThat(player1.cards).map(Card::value)
+                .containsExactly(3, 5, 7, 9, 11);
+        assertThat(game.discard).map(Card::value)
+                .containsExactly(0, 1);
     }
 
     @Test
@@ -185,9 +214,7 @@ class GameTest {
         game.checkNotStarted();
 
         game.started = true;
-        assertThatThrownBy(game::start)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("game is started");
+        checkGameStartedError(game::start);
     }
 
     @Test
@@ -220,7 +247,7 @@ class GameTest {
         if (error) {
             assertThatThrownBy(() -> game.checkCurrentPlayer(player))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("player '" + player + "' is not current");
+                    .hasMessage("Player '" + player + "' is not current");
         } else {
             game.checkCurrentPlayer(player);
         }
@@ -229,13 +256,25 @@ class GameTest {
     void checkGameNotStartedError(ThrowingCallable action) {
         assertThatThrownBy(action)
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("game is not started");
+                .hasMessage("Game is not started");
+    }
+
+    void checkGameStartedError(ThrowingCallable action) {
+        assertThatThrownBy(action)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Game is started");
     }
 
     void checkGameFinishedError(ThrowingCallable action) {
         assertThatThrownBy(action)
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("game is finished");
+                .hasMessage("Game is finished");
+    }
+
+    void checkPlayersCountError(ThrowingCallable action, int count) {
+        assertThatThrownBy(action)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Invalid players count: " + count);
     }
 
     Game newGame() {
