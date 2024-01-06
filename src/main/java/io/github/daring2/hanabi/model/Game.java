@@ -23,7 +23,10 @@ public class Game {
 
     public void join(Player player) {
         checkNotStarted();
-        Validate.isTrue(players.size() < 5, "Maximum players in the game is 5");
+        Validate.isTrue(
+                players.size() < 5,
+                "Maximum players in the game is 5"
+        );
         players.add(player);
     }
 
