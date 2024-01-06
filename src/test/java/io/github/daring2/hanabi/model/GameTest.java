@@ -12,6 +12,7 @@ import static io.github.daring2.hanabi.model.Game.MAX_FIREWORKS;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 class GameTest {
 
@@ -58,7 +59,20 @@ class GameTest {
 
     @Test
     void testPerformPlayerAction() {
-        //TODO implement
+        var game = spy(newGame());
+        doNothing().when(game).checkActive();
+        doNothing().when(game).checkCurrentPlayer(any());
+        doNothing().when(game).startNextTurn();
+
+        var player0 = new Player("p0");
+        var actionCalls = new ArrayList<String>();
+        game.performPlayerAction(player0, () -> {
+            actionCalls.add("a0");
+        });
+        verify(game).checkActive();
+        verify(game).checkCurrentPlayer(player0);
+        verify(game).startNextTurn();
+        assertThat(actionCalls).containsExactly("a0");
     }
 
     @Test
