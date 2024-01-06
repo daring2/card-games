@@ -10,6 +10,7 @@ public class Game {
 
     final List<Player> players = new ArrayList<>();
     final Map<Color, List<Card>> table = new EnumMap<>(Color.class);
+    final List<Card> discard = new ArrayList<>();
 
     boolean started;
     int turn;
@@ -48,8 +49,39 @@ public class Game {
         started = true;
     }
 
+    public void discardCard(Player player, int cardIndex) {
+        checkActive();
+        discard.add(player.cards.get(cardIndex));
+        takeCard(player);
+        startNextTurn();
+    }
+
+    public void playCard(Player player, int cardIndex) {
+        checkActive();
+        var card = player.cards.get(cardIndex);
+        var tableCards = table.get(card.color());
+        var lastValue = getLastValue(tableCards);
+        if (card.value() == lastValue + 1) {
+            tableCards.add(card);
+        } else {
+            redTokens--;
+        }
+        takeCard(player);
+        startNextTurn();
+    }
+
+    public void shareInfo() {
+        //TODO implement
+    }
+
     void takeCard(Player player) {
         player.cards.add(deck.takeCard());
+    }
+
+    int getLastValue(List<Card> cards) {
+        if (cards.isEmpty())
+            return 0;
+        return cards.getLast().value();
     }
 
     void startNextTurn() {
@@ -63,6 +95,11 @@ public class Game {
 
     void checkNotStarted() {
         Validate.validState(!started, "game is started");
+    }
+
+    void checkActive() {
+        Validate.validState(started, "game is not started");
+        Validate.validState(result == null, "game is finished");
     }
 
 }
