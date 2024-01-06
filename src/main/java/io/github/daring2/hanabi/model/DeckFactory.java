@@ -2,12 +2,14 @@ package io.github.daring2.hanabi.model;
 
 import java.util.ArrayList;
 
+import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
+
 public class DeckFactory {
 
     public Deck create() {
         var cards = new ArrayList<Card>();
         for (Color color : Color.values()) {
-            for (int value = 1; value <= 5; value++) {
+            for (int value = 1; value <= MAX_CARD_VALUE; value++) {
                 var cardNumber = getCardNumber(value);
                 for (int i = 0; i < cardNumber; i++) {
                     cards.add(new Card(color, value));
