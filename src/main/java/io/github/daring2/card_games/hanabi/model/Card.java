@@ -7,7 +7,7 @@ public record Card(
 
     @Override
     public String toString() {
-        return color.name().substring(0, 1) + value;
+        return color.name().charAt(0) + "-" + value;
     }
 
 }

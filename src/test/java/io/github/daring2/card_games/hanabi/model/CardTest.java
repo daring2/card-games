@@ -8,8 +8,8 @@ class CardTest {
 
     @Test
     void testToString() {
-        assertThat(new Card(1, Color.WHITE)).hasToString("W1");
-        assertThat(new Card(2, Color.RED)).hasToString("R2");
+        assertThat(new Card(1, Color.WHITE)).hasToString("W-1");
+        assertThat(new Card(2, Color.RED)).hasToString("R-2");
     }
 
 }
