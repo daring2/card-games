@@ -1,8 +1,8 @@
 package io.github.daring2.hanabi.model;
 
 public record Card(
-        int value,
-        Color color
+        Color color,
+        int value
 ) {
 
     @Override

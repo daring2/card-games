@@ -1,5 +1,7 @@
 package io.github.daring2.hanabi.model;
 
+import org.apache.commons.lang3.Validate;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -20,9 +22,7 @@ public class Deck {
     }
 
     public Card takeCard() {
-        if (isEmpty()) {
-            throw new IllegalArgumentException("deck is empty");
-        }
+        Validate.isTrue(!isEmpty(), "Deck is empty");
         return cards.removeLast();
     }
 
