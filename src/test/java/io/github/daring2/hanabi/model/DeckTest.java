@@ -1,6 +1,5 @@
 package io.github.daring2.hanabi.model;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -29,7 +28,9 @@ class DeckTest {
         assertThat(deck.takeCard()).isEqualTo(cards.get(1));
         assertThat(deck.takeCard()).isEqualTo(cards.get(0));
         assertThat(deck.isEmpty()).isTrue();
-        assertThatThrownBy(deck::takeCard).hasMessage("Deck is empty");
+        assertThatThrownBy(deck::takeCard)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("deck is empty");
     }
 
 }

@@ -22,7 +22,7 @@ public class Deck {
     }
 
     public Card takeCard() {
-        Validate.isTrue(!isEmpty(), "Deck is empty");
+        Validate.validState(!isEmpty(), "deck is empty");
         return cards.removeLast();
     }
 
