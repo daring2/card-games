@@ -1,4 +1,4 @@
-package io.github.daring2.card_games.hanabi.model;
+package io.github.daring2.hanabi.model;
 
 import org.junit.jupiter.api.Test;
 
