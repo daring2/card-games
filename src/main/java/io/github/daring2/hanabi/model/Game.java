@@ -52,12 +52,16 @@ public class Game {
             cards.add(new Card(color, 0));
             table.put(color, cards);
         }
-        var initCards = players.size() <= 3 ? 5 : 4;
+        var initCards = getInitCards();
         for (int i = 0; i < initCards; i++) {
             players.forEach(this::takeCard);
         }
         turn = 1;
         started = true;
+    }
+
+    int getInitCards() {
+        return players.size() <= 3 ? 5 : 4;
     }
 
     public void discardCard(Player player, int cardIndex) {
@@ -80,6 +84,7 @@ public class Game {
             if (card.value() == lastValue + 1) {
                 addCardToTable(card);
             } else {
+                discard.add(card);
                 discardRedToken();
             }
             takeCard(player);

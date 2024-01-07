@@ -43,6 +43,16 @@ class GameTest {
     }
 
     @Test
+    void testGetInitCards() {
+        var game = newGame();
+        assertThat(game.getInitCards()).isEqualTo(5);
+        game.join(new Player("p2"));
+        assertThat(game.getInitCards()).isEqualTo(5);
+        game.join(new Player("p3"));
+        assertThat(game.getInitCards()).isEqualTo(4);
+    }
+
+    @Test
     void testDiscardCard() {
         var game = newGame();
 
