@@ -5,16 +5,27 @@ import jakarta.annotation.Nullable;
 public record CardInfo(
         @Nullable
         Color color,
-        @Nullable
-        Integer value
+        int value
 ) {
+        public static final int NULL_VALUE = 0;
 
         public CardInfo(Color color) {
-                this(color, null);
+                this(color, NULL_VALUE);
         }
 
-        public CardInfo(Integer value) {
+        public CardInfo(int value) {
                 this(null, value);
+        }
+
+        public boolean isValidForShare() {
+                return color == null || value == NULL_VALUE;
+        }
+
+        CardInfo merge(CardInfo info) {
+                return new CardInfo(
+                        color != null ? color : info.color,
+                        value != NULL_VALUE ? value : info.value
+                );
         }
 
 }
