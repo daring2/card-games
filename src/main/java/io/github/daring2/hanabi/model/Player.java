@@ -25,6 +25,14 @@ public class Player {
         return card;
     }
 
+    void addCardInfo(CardInfo info) {
+        for (Card card : cards) {
+            if (card.color() != info.color() && card.value() != info.value())
+                continue;
+            knownCards.merge(card, info, CardInfo::merge);
+        }
+    }
+
     @Override
     public String toString() {
         return name;

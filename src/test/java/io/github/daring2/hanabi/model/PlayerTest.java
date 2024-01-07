@@ -2,6 +2,8 @@ package io.github.daring2.hanabi.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,6 +37,41 @@ class PlayerTest {
                 cards.get(2)
         );
         assertThat(player.knownCards).isEmpty();
+    }
+
+    @Test
+    void testAddCardInfo() {
+        var player = new Player("p0");
+        assertThat(player.knownCards).isEmpty();
+
+        var cards = new ArrayList<Card>();
+        rangeClosed(1, 2).forEach(i -> cards.add(new Card(Color.RED, i)));
+        rangeClosed(2, 3).forEach(i -> cards.add(new Card(Color.GREEN, i)));
+        player.cards.addAll(cards);
+
+        player.addCardInfo(new CardInfo(Color.WHITE));
+        assertThat(player.knownCards).isEmpty();
+
+        player.addCardInfo(new CardInfo(5));
+        assertThat(player.knownCards).isEmpty();
+
+        player.addCardInfo(new CardInfo(Color.RED));
+        assertThat(player.knownCards).hasSize(2)
+                .containsEntry(cards.get(0), new CardInfo(Color.RED))
+                .containsEntry(cards.get(1), new CardInfo(Color.RED));
+
+        player.addCardInfo(new CardInfo(2));
+        assertThat(player.knownCards).hasSize(3)
+                .containsEntry(cards.get(0), new CardInfo(Color.RED))
+                .containsEntry(cards.get(1), new CardInfo(Color.RED, 2))
+                .containsEntry(cards.get(2), new CardInfo(2));
+
+        player.addCardInfo(new CardInfo(Color.GREEN));
+        assertThat(player.knownCards).hasSize(4)
+                .containsEntry(cards.get(0), new CardInfo(Color.RED))
+                .containsEntry(cards.get(1), new CardInfo(Color.RED, 2))
+                .containsEntry(cards.get(2), new CardInfo(Color.GREEN, 2))
+                .containsEntry(cards.get(3), new CardInfo(Color.GREEN));
     }
 
 }
