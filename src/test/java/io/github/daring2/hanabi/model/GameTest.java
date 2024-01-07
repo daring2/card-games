@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("SequencedCollectionMethodCanBeUsed")
 class GameTest {
 
     @Test
@@ -56,9 +57,9 @@ class GameTest {
         var game = newGame();
 
         var cards = new ArrayList<Card>();
-        range(0, 20).forEach(i -> {
-            cards.add(new Card(Color.WHITE, i));
-        });
+        range(0, 20).forEach(i ->
+                cards.add(new Card(Color.WHITE, i))
+        );
         game.deck.cards.clear();
         game.deck.cards.addAll(cards.reversed());
 
@@ -136,9 +137,9 @@ class GameTest {
 
         var player0 = new Player("p0");
         var actionCalls = new ArrayList<String>();
-        game.performPlayerAction(player0, () -> {
-            actionCalls.add("a0");
-        });
+        game.performPlayerAction(player0, () ->
+            actionCalls.add("a0")
+        );
         verify(game).checkActive();
         verify(game).checkCurrentPlayer(player0);
         verify(game).startNextTurn();
