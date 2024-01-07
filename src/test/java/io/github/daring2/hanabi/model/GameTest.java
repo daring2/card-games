@@ -61,8 +61,8 @@ class GameTest {
         range(0, 20).forEach(i ->
                 cards.add(new Card(WHITE, i))
         );
-        game.deck.cards.clear();
-        game.deck.cards.addAll(cards.reversed());
+        game.deck.clear();
+        game.deck.addAll(cards.reversed());
 
         game.start();
         assertThat(game.discard).isEmpty();
@@ -226,7 +226,7 @@ class GameTest {
     @Test
     void testTakeCard() {
         var game = newGame();
-        var cards = new ArrayList<>(game.deck.cards);
+        var cards = new ArrayList<>(game.deck);
         Collections.reverse(cards);
         var player0 = game.players.get(0);
         player0.cards.clear();
@@ -349,8 +349,8 @@ class GameTest {
                 cards.add(new Card(color, value));
             }
         }
-        var deck = new Deck(cards.reversed());
-        var game = new Game(deck);
+        var game = new Game();
+        game.deck.addAll(cards.reversed());
         game.join(new Player("p0"));
         game.join(new Player("p1"));
         return game;

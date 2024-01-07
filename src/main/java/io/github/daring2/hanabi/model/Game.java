@@ -11,8 +11,7 @@ public class Game {
     public static final int MAX_RED_TOKENS = 3;
     public static final int MAX_FIREWORKS = 8;
 
-    final Deck deck;
-
+    final List<Card> deck = new ArrayList<>();
     final List<Player> players = new ArrayList<>();
     final Map<Color, List<Card>> table = new EnumMap<>(Color.class);
     final List<Card> discard = new ArrayList<>();
@@ -23,10 +22,6 @@ public class Game {
     int blueTokens = MAX_BLUE_TOKENS;
     int redTokens = MAX_RED_TOKENS;
     GameResult result;
-
-    public Game(Deck deck) {
-        this.deck = deck;
-    }
 
     public void join(Player player) {
         checkNotStarted();
@@ -141,7 +136,8 @@ public class Game {
             return;
         }
         //TODO check if deck is empty
-        player.cards.add(deck.takeCard());
+        Validate.validState(!deck.isEmpty(), "Deck is empty");
+        player.cards.add(deck.removeLast());
     }
 
     void startNextTurn() {

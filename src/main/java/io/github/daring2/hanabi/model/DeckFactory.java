@@ -1,12 +1,13 @@
 package io.github.daring2.hanabi.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 
 public class DeckFactory {
 
-    public Deck create() {
+    public List<Card> create() {
         var cards = new ArrayList<Card>();
         for (Color color : Color.values()) {
             for (int value = 1; value <= MAX_CARD_VALUE; value++) {
@@ -16,7 +17,7 @@ public class DeckFactory {
                 }
             }
         }
-        return new Deck(cards);
+        return cards;
     }
 
     protected int getCardNumber(int value) {
