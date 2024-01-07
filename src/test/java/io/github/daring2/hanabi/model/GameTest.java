@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-import static io.github.daring2.hanabi.model.Game.MAX_BLUE_TOKENS;
-import static io.github.daring2.hanabi.model.Game.MAX_FIREWORKS;
+import static io.github.daring2.hanabi.model.Game.*;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,8 +56,9 @@ class GameTest {
         var game = newGame();
 
         var cards = new ArrayList<Card>();
-        range(0, 20).mapToObj(i -> new Card(Color.WHITE, i))
-                .forEach(cards::add);
+        range(0, 20).forEach(i -> {
+            cards.add(new Card(Color.WHITE, i));
+        });
         game.deck.cards.clear();
         game.deck.cards.addAll(cards.reversed());
 
@@ -93,7 +93,38 @@ class GameTest {
 
     @Test
     void testPlayCard() {
-        //TODO implement
+        checkGame(it -> {
+            var game = spy(it);
+            var player0 = game.players.get(0);
+            game.started = false;
+            checkGameNotStartedError(() -> game.playCard(player0, 0));
+        });
+        checkGame(it -> {
+            var game = spy(it);
+            var player0 = game.players.get(0);
+            game.playCard(player0, 0); // W-1
+            assertThat(player0.cards).hasSize(5)
+                    .first().isEqualTo(new Card(Color.WHITE, 3));
+            verify(game, times(1))
+                    .addCardToTable(new Card(Color.WHITE, 1));
+            verify(game, times(0)).discardRedToken();
+            assertThat(game.redTokens).isEqualTo(MAX_RED_TOKENS);
+            assertThat(game.discard).isEmpty();
+            verify(game, times(1)).takeCard(player0);
+        });
+        checkGame(it -> {
+            var game = spy(it);
+            var player0 = game.players.get(0);
+            game.playCard(player0, 1); // W-3
+            assertThat(player0.cards).hasSize(5)
+                    .first().isEqualTo(new Card(Color.WHITE, 1));
+            verify(game, times(0))
+                    .addCardToTable(new Card(Color.WHITE, 1));
+            verify(game, times(1)).discardRedToken();
+            assertThat(game.discard).containsExactly(new Card(Color.WHITE, 3));
+            assertThat(game.redTokens).isEqualTo(MAX_RED_TOKENS - 1);
+            verify(game, times(1)).takeCard(player0);
+        });
     }
 
     @Test
@@ -119,7 +150,7 @@ class GameTest {
         var cards = rangeClosed(0, 5)
                 .mapToObj(i -> new Card(Color.WHITE, i))
                 .toList();
-        checkAddCardToTable(game -> {
+        checkGame(game -> {
             game.addCardToTable(cards.get(1));
             assertThat(game.table.get(Color.WHITE)).isEqualTo(cards.subList(0, 2));
             assertThat(game.fireworks).isEqualTo(0);
@@ -132,7 +163,7 @@ class GameTest {
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
         });
-        checkAddCardToTable(game -> {
+        checkGame(game -> {
             game.addCardToTable(cards.get(5));
             assertThat(game.table.get(Color.WHITE))
                     .containsExactly(cards.get(0), cards.get(5));
@@ -140,7 +171,7 @@ class GameTest {
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
         });
-        checkAddCardToTable(game -> {
+        checkGame(game -> {
             game.fireworks = MAX_FIREWORKS - 1;
             game.addCardToTable(cards.get(5));
             assertThat(game.table.get(Color.WHITE))
@@ -150,12 +181,6 @@ class GameTest {
             assertThat(game.result).isEqualTo(GameResult.WIN);
         });
 
-    }
-
-    void checkAddCardToTable(Consumer<Game> action) {
-        var game = newGame();
-        game.start();
-        action.accept(game);
     }
 
     @Test
@@ -287,8 +312,20 @@ class GameTest {
                 .hasMessage("Invalid players count: " + count);
     }
 
+    void checkGame(Consumer<Game> action) {
+        var game = newGame();
+        game.start();
+        action.accept(game);
+    }
+
     Game newGame() {
-        var deck = new DeckFactory().create();
+        var cards = new ArrayList<Card>();
+        for (Color color : Color.values()) {
+            for (int value = 1; value <= MAX_CARD_VALUE; value++) {
+                cards.add(new Card(color, value));
+            }
+        }
+        var deck = new Deck(cards.reversed());
         var game = new Game(deck);
         game.join(new Player("p0"));
         game.join(new Player("p1"));
