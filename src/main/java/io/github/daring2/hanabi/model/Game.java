@@ -90,16 +90,20 @@ public class Game {
 
     public void shareInfo(
             Player player,
-            Player targetPlayer
+            Player targetPlayer,
+            CardInfo info
     ) {
         performPlayerAction(player, () -> {
-            //TODO check info
+            Validate.isTrue(
+                    info.isValidForShare(),
+                    "Only one property can be shared"
+            );
             Validate.isTrue(
                     blueTokens > 0,
                     "No blue tokens are available"
             );
             blueTokens--;
-            //TODO implement
+            targetPlayer.addCardInfo(info);
         });
     }
 

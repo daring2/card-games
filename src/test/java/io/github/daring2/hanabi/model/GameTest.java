@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
 
+import static io.github.daring2.hanabi.model.Color.WHITE;
 import static io.github.daring2.hanabi.model.Game.*;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
@@ -58,7 +59,7 @@ class GameTest {
 
         var cards = new ArrayList<Card>();
         range(0, 20).forEach(i ->
-                cards.add(new Card(Color.WHITE, i))
+                cards.add(new Card(WHITE, i))
         );
         game.deck.cards.clear();
         game.deck.cards.addAll(cards.reversed());
@@ -105,9 +106,9 @@ class GameTest {
             var player0 = game.players.get(0);
             game.playCard(player0, 0); // W-1
             assertThat(player0.cards).hasSize(5)
-                    .first().isEqualTo(new Card(Color.WHITE, 3));
+                    .first().isEqualTo(new Card(WHITE, 3));
             verify(game, times(1))
-                    .addCardToTable(new Card(Color.WHITE, 1));
+                    .addCardToTable(new Card(WHITE, 1));
             verify(game, times(0)).discardRedToken();
             assertThat(game.redTokens).isEqualTo(MAX_RED_TOKENS);
             assertThat(game.discard).isEmpty();
@@ -118,14 +119,36 @@ class GameTest {
             var player0 = game.players.get(0);
             game.playCard(player0, 1); // W-3
             assertThat(player0.cards).hasSize(5)
-                    .first().isEqualTo(new Card(Color.WHITE, 1));
+                    .first().isEqualTo(new Card(WHITE, 1));
             verify(game, times(0))
-                    .addCardToTable(new Card(Color.WHITE, 1));
+                    .addCardToTable(new Card(WHITE, 1));
             verify(game, times(1)).discardRedToken();
-            assertThat(game.discard).containsExactly(new Card(Color.WHITE, 3));
+            assertThat(game.discard).containsExactly(new Card(WHITE, 3));
             assertThat(game.redTokens).isEqualTo(MAX_RED_TOKENS - 1);
             verify(game, times(1)).takeCard(player0);
         });
+    }
+
+    @Test
+    void testShareInfo() {
+        var game = newGame();
+        var player0 = game.players.get(0);
+        var player1 = game.players.get(1);
+        checkGameNotStartedError(() -> game.shareInfo(player0, player1, new CardInfo(WHITE)));
+
+        game.start();
+        assertThatThrownBy(() -> game.shareInfo(player0, player1, new CardInfo(WHITE, 1)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Only one property can be shared");
+
+        game.blueTokens = 0;
+        assertThatThrownBy(() -> game.shareInfo(player0, player1, new CardInfo(WHITE)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("No blue tokens are available");
+
+        game.blueTokens = 3;
+        game.shareInfo(player0, player1, new CardInfo(WHITE));
+        assertThat(game.blueTokens).isEqualTo(2);
     }
 
     @Test
@@ -149,24 +172,24 @@ class GameTest {
     @Test
     void testAddCardToTable() {
         var cards = rangeClosed(0, 5)
-                .mapToObj(i -> new Card(Color.WHITE, i))
+                .mapToObj(i -> new Card(WHITE, i))
                 .toList();
         checkGame(game -> {
             game.addCardToTable(cards.get(1));
-            assertThat(game.table.get(Color.WHITE)).isEqualTo(cards.subList(0, 2));
+            assertThat(game.table.get(WHITE)).isEqualTo(cards.subList(0, 2));
             assertThat(game.fireworks).isEqualTo(0);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
 
             game.addCardToTable(cards.get(2));
-            assertThat(game.table.get(Color.WHITE)).isEqualTo(cards.subList(0, 3));
+            assertThat(game.table.get(WHITE)).isEqualTo(cards.subList(0, 3));
             assertThat(game.fireworks).isEqualTo(0);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
         });
         checkGame(game -> {
             game.addCardToTable(cards.get(5));
-            assertThat(game.table.get(Color.WHITE))
+            assertThat(game.table.get(WHITE))
                     .containsExactly(cards.get(0), cards.get(5));
             assertThat(game.fireworks).isEqualTo(1);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
@@ -175,7 +198,7 @@ class GameTest {
         checkGame(game -> {
             game.fireworks = MAX_FIREWORKS - 1;
             game.addCardToTable(cards.get(5));
-            assertThat(game.table.get(Color.WHITE))
+            assertThat(game.table.get(WHITE))
                     .containsExactly(cards.get(0), cards.get(5));
             assertThat(game.fireworks).isEqualTo(MAX_FIREWORKS);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
