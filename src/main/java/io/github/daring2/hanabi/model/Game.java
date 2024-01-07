@@ -2,10 +2,7 @@ package io.github.daring2.hanabi.model;
 
 import org.apache.commons.lang3.Validate;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
 
@@ -67,10 +64,10 @@ public class Game {
     public void discardCard(Player player, int cardIndex) {
         Validate.isTrue(
                 blueTokens < MAX_BLUE_TOKENS,
-                "No blue tokens are available"
+                "All blue tokens are in the game"
         );
         performPlayerAction(player, () -> {
-            var card = player.cards.remove(cardIndex);
+            var card = player.removeCard(cardIndex);
             discard.add(card);
             takeCard(player);
         });
@@ -78,7 +75,7 @@ public class Game {
 
     public void playCard(Player player, int cardIndex) {
         performPlayerAction(player, () -> {
-            var card = player.cards.remove(cardIndex);
+            var card = player.removeCard(cardIndex);
             var tableCards = table.get(card.color());
             var lastValue = tableCards.getLast().value();
             if (card.value() == lastValue + 1) {
@@ -91,8 +88,19 @@ public class Game {
         });
     }
 
-    public void shareInfo() {
-        //TODO implement
+    public void shareInfo(
+            Player player,
+            Player targetPlayer
+    ) {
+        performPlayerAction(player, () -> {
+            //TODO check info
+            Validate.isTrue(
+                    blueTokens > 0,
+                    "No blue tokens are available"
+            );
+            blueTokens--;
+            //TODO implement
+        });
     }
 
     void performPlayerAction(Player player, Runnable action) {

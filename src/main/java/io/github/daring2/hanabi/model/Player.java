@@ -12,6 +12,16 @@ public class Player {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    Card removeCard(int index) {
+        var card = cards.remove(index);
+//        knownCards.remove(card);
+        return card;
+    }
+
     @Override
     public String toString() {
         return name;

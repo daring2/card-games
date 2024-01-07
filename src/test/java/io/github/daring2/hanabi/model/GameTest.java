@@ -68,7 +68,7 @@ class GameTest {
         var player0 = game.players.get(0);
         assertThatThrownBy(() -> game.discardCard(player0, 0))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("No blue tokens are available");
+                .hasMessage("All blue tokens are in the game");
         assertThat(game.discard).isEmpty();
 
         game.blueTokens = 1;
