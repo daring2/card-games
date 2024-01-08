@@ -24,10 +24,10 @@ class GameTest {
         game.players.clear();
         checkPlayersCountError(game::start, 0);
 
-        game.join(new Player("p0"));
+        game.addPlayer(new Player("p0"));
         checkPlayersCountError(game::start, 1);
 
-        game.join(new Player("p1"));
+        game.addPlayer(new Player("p1"));
         game.start();
         for (Color color : Color.values()) {
             assertThat(game.table.get(color)).singleElement()
@@ -44,12 +44,33 @@ class GameTest {
     }
 
     @Test
+    void testSetDeck() {
+        //TODO implement
+    }
+
+    @Test
+    void testAddPlayer() {
+        //TODO implement
+    }
+
+    @Test
+    void testValidPlayersCount() {
+        var game = newGame();
+        game.players.clear();
+        assertThat(game.isValidPlayersCount()).isEqualTo(false);
+        game.addPlayer(new Player("p0"));
+        assertThat(game.isValidPlayersCount()).isEqualTo(false);
+        game.addPlayer(new Player("p1"));
+        assertThat(game.isValidPlayersCount()).isEqualTo(true);
+    }
+
+    @Test
     void testGetInitCards() {
         var game = newGame();
         assertThat(game.getInitCards()).isEqualTo(5);
-        game.join(new Player("p2"));
+        game.addPlayer(new Player("p2"));
         assertThat(game.getInitCards()).isEqualTo(5);
-        game.join(new Player("p3"));
+        game.addPlayer(new Player("p3"));
         assertThat(game.getInitCards()).isEqualTo(4);
     }
 
@@ -61,8 +82,7 @@ class GameTest {
         range(0, 20).forEach(i ->
                 cards.add(new Card(WHITE, i))
         );
-        game.deck.clear();
-        game.deck.addAll(cards.reversed());
+        game.setDeck(cards.reversed());
 
         game.start();
         assertThat(game.discard).isEmpty();
@@ -356,8 +376,8 @@ class GameTest {
         }
         var game = new Game();
         game.deck.addAll(cards.reversed());
-        game.join(new Player("p0"));
-        game.join(new Player("p1"));
+        game.addPlayer(new Player("p0"));
+        game.addPlayer(new Player("p1"));
         return game;
     }
 

@@ -6,6 +6,8 @@ import java.util.*;
 
 public class Game {
 
+    public static final int MIN_PLAYERS = 2;
+    public static final int MAX_PLAYERS = 5;
     public static final int MAX_CARD_VALUE = 5;
     public static final int MAX_BLUE_TOKENS = 8;
     public static final int MAX_RED_TOKENS = 3;
@@ -23,21 +25,26 @@ public class Game {
     int redTokens = MAX_RED_TOKENS;
     GameResult result;
 
-    public void join(Player player) {
+    public void setDeck(List<Card> cards) {
+        checkNotStarted();
+        deck.clear();
+        deck.addAll(cards);
+    }
+
+    public void addPlayer(Player player) {
         checkNotStarted();
         Validate.isTrue(
-                players.size() < 5,
-                "Maximum players in the game is 5"
+                players.size() < MAX_PLAYERS,
+                "Maximum players in the game is " + MAX_PLAYERS
         );
         players.add(player);
     }
 
     public void start() {
         checkNotStarted();
-        var playersCount = players.size();
         Validate.validState(
-                playersCount >= 2 && playersCount <= 5,
-                "Invalid players count: " + playersCount
+                isValidPlayersCount(),
+                "Invalid players count: " + players.size()
         );
         for (Color color : Color.values()) {
             var cards = new ArrayList<Card>();
@@ -50,6 +57,11 @@ public class Game {
         }
         turn = 1;
         started = true;
+    }
+
+    boolean isValidPlayersCount() {
+        var playersCount = players.size();
+        return playersCount >= MIN_PLAYERS && playersCount <= MAX_PLAYERS;
     }
 
     int getInitCards() {
