@@ -135,8 +135,10 @@ public class Game {
         if (result != null) {
             return;
         }
-        //TODO check if deck is empty
-        Validate.validState(!deck.isEmpty(), "Deck is empty");
+        if (deck.isEmpty()) {
+            result = GameResult.LOSS;
+            return;
+        }
         player.cards.add(deck.removeLast());
     }
 

@@ -239,6 +239,11 @@ class GameTest {
         game.result = GameResult.WIN;
         game.takeCard(player0);
         assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
+
+        game.deck.clear();
+        game.result = null;
+        game.takeCard(player0);
+        assertThat(game.result).isEqualTo(GameResult.LOSS);
     }
 
     @Test
