@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
@@ -17,6 +18,7 @@ public class DeckFactory {
                 }
             }
         }
+        Collections.shuffle(cards);
         return cards;
     }
 
