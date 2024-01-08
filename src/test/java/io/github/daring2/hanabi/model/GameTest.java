@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static io.github.daring2.hanabi.model.Color.WHITE;
@@ -45,12 +46,33 @@ class GameTest {
 
     @Test
     void testSetDeck() {
-        //TODO implement
+        var game = newGame();
+        assertThat(game.deck).hasSize(25);
+        var cards = rangeClosed(1, 2)
+                .mapToObj(i -> new Card(WHITE, i))
+                .toList();
+        game.setDeck(cards);
+        assertThat(game.deck).isEqualTo(cards);
     }
 
     @Test
     void testAddPlayer() {
-        //TODO implement
+        var game = newGame();
+        game.players.clear();
+
+        var players = rangeClosed(0, 4)
+                .mapToObj(i -> new Player("p" + i))
+                .toList();
+        players.forEach(game::addPlayer);
+        assertThat(game.players).isEqualTo(players);
+
+        assertThatThrownBy(() -> game.addPlayer(new Player("p5")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Maximum players in the game is 5");
+
+        game.players.clear();
+        game.started = true;
+        checkGameStartedError(() -> game.addPlayer(players.getFirst()));
     }
 
     @Test
@@ -181,7 +203,7 @@ class GameTest {
         var player0 = new Player("p0");
         var actionCalls = new ArrayList<String>();
         game.performPlayerAction(player0, () ->
-            actionCalls.add("a0")
+                actionCalls.add("a0")
         );
         verify(game).checkActive();
         verify(game).checkCurrentPlayer(player0);
