@@ -63,11 +63,15 @@ public class BotSession {
     }
 
     void processCreateCommand() {
-        game = bot.context.gameFactory().create();
-        bot.games.put(game.id(), game);
-        player = createPlayer();
+        createGame();
+        createPlayer();
         game.addPlayer(player);
         sendMessage("game_created: %s", game.id());
+    }
+
+    void createGame() {
+        game = bot.context.gameFactory().create();
+        bot.games.put(game.id(), game);
     }
 
     void processJoinCommand(UserCommand command) {
@@ -78,13 +82,13 @@ public class BotSession {
             return;
         }
         //TODO check if player is already joined
-        player = createPlayer();
+        createPlayer();
         game.addPlayer(player);
         sendMessage("player_joined: game=%s, player=%s", game.id(), player);
     }
 
-    Player createPlayer() {
-        return new Player(user.getUserName());
+    void createPlayer() {
+        player = new Player(user.getUserName());
     }
 
     void sendMessage(String format, Object... args) {
