@@ -5,6 +5,7 @@ import io.github.daring2.hanabi.model.GameFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Map;
@@ -33,13 +34,19 @@ public class HanabiBot extends TelegramLongPollingBot {
         var message = update.getMessage();
         if (message == null)
             return;
-        var chatId = message.getFrom().getId();
-        sessions.computeIfAbsent(chatId, this::createSession)
-                .processUpdate(update);
+        var session = sessions.computeIfAbsent(
+                message.getChatId(),
+                id -> createSession(message)
+        );
+        session.processUpdate(update);
     }
 
-    BotSession createSession(Long chatId) {
-        return new BotSession(this, chatId);
+    BotSession createSession(Message message) {
+        return new BotSession(
+                this,
+                message.getFrom(),
+                message.getChatId()
+        );
     }
 
     @ConfigurationProperties("hanabi-bot")
@@ -52,6 +59,7 @@ public class HanabiBot extends TelegramLongPollingBot {
     public record Context(
             Config config,
             GameFactory gameFactory
-    ) {}
+    ) {
+    }
 
 }

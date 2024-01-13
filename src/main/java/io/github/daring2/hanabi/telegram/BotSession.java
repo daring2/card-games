@@ -1,14 +1,15 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Game;
+import io.github.daring2.hanabi.model.Player;
 import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -16,40 +17,70 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class BotSession {
 
     final HanabiBot bot;
+    final User user;
     final Long chatId;
 
     Game game;
+    Player player;
 
-    public BotSession(HanabiBot bot, Long chatId) {
+    public BotSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
+        this.user = user;
         this.chatId = chatId;
     }
 
     public synchronized void processUpdate(Update update) {
         var message = update.getMessage();
-        var arguments = parseCommandArguments(message);
-        if (arguments.isEmpty())
+        var command = parseCommand(message);
+        if (command == null)
             return;
-        var command = arguments.getFirst().toLowerCase();
-        if ("/create".equals(command)) {
-            game = bot.context.gameFactory().create();
-            bot.games.put(game.getId(), game);
-            sendText("game_created: id=" + game.getId());
-        } else if ("/join".equals(command) && arguments.size() == 2) {
-            //TODO implement
+        if ("/create".equals(command.name)) {
+            processCreateCommand();
+        } else if ("/join".equals(command.name)) {
+            processJoinCommand(command);
         } else {
-            sendText("Invalid command: " + message.getText());
+            sendMessage("Invalid command: %s", message.getText());
         }
     }
 
-    List<String> parseCommandArguments(Message message) {
+    void processCreateCommand() {
+        game = bot.context.gameFactory().create();
+        bot.games.put(game.getId(), game);
+        player = createPlayer();
+        game.addPlayer(player);
+        sendMessage("game_created: %s", game.getId());
+    }
+
+    void processJoinCommand(UserCommand command) {
+        var gameId = command.getArgument(1);
+        game = bot.games.get(gameId);
+        if (game == null) {
+            sendMessage("invalid_game: %s", gameId);
+            return;
+        }
+        player = createPlayer();
+        game.addPlayer(player);
+        sendMessage("player_joined: game=%s, player=%s", game.getId(), player);
+    }
+
+    Player createPlayer() {
+        return new Player(user.getUserName());
+    }
+
+    UserCommand parseCommand(Message message) {
         var text = message.getText();
         if (isBlank(text))
-            return List.of();
-        return Arrays.stream(text.split(" "))
+            return null;
+        var arguments = Arrays.stream(text.split(" "))
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
                 .toList();
+        return new UserCommand(arguments);
+    }
+
+    void sendMessage(String format, Object... args) {
+        var text = String.format(format, args);
+        sendText(text);
     }
 
     void sendText(String text) {
