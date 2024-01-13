@@ -1,5 +1,8 @@
 package io.github.daring2.hanabi.model;
 
+import io.github.daring2.hanabi.model.event.GameEventBus;
+import io.github.daring2.hanabi.model.event.GameStartedEvent;
+import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
 import org.apache.commons.lang3.Validate;
 
 import java.util.*;
@@ -16,6 +19,7 @@ public class Game {
     public static final int MAX_FIREWORKS = 8;
 
     final String id = randomUUID().toString();
+    final GameEventBus eventBus = new GameEventBus();
     final List<Card> deck = new ArrayList<>();
     final List<Player> players = new ArrayList<>();
     final Map<Color, List<Card>> table = new EnumMap<>(Color.class);
@@ -32,6 +36,10 @@ public class Game {
         return id;
     }
 
+    public GameEventBus eventBus() {
+        return eventBus;
+    }
+
     public void setDeck(List<Card> cards) {
         checkNotStarted();
         deck.clear();
@@ -45,6 +53,7 @@ public class Game {
                 "Maximum players in the game is " + MAX_PLAYERS
         );
         players.add(player);
+        eventBus.publish(new PlayerJoinedEvent(this, player));
     }
 
     public void start() {
@@ -62,8 +71,9 @@ public class Game {
         for (int i = 0; i < initCards; i++) {
             players.forEach(this::takeCard);
         }
-        turn = 1;
         started = true;
+        eventBus.publish(new GameStartedEvent(this));
+        startNextTurn();
     }
 
     boolean isValidPlayersCount() {

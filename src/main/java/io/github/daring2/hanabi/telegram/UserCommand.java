@@ -8,7 +8,7 @@ class UserCommand {
     final List<String> arguments;
 
     UserCommand(List<String> arguments) {
-        this.name = arguments.getFirst();
+        this.name = arguments.getFirst().toLowerCase();
         this.arguments = arguments;
     }
 

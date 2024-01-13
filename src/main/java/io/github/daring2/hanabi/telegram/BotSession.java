@@ -2,6 +2,10 @@ package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.Player;
+import io.github.daring2.hanabi.model.event.GameCreatedEvent;
+import io.github.daring2.hanabi.model.event.GameEvent;
+import io.github.daring2.hanabi.model.event.GameStartedEvent;
+import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -30,7 +34,8 @@ public class BotSession {
     }
 
     public void processUpdate(Update update) {
-        synchronized (game) {
+        var lock = game != null ? game : this; //TODO refactor
+        synchronized (lock) {
             var message = update.getMessage();
             var command = parseCommand(message);
             if (command == null)
@@ -53,42 +58,73 @@ public class BotSession {
     void processCommand(UserCommand command) {
         if (command == null)
             return;
-        if ("/create".equals(command.name)) {
-            processCreateCommand();
-        } else if ("/join".equals(command.name)) {
-            processJoinCommand(command);
-        } else {
-            sendMessage("Invalid command: %s", command.name);
+        switch (command.name) {
+            case "/create" -> processCreateCommand();
+            case "/join" -> processJoinCommand(command);
+            case "/start" -> processStartCommand();
+            default -> {
+                sendMessage("invalid_command: %s", command.name);
+            }
         }
     }
 
     void processCreateCommand() {
         createGame();
+        registerGameListener();
+        game.eventBus().publish(new GameCreatedEvent(game));
         createPlayer();
-        game.addPlayer(player);
-        sendMessage("game_created: %s", game.id());
-    }
-
-    void createGame() {
-        game = bot.context.gameFactory().create();
-        bot.games.put(game.id(), game);
     }
 
     void processJoinCommand(UserCommand command) {
+        //TODO leave current game
         var gameId = command.getArgument(1);
         game = bot.games.get(gameId);
         if (game == null) {
             sendMessage("invalid_game: %s", gameId);
             return;
         }
-        //TODO check if player is already joined
+        registerGameListener();
         createPlayer();
-        game.addPlayer(player);
-        sendMessage("player_joined: game=%s, player=%s", game.id(), player);
+
+    }
+
+    void processStartCommand() {
+        if (game == null) {
+            sendMessage("game_is_null");
+            return;
+        }
+        game.start();
+    }
+
+    void createGame() {
+        //TODO leave current game
+        game = bot.context.gameFactory().create();
+        bot.games.put(game.id(), game);
+    }
+
+    void registerGameListener() {
+        game.eventBus().subscribe(this::processGameEvent);
     }
 
     void createPlayer() {
         player = new Player(user.getUserName());
+        game.addPlayer(player);
+    }
+
+    void processGameEvent(GameEvent event) {
+        switch (event) {
+            case GameCreatedEvent e -> {
+                sendMessage("game_created: %s", game.id());
+            }
+            case PlayerJoinedEvent e -> {
+                sendMessage("player_joined: game=%s, player=%s", game.id(), player);
+            }
+            case GameStartedEvent e -> {
+                sendMessage("game_started: %s", game.id());
+            }
+            default -> {
+            }
+        }
     }
 
     void sendMessage(String format, Object... args) {
