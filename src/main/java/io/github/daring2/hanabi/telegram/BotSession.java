@@ -64,10 +64,10 @@ public class BotSession {
 
     void processCreateCommand() {
         game = bot.context.gameFactory().create();
-        bot.games.put(game.getId(), game);
+        bot.games.put(game.id(), game);
         player = createPlayer();
         game.addPlayer(player);
-        sendMessage("game_created: %s", game.getId());
+        sendMessage("game_created: %s", game.id());
     }
 
     void processJoinCommand(UserCommand command) {
@@ -80,7 +80,7 @@ public class BotSession {
         //TODO check if player is already joined
         player = createPlayer();
         game.addPlayer(player);
-        sendMessage("player_joined: game=%s, player=%s", game.getId(), player);
+        sendMessage("player_joined: game=%s, player=%s", game.id(), player);
     }
 
     Player createPlayer() {

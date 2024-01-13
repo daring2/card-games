@@ -28,7 +28,7 @@ public class Game {
     int redTokens = MAX_RED_TOKENS;
     GameResult result;
 
-    public String getId() {
+    public String id() {
         return id;
     }
 
