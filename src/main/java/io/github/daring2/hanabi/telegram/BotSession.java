@@ -29,9 +29,28 @@ public class BotSession {
         this.chatId = chatId;
     }
 
-    public synchronized void processUpdate(Update update) {
-        var message = update.getMessage();
-        var command = parseCommand(message);
+    public void processUpdate(Update update) {
+        synchronized (game) {
+            var message = update.getMessage();
+            var command = parseCommand(message);
+            if (command == null)
+                return;
+            processCommand(command);
+        }
+    }
+
+    UserCommand parseCommand(Message message) {
+        var text = message.getText();
+        if (isBlank(text))
+            return null;
+        var arguments = Arrays.stream(text.split(" "))
+                .map(String::trim)
+                .filter(StringUtils::isNotBlank)
+                .toList();
+        return new UserCommand(arguments);
+    }
+
+    void processCommand(UserCommand command) {
         if (command == null)
             return;
         if ("/create".equals(command.name)) {
@@ -39,7 +58,7 @@ public class BotSession {
         } else if ("/join".equals(command.name)) {
             processJoinCommand(command);
         } else {
-            sendMessage("Invalid command: %s", message.getText());
+            sendMessage("Invalid command: %s", command.name);
         }
     }
 
@@ -58,6 +77,7 @@ public class BotSession {
             sendMessage("invalid_game: %s", gameId);
             return;
         }
+        //TODO check if player is already joined
         player = createPlayer();
         game.addPlayer(player);
         sendMessage("player_joined: game=%s, player=%s", game.getId(), player);
@@ -65,17 +85,6 @@ public class BotSession {
 
     Player createPlayer() {
         return new Player(user.getUserName());
-    }
-
-    UserCommand parseCommand(Message message) {
-        var text = message.getText();
-        if (isBlank(text))
-            return null;
-        var arguments = Arrays.stream(text.split(" "))
-                .map(String::trim)
-                .filter(StringUtils::isNotBlank)
-                .toList();
-        return new UserCommand(arguments);
     }
 
     void sendMessage(String format, Object... args) {
