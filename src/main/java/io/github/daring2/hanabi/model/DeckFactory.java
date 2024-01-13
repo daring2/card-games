@@ -1,12 +1,17 @@
 package io.github.daring2.hanabi.model;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 
+@Component
 public class DeckFactory {
+
+    public static final int DECK_SIZE = 50;
 
     public List<Card> create() {
         var cards = new ArrayList<Card>();

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.github.daring2.hanabi.model.DeckFactory.DECK_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DeckFactoryTest {
@@ -11,7 +12,7 @@ class DeckFactoryTest {
     @Test
     void testCreate() {
         var deck = new DeckFactory().create();
-        assertThat(deck.size()).isEqualTo(50);
+        assertThat(deck.size()).isEqualTo(DECK_SIZE);
         for (Color color : Color.values()) {
             assertThat(getCardCount(deck, color, 1)).isEqualTo(3);
             assertThat(getCardCount(deck, color, 2)).isEqualTo(2);

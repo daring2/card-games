@@ -4,6 +4,8 @@ import org.apache.commons.lang3.Validate;
 
 import java.util.*;
 
+import static java.util.UUID.randomUUID;
+
 public class Game {
 
     public static final int MIN_PLAYERS = 2;
@@ -13,6 +15,7 @@ public class Game {
     public static final int MAX_RED_TOKENS = 3;
     public static final int MAX_FIREWORKS = 8;
 
+    final String id = randomUUID().toString();
     final List<Card> deck = new ArrayList<>();
     final List<Player> players = new ArrayList<>();
     final Map<Color, List<Card>> table = new EnumMap<>(Color.class);
@@ -24,6 +27,10 @@ public class Game {
     int blueTokens = MAX_BLUE_TOKENS;
     int redTokens = MAX_RED_TOKENS;
     GameResult result;
+
+    public String getId() {
+        return id;
+    }
 
     public void setDeck(List<Card> cards) {
         checkNotStarted();
