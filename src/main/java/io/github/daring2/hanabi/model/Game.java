@@ -72,10 +72,7 @@ public class Game {
 
     public void start() {
         checkNotStarted();
-        Validate.validState(
-                isValidPlayersCount(),
-                "Invalid players count: " + players.size()
-        );
+        checkPlayersBeforeStart();
         for (Color color : Color.values()) {
             var cards = new ArrayList<Card>();
             cards.add(new Card(color, 0));
@@ -96,9 +93,10 @@ public class Game {
         publishEvent(new GameFinishedEvent(this, result));
     }
 
-    boolean isValidPlayersCount() {
+    void checkPlayersBeforeStart() {
         var playersCount = players.size();
-        return playersCount >= MIN_PLAYERS && playersCount <= MAX_PLAYERS;
+        validate(playersCount >= MIN_PLAYERS, "not_enough_players");
+        validate(playersCount <= MAX_PLAYERS, "too_many_players");
     }
 
     int getInitCards() {
