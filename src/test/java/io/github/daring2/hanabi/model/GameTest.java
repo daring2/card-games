@@ -1,7 +1,9 @@
 package io.github.daring2.hanabi.model;
 
+import io.github.daring2.hanabi.model.event.GameFinishedEvent;
 import io.github.daring2.hanabi.model.event.GameStartedEvent;
-import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
+import io.github.daring2.hanabi.model.event.PlayerAddedEvent;
+import io.github.daring2.hanabi.model.event.PlayerRemovedEvent;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 
@@ -33,8 +35,8 @@ class GameTest {
         game.addPlayer(new Player("p1"));
         game.start();
         assertThat(game.events).containsExactly(
-                new PlayerJoinedEvent(game, game.players.get(0)),
-                new PlayerJoinedEvent(game, game.players.get(1)),
+                new PlayerAddedEvent(game, game.players.get(0)),
+                new PlayerAddedEvent(game, game.players.get(1)),
                 new GameStartedEvent(game)
         );
         for (Color color : Color.values()) {
@@ -49,6 +51,24 @@ class GameTest {
         assertThat(game.started).isTrue();
 
         checkGameStartedError(game::start);
+    }
+
+    @Test
+    void testFinish() {
+        var game = newGame();
+        assertThatThrownBy(() -> game.finish(null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("Result is null");
+
+        game.start();
+        assertThat(game.result).isNull();
+
+        game.events.clear();
+        game.finish(GameResult.CANCEL);
+        assertThat(game.result).isEqualTo(GameResult.CANCEL);
+        assertThat(game.events).containsExactly(
+                new GameFinishedEvent(game, GameResult.CANCEL)
+        );
     }
 
     @Test
@@ -74,7 +94,7 @@ class GameTest {
         players.forEach(game::addPlayer);
         assertThat(game.players).isEqualTo(players);
         assertThat(game.events).zipSatisfy(players, (event, player) -> {
-            assertThat(event).isEqualTo(new PlayerJoinedEvent(game, player));
+            assertThat(event).isEqualTo(new PlayerAddedEvent(game, player));
         });
 
         assertThatThrownBy(() -> game.addPlayer(new Player("p5")))
@@ -84,6 +104,43 @@ class GameTest {
         game.players.clear();
         game.started = true;
         checkGameStartedError(() -> game.addPlayer(players.getFirst()));
+    }
+
+    @Test
+    void testRemovePlayer() {
+        var game = newGame();
+        game.players.clear();
+        game.events.clear();
+
+        var players = rangeClosed(0, 2)
+                .mapToObj(i -> new Player("p" + i))
+                .toList();
+        players.forEach(game::addPlayer);
+        assertThat(game.players).isEqualTo(players);
+
+        var player1 = players.get(1);
+        game.events.clear();
+        game.removePlayer(player1);
+        assertThat(game.players).containsExactly(players.get(0), players.get(2));
+        assertThat(game.events).containsExactly(new PlayerRemovedEvent(game, player1));
+
+        game.events.clear();
+        game.removePlayer(player1);
+        assertThat(game.players).containsExactly(players.get(0), players.get(2));
+        assertThat(game.events).isEmpty();
+
+        game.players.clear();
+        players.forEach(game::addPlayer);
+        game.start();
+        game.events.clear();
+        game.removePlayer(player1);
+        assertThat(game.players).containsExactly(players.get(0), players.get(2));
+        assertThat(game.result).isEqualTo(GameResult.CANCEL);
+        assertThat(game.events).containsExactly(
+                new PlayerRemovedEvent(game, player1),
+                new GameFinishedEvent(game, GameResult.CANCEL)
+        );
+
     }
 
     @Test

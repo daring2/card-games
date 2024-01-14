@@ -6,7 +6,7 @@ import io.github.daring2.hanabi.model.event.GameCreatedEvent;
 import io.github.daring2.hanabi.model.event.GameEvent;
 import io.github.daring2.hanabi.model.event.GameEventBus.Subscription;
 import io.github.daring2.hanabi.model.event.GameStartedEvent;
-import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
+import io.github.daring2.hanabi.model.event.PlayerAddedEvent;
 
 import java.util.Arrays;
 
@@ -31,7 +31,7 @@ public class GameEventProcessor {
             case GameCreatedEvent ignored -> {
                 sendMessage("game_created: %s", game);
             }
-            case PlayerJoinedEvent ignored -> {
+            case PlayerAddedEvent ignored -> {
                 sendMessage("player_joined: game=%s, player=%s", game, player());
             }
             case GameStartedEvent ignored -> {

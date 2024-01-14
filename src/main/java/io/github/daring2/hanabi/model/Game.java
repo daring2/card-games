@@ -1,9 +1,6 @@
 package io.github.daring2.hanabi.model;
 
-import io.github.daring2.hanabi.model.event.GameEvent;
-import io.github.daring2.hanabi.model.event.GameEventBus;
-import io.github.daring2.hanabi.model.event.GameStartedEvent;
-import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
+import io.github.daring2.hanabi.model.event.*;
 import org.apache.commons.lang3.Validate;
 
 import java.util.*;
@@ -60,7 +57,17 @@ public class Game {
                 "Maximum players in the game is " + MAX_PLAYERS
         );
         players.add(player);
-        eventBus.publish(new PlayerJoinedEvent(this, player));
+        publishEvent(new PlayerAddedEvent(this, player));
+    }
+
+    public void removePlayer(Player player) {
+        var removed = players.remove(player);
+        if (!removed)
+            return;
+        publishEvent(new PlayerRemovedEvent(this, player));
+        if (started && result == null) {
+            finish(GameResult.CANCEL);
+        }
     }
 
     public void start() {
@@ -79,8 +86,14 @@ public class Game {
             players.forEach(this::takeCard);
         }
         started = true;
-        eventBus.publish(new GameStartedEvent(this));
+        publishEvent(new GameStartedEvent(this));
         startNextTurn();
+    }
+
+    public void finish(GameResult result) {
+        Validate.notNull(result, "Result is null");
+        this.result = result;
+        publishEvent(new GameFinishedEvent(this, result));
     }
 
     boolean isValidPlayersCount() {
@@ -156,14 +169,14 @@ public class Game {
             }
         }
         if (fireworks >= MAX_FIREWORKS) {
-            result = GameResult.WIN;
+            finish(GameResult.WIN);
         }
     }
 
     void discardRedToken() {
         redTokens--;
         if (redTokens <= 0) {
-            result = GameResult.LOSS;
+            finish(GameResult.LOSS);
         }
     }
 
@@ -172,7 +185,7 @@ public class Game {
             return;
         }
         if (deck.isEmpty()) {
-            result = GameResult.LOSS;
+            finish(GameResult.LOSS);
             return;
         }
         player.cards.add(deck.removeLast());
@@ -201,6 +214,15 @@ public class Game {
                 player == getCurrentPlayer(),
                 "Player '%s' is not current", player
         );
+    }
+
+    void publishEvent(GameEvent event) {
+        eventBus.publish(event);
+    }
+
+    @Override
+    public String toString() {
+        return "Game(id=" + id + ")";
     }
 
 }
