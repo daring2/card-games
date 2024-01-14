@@ -52,7 +52,13 @@ public class GameEventProcessor implements AutoCloseable {
     }
 
     void processTurnStarted(TurnStartedEvent event) {
-        //TODO implement
+        session.sendMessage(
+                "turn_info",
+                game.currentPlayer(),
+                game.deckSize(),
+                game.blueTokens(),
+                game.redTokens()
+        );
     }
 
     public void close() {

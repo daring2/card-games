@@ -39,6 +39,18 @@ public class Game {
         return id;
     }
 
+    public int deckSize() {
+        return deck.size();
+    }
+
+    public int blueTokens() {
+        return blueTokens;
+    }
+
+    public int redTokens() {
+        return redTokens;
+    }
+
     public GameEventBus eventBus() {
         return eventBus;
     }
@@ -185,7 +197,7 @@ public class Game {
         publishEvent(new TurnStartedEvent(this, turn));
     }
 
-    Player currentPlayer() {
+    public Player currentPlayer() {
         return players.get((turn - 1) % players.size());
     }
 
