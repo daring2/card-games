@@ -24,10 +24,10 @@ class GameTest {
         var game = newGame();
         game.players.clear();
         game.events.clear();
-        checkPlayersCountError(game::start, 0);
+        checkNotEnoughPlayersError(game::start);
 
         game.addPlayer(new Player("p0"));
-        checkPlayersCountError(game::start, 1);
+        checkNotEnoughPlayersError(game::start);
 
         game.addPlayer(new Player("p1"));
         game.start();
@@ -55,8 +55,8 @@ class GameTest {
     void testFinish() {
         var game = newGame();
         assertThatThrownBy(() -> game.finish(null))
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("Result is null");
+                .isInstanceOf(GameException.class)
+                .hasMessage("result_is_null");
 
         game.start();
         assertThat(game.result).isNull();
@@ -96,8 +96,8 @@ class GameTest {
         });
 
         assertThatThrownBy(() -> game.addPlayer(new Player("p5")))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Maximum players in the game is 5");
+                .isInstanceOf(GameException.class)
+                .hasMessage("too_many_players");
 
         game.players.clear();
         game.started = true;
@@ -145,11 +145,21 @@ class GameTest {
     void testValidPlayersCount() {
         var game = newGame();
         game.players.clear();
-        assertThat(game.isValidPlayersCount()).isEqualTo(false);
+
         game.addPlayer(new Player("p0"));
-        assertThat(game.isValidPlayersCount()).isEqualTo(false);
+        assertThatThrownBy(game::checkPlayersBeforeStart)
+                .isInstanceOf(GameException.class)
+                .hasMessage("not_enough_players");
+
         game.addPlayer(new Player("p1"));
-        assertThat(game.isValidPlayersCount()).isEqualTo(true);
+        game.checkPlayersBeforeStart();
+
+        rangeClosed(2, 5).forEach(i -> {
+            game.players.add(new Player("p" + i));
+        });
+        assertThatThrownBy(game::checkPlayersBeforeStart)
+                .isInstanceOf(GameException.class)
+                .hasMessage("too_many_players");
     }
 
     @Test
@@ -177,8 +187,8 @@ class GameTest {
 
         var player0 = game.players.get(0);
         assertThatThrownBy(() -> game.discardCard(player0, 0))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("All blue tokens are in the game");
+                .isInstanceOf(GameException.class)
+                .hasMessage("all_blue_tokens_in_game");
         assertThat(game.discard).isEmpty();
 
         game.blueTokens = 1;
@@ -373,11 +383,11 @@ class GameTest {
         var game = newGame();
         var players = game.players;
         game.turn = 1;
-        assertThat(game.getCurrentPlayer()).isEqualTo(players.get(0));
+        assertThat(game.currentPlayer()).isEqualTo(players.get(0));
         game.turn = 2;
-        assertThat(game.getCurrentPlayer()).isEqualTo(players.get(1));
+        assertThat(game.currentPlayer()).isEqualTo(players.get(1));
         game.turn = 1;
-        assertThat(game.getCurrentPlayer()).isEqualTo(players.get(0));
+        assertThat(game.currentPlayer()).isEqualTo(players.get(0));
     }
 
     @Test
@@ -418,8 +428,10 @@ class GameTest {
         var player = game.players.get(playerIndex);
         if (error) {
             assertThatThrownBy(() -> game.checkCurrentPlayer(player))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Player '" + player + "' is not current");
+                    .isInstanceOfSatisfying(GameException.class, e -> {
+                        assertThat(e.getCode()).isEqualTo("player_not_current");
+                        assertThat(e.getArguments()).containsExactly(game.currentPlayer());
+                    });
         } else {
             game.checkCurrentPlayer(player);
         }
@@ -443,10 +455,10 @@ class GameTest {
                 .hasMessage("game_finished");
     }
 
-    void checkPlayersCountError(ThrowingCallable action, int count) {
+    void checkNotEnoughPlayersError(ThrowingCallable action) {
         assertThatThrownBy(action)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Invalid players count: " + count);
+                .isInstanceOf(GameException.class)
+                .hasMessage("not_enough_players");
     }
 
     void checkGame(Consumer<Game> action) {

@@ -52,10 +52,7 @@ public class Game {
 
     public void addPlayer(Player player) {
         checkNotStarted();
-        Validate.isTrue(
-                players.size() < MAX_PLAYERS,
-                "Maximum players in the game is " + MAX_PLAYERS
-        );
+        validate(players.size() < MAX_PLAYERS, "too_many_players");
         players.add(player);
         publishEvent(new PlayerAddedEvent(this, player));
     }
@@ -88,7 +85,7 @@ public class Game {
     }
 
     public void finish(GameResult result) {
-        Validate.notNull(result, "Result is null");
+        validate(result != null, "result_is_null");
         this.result = result;
         publishEvent(new GameFinishedEvent(this, result));
     }
@@ -104,9 +101,9 @@ public class Game {
     }
 
     public void discardCard(Player player, int cardIndex) {
-        Validate.isTrue(
+        validate(
                 blueTokens < MAX_BLUE_TOKENS,
-                "All blue tokens are in the game"
+                "all_blue_tokens_in_game"
         );
         performPlayerAction(player, () -> {
             var card = player.removeCard(cardIndex);
@@ -195,7 +192,7 @@ public class Game {
         publishEvent(new TurnStartedEvent(this, turn));
     }
 
-    Player getCurrentPlayer() {
+    Player currentPlayer() {
         return players.get((turn - 1) % players.size());
     }
 
@@ -209,9 +206,10 @@ public class Game {
     }
 
     void checkCurrentPlayer(Player player) {
-        Validate.isTrue(
-                player == getCurrentPlayer(),
-                "Player '%s' is not current", player
+        var currentPlayer = currentPlayer();
+        validate(
+                player == currentPlayer,
+                "player_not_current", currentPlayer
         );
     }
 
