@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Locale;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 @Component
 public class GameMessages {
 
@@ -19,12 +21,15 @@ public class GameMessages {
         args = Arrays.stream(args)
                 .map(this::formatArgument)
                 .toArray();
-        return context.messageSource.getMessage(
+        var message = context.messageSource.getMessage(
                 "hanabi." + code,
-                args,
-                code,
+                args, "",
                 Locale.getDefault()
         );
+        if (isEmpty(message)) {
+            message = code + ": " + Arrays.toString(args);
+        }
+        return message;
     }
 
     Object formatArgument(Object argument) {
