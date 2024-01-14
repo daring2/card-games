@@ -1,7 +1,6 @@
 package io.github.daring2.hanabi.model;
 
 import io.github.daring2.hanabi.model.event.*;
-import org.apache.commons.lang3.Validate;
 
 import java.util.*;
 
@@ -133,14 +132,8 @@ public class Game {
             CardInfo info
     ) {
         performPlayerAction(player, () -> {
-            Validate.isTrue(
-                    info.isValidForShare(),
-                    "Only one property can be shared"
-            );
-            Validate.isTrue(
-                    blueTokens > 0,
-                    "No blue tokens are available"
-            );
+            validate(info.isValidForShare(), "invalid_share_info");
+            validate(blueTokens > 0, "no_blue_tokens_available");
             blueTokens--;
             targetPlayer.addCardInfo(info);
         });

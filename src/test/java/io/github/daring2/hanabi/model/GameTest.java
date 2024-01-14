@@ -256,13 +256,13 @@ class GameTest {
 
         game.start();
         assertThatThrownBy(() -> game.shareInfo(player0, player1, new CardInfo(WHITE, 1)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Only one property can be shared");
+                .isInstanceOf(GameException.class)
+                .hasMessage("invalid_share_info");
 
         game.blueTokens = 0;
         assertThatThrownBy(() -> game.shareInfo(player0, player1, new CardInfo(WHITE)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("No blue tokens are available");
+                .isInstanceOf(GameException.class)
+                .hasMessage("no_blue_tokens_available");
 
         game.blueTokens = 3;
         game.shareInfo(player0, player1, new CardInfo(WHITE));
