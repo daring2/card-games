@@ -1,5 +1,6 @@
 package io.github.daring2.hanabi.model;
 
+import io.github.daring2.hanabi.model.event.GameEvent;
 import io.github.daring2.hanabi.model.event.GameEventBus;
 import io.github.daring2.hanabi.model.event.GameStartedEvent;
 import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
@@ -20,6 +21,8 @@ public class Game {
 
     final String id = randomUUID().toString();
     final GameEventBus eventBus = new GameEventBus();
+    final List<GameEvent> events = new ArrayList<>();
+
     final List<Card> deck = new ArrayList<>();
     final List<Player> players = new ArrayList<>();
     final Map<Color, List<Card>> table = new EnumMap<>(Color.class);
@@ -31,6 +34,10 @@ public class Game {
     int blueTokens = MAX_BLUE_TOKENS;
     int redTokens = MAX_RED_TOKENS;
     GameResult result;
+
+    public Game() {
+        eventBus.subscribe(events::add);
+    }
 
     public String id() {
         return id;

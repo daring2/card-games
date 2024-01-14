@@ -1,11 +1,12 @@
 package io.github.daring2.hanabi.model;
 
+import io.github.daring2.hanabi.model.event.GameStartedEvent;
+import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 
 import static io.github.daring2.hanabi.model.Color.WHITE;
@@ -23,6 +24,7 @@ class GameTest {
     void testStart() {
         var game = newGame();
         game.players.clear();
+        game.events.clear();
         checkPlayersCountError(game::start, 0);
 
         game.addPlayer(new Player("p0"));
@@ -30,6 +32,11 @@ class GameTest {
 
         game.addPlayer(new Player("p1"));
         game.start();
+        assertThat(game.events).containsExactly(
+                new PlayerJoinedEvent(game, game.players.get(0)),
+                new PlayerJoinedEvent(game, game.players.get(1)),
+                new GameStartedEvent(game)
+        );
         for (Color color : Color.values()) {
             assertThat(game.table.get(color)).singleElement()
                     .isEqualTo(new Card(color, 0));
@@ -59,12 +66,16 @@ class GameTest {
     void testAddPlayer() {
         var game = newGame();
         game.players.clear();
+        game.events.clear();
 
         var players = rangeClosed(0, 4)
                 .mapToObj(i -> new Player("p" + i))
                 .toList();
         players.forEach(game::addPlayer);
         assertThat(game.players).isEqualTo(players);
+        assertThat(game.events).zipSatisfy(players, (event, player) -> {
+            assertThat(event).isEqualTo(new PlayerJoinedEvent(game, player));
+        });
 
         assertThatThrownBy(() -> game.addPlayer(new Player("p5")))
                 .isInstanceOf(IllegalArgumentException.class)

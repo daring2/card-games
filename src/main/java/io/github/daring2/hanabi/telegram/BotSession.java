@@ -112,6 +112,7 @@ public class BotSession {
     }
 
     void processGameEvent(GameEvent event) {
+        //TODO introduce GameEventProcessor
         switch (event) {
             case GameCreatedEvent e -> {
                 sendMessage("game_created: %s", game.id());
