@@ -1,13 +1,11 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Game;
-import io.github.daring2.hanabi.model.Player;
+import io.github.daring2.hanabi.model.GameResult;
 import io.github.daring2.hanabi.model.event.*;
 import io.github.daring2.hanabi.model.event.GameEventBus.Subscription;
 
-import java.util.Arrays;
-
-public class GameEventProcessor {
+public class GameEventProcessor implements AutoCloseable {
 
     final UserSession session;
     final Game game;
@@ -21,41 +19,34 @@ public class GameEventProcessor {
 
     public void process(GameEvent event) {
         switch (event) {
-            case GameCreatedEvent ignored -> {
-                sendMessage("game_created: %s", game);
+            case GameCreatedEvent e -> {
+                session.sendMessage("game_created", e.game());
             }
             case PlayerAddedEvent e -> {
-                sendMessage("player_joined: game=%s, player=%s", game, e.player());
+                session.sendMessage("player_joined", e.player());
             }
             case PlayerRemovedEvent e -> {
-                sendMessage("player_left: game=%s, player=%s", game, e.player());
+                session.sendMessage("player_left", e.player());
             }
             case GameStartedEvent ignored -> {
-                sendMessage("game_started: %s", game);
+                session.sendMessage("game_started");
             }
             case GameFinishedEvent e -> {
-                sendMessage("game_finished: game=%s, result=%s", game, e.result());
+                var result = e.result();
+                if (result == GameResult.CANCEL) {
+                    session.sendMessage("game_canceled");
+                } else {
+                    session.sendMessage("game_finished", result);
+                }
             }
             default -> {
             }
         }
     }
 
-    void sendMessage(String format, Object... args) {
-        args = Arrays.stream(args)
-                .map(this::formatMessageArgument)
-                .toArray();
-        session.sendMessage(format, args);
-    }
 
-    Object formatMessageArgument(Object argument) {
-        if (argument == null)
-            return null;
-        return switch (argument) {
-            case Game it -> it.id();
-            case Player it -> it.name();
-            default -> argument;
-        };
+    public void close() {
+        subscription.remove();
     }
 
 }

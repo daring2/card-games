@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Game;
+import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.GameCreatedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -64,20 +65,18 @@ public class UserSession {
             case "/join" -> processJoinCommand(command);
             case "/leave" -> processLeaveCommand();
             case "/start" -> processStartCommand();
-            default -> {
-                sendMessage("invalid_command: %s", command.name);
-            }
+            default -> processInvalidCommand(command);
         }
     }
 
     void processSetUserNameCommand(UserCommand command) {
         var name =  command.getArgument(1);
         if (isBlank(name)) {
-            sendMessage("invalid_user_name: %s", name);
+            sendMessage("empty_user_name");
             return;
         }
         userName = name;
-        sendMessage("user_name_updated: %s", userName);
+        sendMessage("user_name_updated", userName);
     }
 
     void processCreateCommand() {
@@ -88,33 +87,21 @@ public class UserSession {
     }
 
     void processJoinCommand(UserCommand command) {
-        //TODO leave current game
+        leaveCurrentGame();
         var gameId = command.getArgument(1);
         game = bot.games.get(gameId);
         if (game == null) {
-            sendMessage("game_not_found: %s", gameId);
+            sendMessage("game_not_found", gameId);
             return;
         }
         registerGameListener();
         createPlayer();
-
     }
 
     void processLeaveCommand() {
-        if (game == null) {
-            sendMessage("game_is_null");
-            return;
-        }
-        leaveGame();
-    }
-
-    void leaveGame() {
         if (game == null)
             return;
-        game.removePlayer(player);
-        eventProcessor.subscription.remove();
-        game = null;
-        player = null;
+        leaveCurrentGame();
     }
 
     void processStartCommand() {
@@ -125,8 +112,12 @@ public class UserSession {
         game.start();
     }
 
+    void processInvalidCommand(UserCommand command) {
+        sendMessage("invalid_command", command.name);
+    }
+
     void createGame() {
-        //TODO leave current game
+        leaveCurrentGame();
         game = bot.context.gameFactory().create();
         bot.games.put(game.id(), game);
     }
@@ -140,8 +131,16 @@ public class UserSession {
         game.addPlayer(player);
     }
 
-    void sendMessage(String format, Object... args) {
-        var text = String.format(format, args);
+    void leaveCurrentGame() {
+        if (game == null)
+            return;
+        game.removePlayer(player);
+        eventProcessor.close();
+        game = null;
+    }
+
+    void sendMessage(String code, Object... args) {
+        var text = gameMessages().getMessage(code, args);
         sendText(text);
     }
 
@@ -155,6 +154,10 @@ public class UserSession {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    GameMessages gameMessages() {
+        return bot.context.gameMessages();
     }
 
 }
