@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Game;
+import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.GameCreatedEvent;
@@ -48,8 +49,7 @@ public class UserSession {
             try {
                 processCommand(command);
             } catch (Exception e) {
-                logger.error("Cannot process command: " + message.getText(), e);
-                sendMessage("command_error", e.getMessage());
+                processCommandError(message, e);
             }
         }
     }
@@ -162,6 +162,19 @@ public class UserSession {
             bot.execute(sendMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    void processCommandError(Message message, Exception exception) {
+        if (exception instanceof GameException e) {
+            var errorText = gameMessages().getMessage(
+                    "errors." + e.getCode(),
+                    e.getArguments()
+            );
+            sendMessage("game_error", errorText);
+        } else {
+            logger.error("Cannot process command: " + message.getText(), exception);
+            sendMessage("command_error", exception.getMessage());
         }
     }
 

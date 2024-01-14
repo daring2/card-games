@@ -1,9 +1,6 @@
 package io.github.daring2.hanabi.model;
 
-import io.github.daring2.hanabi.model.event.GameFinishedEvent;
-import io.github.daring2.hanabi.model.event.GameStartedEvent;
-import io.github.daring2.hanabi.model.event.PlayerAddedEvent;
-import io.github.daring2.hanabi.model.event.PlayerRemovedEvent;
+import io.github.daring2.hanabi.model.event.*;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +34,8 @@ class GameTest {
         assertThat(game.events).containsExactly(
                 new PlayerAddedEvent(game, game.players.get(0)),
                 new PlayerAddedEvent(game, game.players.get(1)),
-                new GameStartedEvent(game)
+                new GameStartedEvent(game),
+                new TurnStartedEvent(game, 1)
         );
         for (Color color : Color.values()) {
             assertThat(game.table.get(color)).singleElement()
@@ -429,20 +427,20 @@ class GameTest {
 
     void checkGameNotStartedError(ThrowingCallable action) {
         assertThatThrownBy(action)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Game is not started");
+                .isInstanceOf(GameException.class)
+                .hasMessage("game_not_started");
     }
 
     void checkGameStartedError(ThrowingCallable action) {
         assertThatThrownBy(action)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Game is started");
+                .isInstanceOf(GameException.class)
+                .hasMessage("game_started");
     }
 
     void checkGameFinishedError(ThrowingCallable action) {
         assertThatThrownBy(action)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Game is finished");
+                .isInstanceOf(GameException.class)
+                .hasMessage("game_finished");
     }
 
     void checkPlayersCountError(ThrowingCallable action, int count) {

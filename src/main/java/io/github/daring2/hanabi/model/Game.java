@@ -202,12 +202,12 @@ public class Game {
     }
 
     void checkNotStarted() {
-        Validate.validState(!started, "Game is started");
+        validate(!started, "game_started");
     }
 
     void checkActive() {
-        Validate.validState(started, "Game is not started");
-        Validate.validState(result == null, "Game is finished");
+        validate(started, "game_not_started");
+        validate(result == null, "game_finished");
     }
 
     void checkCurrentPlayer(Player player) {
@@ -215,6 +215,12 @@ public class Game {
                 player == getCurrentPlayer(),
                 "Player '%s' is not current", player
         );
+    }
+
+    void validate(boolean expression, String code, Object... args) {
+        if (!expression) {
+            throw new GameException(code, args);
+        }
     }
 
     void publishEvent(GameEvent event) {
