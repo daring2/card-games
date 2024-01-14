@@ -3,9 +3,6 @@ package io.github.daring2.hanabi.telegram;
 import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.GameCreatedEvent;
-import io.github.daring2.hanabi.model.event.GameEvent;
-import io.github.daring2.hanabi.model.event.GameStartedEvent;
-import io.github.daring2.hanabi.model.event.PlayerJoinedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -18,19 +15,22 @@ import java.util.Arrays;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
-public class BotSession {
+public class UserSession {
 
     final HanabiBot bot;
     final User user;
     final Long chatId;
 
+    String userName;
     Game game;
     Player player;
+    GameEventProcessor eventProcessor;
 
-    public BotSession(HanabiBot bot, User user, Long chatId) {
+    public UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
         this.user = user;
         this.chatId = chatId;
+        this.userName = user.getUserName();
     }
 
     public void processUpdate(Update update) {
@@ -59,6 +59,7 @@ public class BotSession {
         if (command == null)
             return;
         switch (command.name) {
+            case "/set_user_name" -> processSetUserNameCommand(command);
             case "/create" -> processCreateCommand();
             case "/join" -> processJoinCommand(command);
             case "/start" -> processStartCommand();
@@ -66,6 +67,16 @@ public class BotSession {
                 sendMessage("invalid_command: %s", command.name);
             }
         }
+    }
+
+    void processSetUserNameCommand(UserCommand command) {
+        var name =  command.getArgument(1);
+        if (isBlank(name)) {
+            sendMessage("invalid_user_name: %s", name);
+            return;
+        }
+        userName = name;
+        sendMessage("user_name_updated: %s", userName);
     }
 
     void processCreateCommand() {
@@ -80,7 +91,7 @@ public class BotSession {
         var gameId = command.getArgument(1);
         game = bot.games.get(gameId);
         if (game == null) {
-            sendMessage("invalid_game: %s", gameId);
+            sendMessage("game_not_found: %s", gameId);
             return;
         }
         registerGameListener();
@@ -103,29 +114,12 @@ public class BotSession {
     }
 
     void registerGameListener() {
-        game.eventBus().subscribe(this::processGameEvent);
+        eventProcessor = new GameEventProcessor(this);
     }
 
     void createPlayer() {
-        player = new Player(user.getUserName());
+        player = new Player(userName);
         game.addPlayer(player);
-    }
-
-    void processGameEvent(GameEvent event) {
-        //TODO introduce GameEventProcessor
-        switch (event) {
-            case GameCreatedEvent e -> {
-                sendMessage("game_created: %s", game.id());
-            }
-            case PlayerJoinedEvent e -> {
-                sendMessage("player_joined: game=%s, player=%s", game.id(), player);
-            }
-            case GameStartedEvent e -> {
-                sendMessage("game_started: %s", game.id());
-            }
-            default -> {
-            }
-        }
     }
 
     void sendMessage(String format, Object... args) {

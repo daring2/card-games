@@ -16,7 +16,7 @@ public class HanabiBot extends TelegramLongPollingBot {
 
     final Context context;
 
-    final Map<Long, BotSession> sessions = new ConcurrentHashMap<>();
+    final Map<Long, UserSession> sessions = new ConcurrentHashMap<>();
     final Map<String, Game> games = new ConcurrentHashMap<>();
 
     public HanabiBot(Context context) {
@@ -36,13 +36,13 @@ public class HanabiBot extends TelegramLongPollingBot {
             return;
         var session = sessions.computeIfAbsent(
                 message.getChatId(),
-                id -> createSession(message)
+                id -> createUserSession(message)
         );
         session.processUpdate(update);
     }
 
-    BotSession createSession(Message message) {
-        return new BotSession(
+    UserSession createUserSession(Message message) {
+        return new UserSession(
                 this,
                 message.getFrom(),
                 message.getChatId()
