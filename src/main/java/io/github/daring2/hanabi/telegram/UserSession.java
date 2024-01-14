@@ -5,6 +5,8 @@ import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.GameCreatedEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,6 +19,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
 public class UserSession {
+
+    static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 
     final HanabiBot bot;
     final User user;
@@ -41,7 +45,12 @@ public class UserSession {
             var command = parseCommand(message);
             if (command == null)
                 return;
-            processCommand(command);
+            try {
+                processCommand(command);
+            } catch (Exception e) {
+                logger.error("Cannot process command: " + message.getText(), e);
+                sendMessage("command_error", e.getMessage());
+            }
         }
     }
 

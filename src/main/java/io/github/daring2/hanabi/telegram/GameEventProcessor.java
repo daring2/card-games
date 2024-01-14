@@ -23,27 +23,37 @@ public class GameEventProcessor implements AutoCloseable {
                 session.sendMessage("game_created", e.game());
             }
             case PlayerAddedEvent e -> {
-                session.sendMessage("player_joined", e.player());
+                if (e.player() == session.player) {
+                    session.sendMessage("current_player_joined");
+                } else {
+                    session.sendMessage("player_joined", e.player());
+                }
             }
             case PlayerRemovedEvent e -> {
-                session.sendMessage("player_left", e.player());
+                if (e.player() == session.player) {
+                    session.sendMessage("current_player_left");
+                } else {
+                    session.sendMessage("player_left", e.player());
+                }
             }
             case GameStartedEvent ignored -> {
                 session.sendMessage("game_started");
             }
             case GameFinishedEvent e -> {
-                var result = e.result();
-                if (result == GameResult.CANCEL) {
+                if (e.result() == GameResult.CANCEL) {
                     session.sendMessage("game_canceled");
                 } else {
-                    session.sendMessage("game_finished", result);
+                    session.sendMessage("game_finished", e.result());
                 }
             }
-            default -> {
-            }
+            case TurnStartedEvent e -> processTurnStarted(e);
+            default -> {}
         }
     }
 
+    void processTurnStarted(TurnStartedEvent event) {
+        //TODO implement
+    }
 
     public void close() {
         subscription.remove();

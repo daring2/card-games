@@ -194,6 +194,7 @@ public class Game {
     void startNextTurn() {
         checkActive();
         turn++;
+        publishEvent(new TurnStartedEvent(this, turn));
     }
 
     Player getCurrentPlayer() {
