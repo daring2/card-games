@@ -62,6 +62,7 @@ public class UserSession {
             case "/set_user_name" -> processSetUserNameCommand(command);
             case "/create" -> processCreateCommand();
             case "/join" -> processJoinCommand(command);
+            case "/leave" -> processLeaveCommand();
             case "/start" -> processStartCommand();
             default -> {
                 sendMessage("invalid_command: %s", command.name);
@@ -97,6 +98,23 @@ public class UserSession {
         registerGameListener();
         createPlayer();
 
+    }
+
+    void processLeaveCommand() {
+        if (game == null) {
+            sendMessage("game_is_null");
+            return;
+        }
+        leaveGame();
+    }
+
+    void leaveGame() {
+        if (game == null)
+            return;
+        game.removePlayer(player);
+        eventProcessor.subscription.remove();
+        game = null;
+        player = null;
     }
 
     void processStartCommand() {
