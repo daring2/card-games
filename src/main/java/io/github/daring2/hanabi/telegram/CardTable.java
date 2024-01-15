@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.leftPad;
 
-class CardTableBuilder {
+class CardTable {
 
     final List<Row> rows = new ArrayList<>();
 
@@ -16,10 +16,10 @@ class CardTableBuilder {
         rows.add(new Row(label, cards));
     }
 
-    String buildTableText() {
+    String buildText() {
         var labelPad = calculateLabelPad();
         return rows.stream()
-                .map(row -> buildRowLine(row, labelPad))
+                .map(row -> buildRowText(row, labelPad))
                 .collect(Collectors.joining("\n"));
     }
 
@@ -30,7 +30,7 @@ class CardTableBuilder {
                 .orElse(0);
     }
 
-    String buildRowLine(Row row, int labelPad) {
+    String buildRowText(Row row, int labelPad) {
         var cells = new ArrayList<String>();
         cells.add(leftPad(row.label, labelPad) + ":");
         row.cards.forEach(card -> cells.add("" + card));
