@@ -52,6 +52,7 @@ public class GameEventProcessor implements AutoCloseable {
     }
 
     void processTurnStarted(TurnStartedEvent event) {
+        var game = event.game();
         session.sendMessage(
                 "turn_info",
                 game.currentPlayer(),

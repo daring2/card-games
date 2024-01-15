@@ -17,7 +17,7 @@ class GameMessagesTest {
         assertThat(messages.getMessage("m1", "a1", "a2"))
                 .isEqualTo("m1: [a1, a2]");
         assertThat(messages.getMessage("invalid_command", "c1"))
-                .isEqualTo("Некорректная команда: c1");
+                .isEqualTo("Некорректная команда: c1.");
         assertThat(messages.getMessage("game_started"))
                 .isEqualTo("Игра запущена");
     }
