@@ -32,7 +32,7 @@ class CardTable {
 
     String buildRowText(Row row, int labelPad) {
         var cells = new ArrayList<String>();
-        cells.add(rightPad(row.label, labelPad) + ":");
+        cells.add(rightPad(row.label, labelPad));
         row.cards.forEach(card -> cells.add("" + card));
         return String.join(" ", cells);
     }
