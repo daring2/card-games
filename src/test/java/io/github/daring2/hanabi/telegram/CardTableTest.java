@@ -27,7 +27,7 @@ class CardTableTest {
                 new Card(Color.GREEN, 3)
         ));
         assertThat(table.buildText()).isEqualTo(
-                "  p1: W-1 R-2\np002: G-3"
+                "p1  : W-1 R-2\np002: G-3"
         );
     }
 
@@ -51,7 +51,7 @@ class CardTableTest {
                 new Card(Color.GREEN, 3)
         ));
         assertThat(table.buildRowText(row, 5)).isEqualTo(
-                "   p1: W-1 R-2 G-3"
+                "p1   : W-1 R-2 G-3"
         );
     }
 

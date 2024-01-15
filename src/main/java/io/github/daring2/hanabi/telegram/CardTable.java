@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.StringUtils.leftPad;
+import static org.apache.commons.lang3.StringUtils.rightPad;
 
 class CardTable {
 
@@ -32,7 +32,7 @@ class CardTable {
 
     String buildRowText(Row row, int labelPad) {
         var cells = new ArrayList<String>();
-        cells.add(leftPad(row.label, labelPad) + ":");
+        cells.add(rightPad(row.label, labelPad) + ":");
         row.cards.forEach(card -> cells.add("" + card));
         return String.join(" ", cells);
     }

@@ -69,7 +69,7 @@ public class UserSession {
         if (command == null)
             return;
         switch (command.name) {
-            case "/set_player_name" -> processSetUserNameCommand(command);
+            case "/set_player_name" -> processSetPlayerNameCommand(command);
             case "/create" -> processCreateCommand();
             case "/join" -> processJoinCommand(command);
             case "/leave" -> processLeaveCommand();
@@ -78,7 +78,7 @@ public class UserSession {
         }
     }
 
-    void processSetUserNameCommand(UserCommand command) {
+    void processSetPlayerNameCommand(UserCommand command) {
         var name =  command.getArgument(1);
         if (isBlank(name)) {
             sendMessage("empty_player_name");
