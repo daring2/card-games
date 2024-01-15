@@ -51,6 +51,12 @@ public class Game {
         return redTokens;
     }
 
+    public List<Card> tableCards() {
+        return table.values().stream()
+                .map(List::getLast)
+                .toList();
+    }
+
     public GameEventBus eventBus() {
         return eventBus;
     }
@@ -81,7 +87,7 @@ public class Game {
     public void start() {
         checkNotStarted();
         checkPlayersBeforeStart();
-        for (Color color : Color.values()) {
+        for (Color color : Color.valueList) {
             var cards = new ArrayList<Card>();
             cards.add(new Card(color, 0));
             table.put(color, cards);

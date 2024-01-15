@@ -13,7 +13,7 @@ class DeckFactoryTest {
     void testCreate() {
         var deck = new DeckFactory().create();
         assertThat(deck.size()).isEqualTo(DECK_SIZE);
-        for (Color color : Color.values()) {
+        for (Color color : Color.valueList) {
             assertThat(getCardCount(deck, color, 1)).isEqualTo(3);
             assertThat(getCardCount(deck, color, 2)).isEqualTo(2);
             assertThat(getCardCount(deck, color, 3)).isEqualTo(2);

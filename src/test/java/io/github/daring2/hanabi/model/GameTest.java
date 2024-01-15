@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-import static io.github.daring2.hanabi.model.Color.WHITE;
+import static io.github.daring2.hanabi.model.Color.*;
 import static io.github.daring2.hanabi.model.Game.*;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
@@ -37,7 +37,7 @@ class GameTest {
                 new GameStartedEvent(game),
                 new TurnStartedEvent(game, 1)
         );
-        for (Color color : Color.values()) {
+        for (Color color : Color.valueList) {
             assertThat(game.table.get(color)).singleElement()
                     .isEqualTo(new Card(color, 0));
         }
@@ -424,6 +424,31 @@ class GameTest {
         checkCurrentPlayerError(game, 1, false);
     }
 
+    @Test
+    void testTableCards() {
+        var game = newGame();
+        assertThat(game.tableCards()).isEmpty();
+
+        game.start();
+        assertThat(game.tableCards()).containsExactly(
+                new Card(WHITE, 0),
+                new Card(RED, 0),
+                new Card(GREEN, 0),
+                new Card(BLUE, 0),
+                new Card(YELLOW, 0)
+        );
+
+        game.table.get(RED).add(new Card(RED, 1));
+        game.table.get(BLUE).add(new Card(Color.BLUE, 3));
+        assertThat(game.tableCards()).containsExactly(
+                new Card(WHITE, 0),
+                new Card(RED, 1),
+                new Card(GREEN, 0),
+                new Card(BLUE, 3),
+                new Card(YELLOW, 0)
+        );
+    }
+
     void checkCurrentPlayerError(Game game, int playerIndex, boolean error) {
         var player = game.players.get(playerIndex);
         if (error) {
@@ -469,7 +494,7 @@ class GameTest {
 
     Game newGame() {
         var cards = new ArrayList<Card>();
-        for (Color color : Color.values()) {
+        for (Color color : Color.valueList) {
             for (int value = 1; value <= MAX_CARD_VALUE; value++) {
                 cards.add(new Card(color, value));
             }

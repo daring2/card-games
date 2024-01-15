@@ -15,7 +15,7 @@ public class DeckFactory {
 
     public List<Card> create() {
         var cards = new ArrayList<Card>();
-        for (Color color : Color.values()) {
+        for (Color color : Color.valueList) {
             for (int value = 1; value <= MAX_CARD_VALUE; value++) {
                 var cardNumber = getCardNumber(value);
                 for (int i = 0; i < cardNumber; i++) {
