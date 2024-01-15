@@ -4,6 +4,7 @@ import io.github.daring2.hanabi.model.event.*;
 
 import java.util.*;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
 public class Game {
@@ -55,6 +56,10 @@ public class Game {
         return table.values().stream()
                 .map(List::getLast)
                 .toList();
+    }
+
+    public List<Player> players() {
+        return unmodifiableList(players);
     }
 
     public GameEventBus eventBus() {

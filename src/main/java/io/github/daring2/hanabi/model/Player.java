@@ -1,9 +1,8 @@
 package io.github.daring2.hanabi.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Collections.unmodifiableList;
 
 public class Player {
 
@@ -17,6 +16,10 @@ public class Player {
 
     public String name() {
         return name;
+    }
+
+    public List<Card> cards() {
+        return unmodifiableList(cards);
     }
 
     Card removeCard(int index) {
