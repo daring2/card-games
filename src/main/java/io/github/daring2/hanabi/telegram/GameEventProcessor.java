@@ -52,14 +52,20 @@ public class GameEventProcessor implements AutoCloseable {
     }
 
     void processTurnStarted(TurnStartedEvent event) {
-        var game = event.game();
-        session.sendMessage(
+        var turnInfo = session.messages().getMessage(
                 "turn_info",
                 game.currentPlayer(),
                 game.deckSize(),
                 game.blueTokens(),
-                game.redTokens()
+                game.redTokens(),
+                buildCardsInfo()
         );
+        session.sendText(turnInfo);
+    }
+
+    String buildCardsInfo() {
+        //TODO implement
+        return "";
     }
 
     public void close() {

@@ -149,7 +149,7 @@ public class UserSession {
     }
 
     void sendMessage(String code, Object... args) {
-        var text = gameMessages().getMessage(code, args);
+        var text = messages().getMessage(code, args);
         sendText(text);
     }
 
@@ -167,7 +167,7 @@ public class UserSession {
 
     void processCommandError(Message message, Exception exception) {
         if (exception instanceof GameException e) {
-            var errorText = gameMessages().getMessage(
+            var errorText = messages().getMessage(
                     "errors." + e.getCode(),
                     e.getArguments()
             );
@@ -178,7 +178,7 @@ public class UserSession {
         }
     }
 
-    GameMessages gameMessages() {
+    GameMessages messages() {
         return bot.context.gameMessages();
     }
 
