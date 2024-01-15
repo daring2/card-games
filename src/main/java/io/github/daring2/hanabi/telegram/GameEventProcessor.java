@@ -58,12 +58,12 @@ public class GameEventProcessor implements AutoCloseable {
                 game.deckSize(),
                 game.blueTokens(),
                 game.redTokens(),
-                buildCardsInfo()
+                buildCardTableText()
         );
-        session.sendText(turnInfo);
+        session.sendText(turnInfo, "MarkdownV2");
     }
 
-    String buildCardsInfo() {
+    String buildCardTableText() {
         var table = new CardTable();
         table.addRow("table", game.tableCards());
         game.players().forEach(player -> {

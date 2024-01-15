@@ -153,16 +153,21 @@ public class UserSession {
         sendText(text);
     }
 
-    void sendText(String text) {
+    void sendText(String text, String parseMode) {
         try {
             var sendMessage = SendMessage.builder()
                     .chatId(chatId)
                     .text(text)
+                    .parseMode(parseMode)
                     .build();
             bot.execute(sendMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    void sendText(String text) {
+        sendText(text, null);
     }
 
     void processCommandError(Message message, Exception exception) {
