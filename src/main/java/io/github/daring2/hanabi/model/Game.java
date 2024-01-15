@@ -149,13 +149,13 @@ public class Game {
         });
     }
 
-    public void shareInfo(
+    public void suggest(
             Player player,
             Player targetPlayer,
             CardInfo info
     ) {
         performPlayerAction(player, () -> {
-            validate(info.isValidForShare(), "invalid_share_info");
+            validate(info.isValidForSuggest(), "invalid_suggestion");
             validate(blueTokens > 0, "no_blue_tokens_available");
             blueTokens--;
             targetPlayer.addCardInfo(info);

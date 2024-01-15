@@ -248,24 +248,24 @@ class GameTest {
     }
 
     @Test
-    void testShareInfo() {
+    void testSuggest() {
         var game = newGame();
         var player0 = game.players.get(0);
         var player1 = game.players.get(1);
-        checkGameNotStartedError(() -> game.shareInfo(player0, player1, new CardInfo(WHITE)));
+        checkGameNotStartedError(() -> game.suggest(player0, player1, new CardInfo(WHITE)));
 
         game.start();
-        assertThatThrownBy(() -> game.shareInfo(player0, player1, new CardInfo(WHITE, 1)))
+        assertThatThrownBy(() -> game.suggest(player0, player1, new CardInfo(WHITE, 1)))
                 .isInstanceOf(GameException.class)
-                .hasMessage("invalid_share_info");
+                .hasMessage("invalid_suggestion");
 
         game.blueTokens = 0;
-        assertThatThrownBy(() -> game.shareInfo(player0, player1, new CardInfo(WHITE)))
+        assertThatThrownBy(() -> game.suggest(player0, player1, new CardInfo(WHITE)))
                 .isInstanceOf(GameException.class)
                 .hasMessage("no_blue_tokens_available");
 
         game.blueTokens = 3;
-        game.shareInfo(player0, player1, new CardInfo(WHITE));
+        game.suggest(player0, player1, new CardInfo(WHITE));
         assertThat(game.blueTokens).isEqualTo(2);
     }
 

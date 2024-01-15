@@ -17,7 +17,7 @@ public record CardInfo(
                 this(null, value);
         }
 
-        public boolean isValidForShare() {
+        public boolean isValidForSuggest() {
                 return color == null || value == NULL_VALUE;
         }
 
