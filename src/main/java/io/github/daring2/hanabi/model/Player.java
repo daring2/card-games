@@ -22,6 +22,10 @@ public class Player {
         return unmodifiableList(cards);
     }
 
+    public CardInfo getKnownCard(Card card) {
+        return knownCards.getOrDefault(card, CardInfo.EMPTY);
+    }
+
     Card removeCard(int index) {
         var card = cards.remove(index);
         knownCards.remove(card);
