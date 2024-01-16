@@ -228,7 +228,7 @@ class GameTest {
             verify(game, times(1))
                     .addCardToTable(new Card(WHITE, 1));
             verify(game, times(0)).discardRedToken();
-            assertThat(game.redTokens).isEqualTo(MAX_RED_TOKENS);
+            assertThat(game.redTokens).isEqualTo(0);
             assertThat(game.discard).isEmpty();
             verify(game, times(1)).takeCard(player0);
         });
@@ -242,7 +242,7 @@ class GameTest {
                     .addCardToTable(new Card(WHITE, 1));
             verify(game, times(1)).discardRedToken();
             assertThat(game.discard).containsExactly(new Card(WHITE, 3));
-            assertThat(game.redTokens).isEqualTo(MAX_RED_TOKENS - 1);
+            assertThat(game.redTokens).isEqualTo(1);
             verify(game, times(1)).takeCard(player0);
         });
     }
@@ -328,16 +328,16 @@ class GameTest {
     @Test
     void testDiscardRedToken() {
         var game = newGame();
-        assertThat(game.redTokens).isEqualTo(3);
-        assertThat(game.result).isNull();
-
-        game.discardRedToken();
-        assertThat(game.redTokens).isEqualTo(2);
-        assertThat(game.result).isNull();
-
-        game.discardRedToken();
-        game.discardRedToken();
         assertThat(game.redTokens).isEqualTo(0);
+        assertThat(game.result).isNull();
+
+        game.discardRedToken();
+        assertThat(game.redTokens).isEqualTo(1);
+        assertThat(game.result).isNull();
+
+        game.discardRedToken();
+        game.discardRedToken();
+        assertThat(game.redTokens).isEqualTo(3);
         assertThat(game.result).isEqualTo(GameResult.LOSS);
     }
 

@@ -29,7 +29,7 @@ public class Game {
     int turn;
     int fireworks;
     int blueTokens = MAX_BLUE_TOKENS;
-    int redTokens = MAX_RED_TOKENS;
+    int redTokens;
     GameResult result;
 
     public Game() {
@@ -185,8 +185,8 @@ public class Game {
     }
 
     void discardRedToken() {
-        redTokens--;
-        if (redTokens <= 0) {
+        redTokens++;
+        if (redTokens >= MAX_RED_TOKENS) {
             finish(GameResult.LOSS);
         }
     }
