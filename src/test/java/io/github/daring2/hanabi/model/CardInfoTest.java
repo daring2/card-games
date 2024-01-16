@@ -2,6 +2,7 @@ package io.github.daring2.hanabi.model;
 
 import org.junit.jupiter.api.Test;
 
+import static io.github.daring2.hanabi.model.CardInfo.NULL_VALUE;
 import static io.github.daring2.hanabi.model.Color.WHITE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,4 +29,11 @@ class CardInfoTest {
                 .isEqualTo(new CardInfo(WHITE, 1));
     }
 
+    @Test
+    void testToString() {
+        assertThat(new CardInfo(null).toString()).isEqualTo("?-?");
+        assertThat(new CardInfo(WHITE).toString()).isEqualTo("W-?");
+        assertThat(new CardInfo(1).toString()).isEqualTo("?-1");
+        assertThat(new CardInfo(WHITE, 1).toString()).isEqualTo("W-1");
+    }
 }
