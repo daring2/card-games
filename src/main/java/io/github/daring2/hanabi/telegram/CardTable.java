@@ -60,7 +60,7 @@ class CardTable {
     String buildCardText(Player player, Card card) {
         if (card.value() <= 0)
             return null;
-        if (player == targetPlayer) {
+        if (player != null && player == targetPlayer) {
             var cardInfo = player.getKnownCard(card);
             return cardInfo.toString();
         } else {
