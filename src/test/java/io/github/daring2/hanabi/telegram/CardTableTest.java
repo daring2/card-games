@@ -2,14 +2,36 @@ package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Card;
 import io.github.daring2.hanabi.model.Color;
+import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.telegram.CardTable.Row;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.github.daring2.hanabi.model.GameTestUtils.newPlayer;
+import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CardTableTest {
+
+    @Test
+    void testAddRow() {
+        var table = new CardTable(null);
+        var cards = rangeClosed(1, 5)
+                .mapToObj(i -> new Card(Color.WHITE, i))
+                .toList();
+        table.addRow("p1", cards.subList(0, 2));
+        assertThat(table.rows).containsExactly(
+                new Row(null, "p1", cards.subList(0, 2))
+        );
+
+        var player2 =  newPlayer("p2", cards.subList(2, 4));
+        table.addRow(player2);
+        assertThat(table.rows).containsExactly(
+                new Row(null, "p1", cards.subList(0, 2)),
+                new Row(player2, "p2", cards.subList(2, 4))
+        );
+    }
 
     @Test
     void testTableText() {
