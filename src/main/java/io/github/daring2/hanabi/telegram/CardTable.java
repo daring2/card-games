@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Card;
+import io.github.daring2.hanabi.model.Player;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -11,10 +12,24 @@ import static org.apache.commons.lang3.StringUtils.rightPad;
 
 class CardTable {
 
+    final Player targetPlayer;
+
     final List<Row> rows = new ArrayList<>();
 
+    public CardTable(Player targetPlayer) {
+        this.targetPlayer = targetPlayer;
+    }
+
     void addRow(String label, List<Card> cards) {
-        rows.add(new Row(label, cards));
+        rows.add(new Row(null, label, cards));
+    }
+
+    void addRow(Player player) {
+        rows.add(new Row(
+                player,
+                player.name(),
+                player.cards()
+        ));
     }
 
     String buildText() {
@@ -49,6 +64,7 @@ class CardTable {
     }
 
     record Row(
+            Player player,
             String label,
             List<Card> cards
     ) {}

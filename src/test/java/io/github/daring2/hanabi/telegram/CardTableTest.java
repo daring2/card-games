@@ -13,7 +13,7 @@ class CardTableTest {
 
     @Test
     void testTableText() {
-        var table = new CardTable();
+        var table = new CardTable(null);
 
         table.addRow("p1", List.of(
                 new Card(Color.WHITE, 1),
@@ -33,7 +33,7 @@ class CardTableTest {
 
     @Test
     void testCalculateLabelPad() {
-        var table = new CardTable();
+        var table = new CardTable(null);
         table.addRow("p1", List.of());
         assertThat(table.calculateLabelPad()).isEqualTo(2);
         table.addRow("p002", List.of());
@@ -44,8 +44,8 @@ class CardTableTest {
 
     @Test
     void testBuildRowText() {
-        var table = new CardTable();
-        var row = new Row("p1", List.of(
+        var table = new CardTable(null);
+        var row = new Row(null, "p1", List.of(
                 new Card(Color.WHITE, 1),
                 new Card(Color.RED, 2),
                 new Card(Color.GREEN, 3)
@@ -57,7 +57,7 @@ class CardTableTest {
 
     @Test
     void testBuildCardText() {
-        var table = new CardTable();
+        var table = new CardTable(null);
         assertThat(table.buildCardText(new Card(Color.WHITE, 0))).isNull();
         assertThat(table.buildCardText(new Card(Color.WHITE, 1))).isEqualTo("W-1");
         assertThat(table.buildCardText(new Card(Color.RED, 2))).isEqualTo("R-2");
