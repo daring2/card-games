@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Card;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,18 @@ class CardTable {
     String buildRowText(Row row, int labelPad) {
         var cells = new ArrayList<String>();
         cells.add(rightPad(row.label, labelPad));
-        row.cards.forEach(card -> cells.add("" + card));
-        return String.join(" ", cells);
+        row.cards.forEach(card -> {
+            cells.add(buildCardText(card));
+        });
+        return cells.stream()
+                .filter(StringUtils::isNotEmpty)
+                .collect(Collectors.joining(" "));
+    }
+
+    String buildCardText(Card card) {
+        if (card.value() <= 0)
+            return null;
+        return card.toString();
     }
 
     record Row(

@@ -55,4 +55,12 @@ class CardTableTest {
         );
     }
 
+    @Test
+    void testBuildCardText() {
+        var table = new CardTable();
+        assertThat(table.buildCardText(new Card(Color.WHITE, 0))).isNull();
+        assertThat(table.buildCardText(new Card(Color.WHITE, 1))).isEqualTo("W-1");
+        assertThat(table.buildCardText(new Card(Color.RED, 2))).isEqualTo("R-2");
+    }
+
 }
