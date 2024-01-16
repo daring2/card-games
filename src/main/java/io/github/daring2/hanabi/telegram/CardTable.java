@@ -50,17 +50,22 @@ class CardTable {
         var cells = new ArrayList<String>();
         cells.add(rightPad(row.label, labelPad));
         row.cards.forEach(card -> {
-            cells.add(buildCardText(card));
+            cells.add(buildCardText(row.player, card));
         });
         return cells.stream()
                 .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.joining(" "));
     }
 
-    String buildCardText(Card card) {
+    String buildCardText(Player player, Card card) {
         if (card.value() <= 0)
             return null;
-        return card.toString();
+        if (player == targetPlayer) {
+            var cardInfo = player.getKnownCard(card);
+            return cardInfo.toString();
+        } else {
+            return card.toString();
+        }
     }
 
     record Row(

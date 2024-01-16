@@ -1,12 +1,15 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Card;
+import io.github.daring2.hanabi.model.CardInfo;
 import io.github.daring2.hanabi.model.Color;
+import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.telegram.CardTable.Row;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.github.daring2.hanabi.model.GameTestUtils.addKnownCard;
 import static io.github.daring2.hanabi.model.GameTestUtils.newPlayer;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,14 +81,36 @@ class CardTableTest {
 
     @Test
     void testBuildCardText() {
-        var table = new CardTable(null);
-        checkCardText(table, new Card(Color.WHITE, 0), null);
-        checkCardText(table, new Card(Color.WHITE, 1), "W-1");
-        checkCardText(table, new Card(Color.RED, 2), "R-2");
+        Player player0 = new Player("p0");
+        Player player1 = new Player("p1");
+        var table = new CardTable(player0);
+
+        var card0 = new Card(Color.WHITE, 0);
+        checkCardText(table, null, card0, null);
+        checkCardText(table, player0, card0, null);
+        checkCardText(table, player1, card0, null);
+
+        var card1 = new Card(Color.WHITE, 1);
+        checkCardText(table, null, card1, "W-1");
+        checkCardText(table, player0, card1, "?-?");
+        checkCardText(table, player1, card1, "W-1");
+
+        addKnownCard(player0, card1, new CardInfo(Color.WHITE));
+        checkCardText(table, null, card1, "W-1");
+        checkCardText(table, player0, card1, "W-?");
+        checkCardText(table, player1, card1, "W-1");
+
+        addKnownCard(player0, card1, new CardInfo(Color.WHITE, 1));
+        checkCardText(table, player0, card1, "W-1");
     }
 
-    void checkCardText(CardTable table, Card card, String text) {
-        assertThat(table.buildCardText(card)).isEqualTo(text);
+    void checkCardText(
+            CardTable table,
+            Player player,
+            Card card,
+            String text
+    ) {
+        assertThat(table.buildCardText(player, card)).isEqualTo(text);
     }
 
 }

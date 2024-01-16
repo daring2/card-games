@@ -10,6 +10,10 @@ public class GameTestUtils {
         return player;
     }
 
+    public static void addKnownCard(Player player, Card card, CardInfo cardInfo) {
+        player.knownCards.put(card, cardInfo);
+    }
+
     private GameTestUtils() {
     }
 
