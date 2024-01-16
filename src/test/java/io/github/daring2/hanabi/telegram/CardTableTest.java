@@ -2,7 +2,6 @@ package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Card;
 import io.github.daring2.hanabi.model.Color;
-import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.telegram.CardTable.Row;
 import org.junit.jupiter.api.Test;
 
@@ -80,9 +79,13 @@ class CardTableTest {
     @Test
     void testBuildCardText() {
         var table = new CardTable(null);
-        assertThat(table.buildCardText(new Card(Color.WHITE, 0))).isNull();
-        assertThat(table.buildCardText(new Card(Color.WHITE, 1))).isEqualTo("W-1");
-        assertThat(table.buildCardText(new Card(Color.RED, 2))).isEqualTo("R-2");
+        checkCardText(table, new Card(Color.WHITE, 0), null);
+        checkCardText(table, new Card(Color.WHITE, 1), "W-1");
+        checkCardText(table, new Card(Color.RED, 2), "R-2");
+    }
+
+    void checkCardText(CardTable table, Card card, String text) {
+        assertThat(table.buildCardText(card)).isEqualTo(text);
     }
 
 }
