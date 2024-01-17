@@ -123,6 +123,7 @@ public class Game {
     }
 
     public void discardCard(Player player, int cardIndex) {
+        checkCardIndex(player, cardIndex);
         validate(
                 blueTokens < MAX_BLUE_TOKENS,
                 "all_blue_tokens_in_game"
@@ -135,6 +136,7 @@ public class Game {
     }
 
     public void playCard(Player player, int cardIndex) {
+        checkCardIndex(player, cardIndex);
         performPlayerAction(player, () -> {
             var card = player.removeCard(cardIndex);
             var tableCards = table.get(card.color());
@@ -227,6 +229,12 @@ public class Game {
                 player == currentPlayer,
                 "player_not_current", currentPlayer
         );
+    }
+
+    void checkCardIndex(Player player, int index) {
+        if (index < 0 || index >= player.cards.size()) {
+            throw new GameException("invalid_card_index");
+        }
     }
 
     void validate(boolean expression, String code, Object... args) {

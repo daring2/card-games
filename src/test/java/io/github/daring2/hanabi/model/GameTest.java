@@ -197,6 +197,7 @@ class GameTest {
         assertThat(game.discard).isEmpty();
 
         game.started = true;
+        checkCardIndexError(() -> game.discardCard(player0, -1));
         game.discardCard(player0, 0);
         assertThat(player0.cards).map(Card::value)
                 .containsExactly(2, 4, 6, 8, 10);
@@ -218,6 +219,8 @@ class GameTest {
             var player0 = game.players.get(0);
             game.started = false;
             checkGameNotStartedError(() -> game.playCard(player0, 0));
+            game.started = true;
+            checkCardIndexError(() -> game.discardCard(player0, -1));
         });
         checkGame(it -> {
             var game = spy(it);
@@ -495,6 +498,12 @@ class GameTest {
         assertThatThrownBy(action)
                 .isInstanceOf(GameException.class)
                 .hasMessage("not_enough_players");
+    }
+
+    void checkCardIndexError(ThrowingCallable action) {
+        assertThatThrownBy(action)
+                .isInstanceOf(GameException.class)
+                .hasMessage("invalid_card_index");
     }
 
     void checkGame(Consumer<Game> action) {
