@@ -370,10 +370,21 @@ class GameTest {
         checkGameNotStartedError(game::startNextTurn);
         game.started = true;
         assertThat(game.turn).isEqualTo(0);
+
+        game.events.clear();
         game.startNextTurn();
         assertThat(game.turn).isEqualTo(1);
+        assertThat(game.events).containsExactly(
+                new TurnStartedEvent(game, 1)
+        );
+
+        game.events.clear();
         game.startNextTurn();
         assertThat(game.turn).isEqualTo(2);
+        assertThat(game.events).containsExactly(
+                new TurnStartedEvent(game, 2)
+        );
+
         game.result = GameResult.WIN;
         checkGameFinishedError(game::startNextTurn);
     }
