@@ -192,6 +192,7 @@ public class Game {
 
     void addRedToken() {
         redTokens++;
+        publishEvent(new AddRedTokenEvent(this, redTokens));
         if (redTokens >= MAX_RED_TOKENS) {
             finish(GameResult.LOSS);
         }

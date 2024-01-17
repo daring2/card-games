@@ -355,14 +355,24 @@ class GameTest {
         assertThat(game.redTokens).isEqualTo(0);
         assertThat(game.result).isNull();
 
+        game.events.clear();
         game.addRedToken();
         assertThat(game.redTokens).isEqualTo(1);
         assertThat(game.result).isNull();
+        assertThat(game.events).containsExactly(
+                new AddRedTokenEvent(game, 1)
+        );
 
+        game.events.clear();
         game.addRedToken();
         game.addRedToken();
         assertThat(game.redTokens).isEqualTo(3);
         assertThat(game.result).isEqualTo(GameResult.LOSS);
+        assertThat(game.events).containsExactly(
+                new AddRedTokenEvent(game, 2),
+                new AddRedTokenEvent(game, 3),
+                new FinishGameEvent(game, GameResult.LOSS)
+        );
     }
 
     @Test
