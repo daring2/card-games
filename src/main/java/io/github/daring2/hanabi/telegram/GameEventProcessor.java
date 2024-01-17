@@ -47,6 +47,15 @@ public class GameEventProcessor implements AutoCloseable {
                 }
             }
             case StartTurnEvent e -> processStartTurnEvent(e);
+            case PlayCardEvent e -> {
+                session.sendMessage("player_played_card", e.player(), e.card());
+            }
+            case CreateFireworkEvent e -> {
+                session.sendMessage("firework_created", e.card());
+            }
+            case AddRedTokenEvent e -> {
+                session.sendMessage("red_token_added");
+            }
             case DiscardCardEvent e -> {
                 session.sendMessage("player_discarded_card", e.player(), e.card());
             }
