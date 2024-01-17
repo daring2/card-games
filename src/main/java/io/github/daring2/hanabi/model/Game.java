@@ -178,6 +178,7 @@ public class Game {
 
     void addCardToTable(Card card) {
         table.get(card.color()).add(card);
+        publishEvent(new AddCardToTableEvent(this, card));
         if (card.value() == MAX_CARD_VALUE) {
             fireworks++;
             publishEvent(new CreateFireworkEvent(this, card));
