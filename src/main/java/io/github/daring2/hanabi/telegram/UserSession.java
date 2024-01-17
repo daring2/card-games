@@ -1,7 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.*;
-import io.github.daring2.hanabi.model.event.GameCreatedEvent;
+import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +90,7 @@ public class UserSession {
     void processCreateCommand() {
         createGame();
         registerGameListener();
-        game.eventBus().publish(new GameCreatedEvent(game));
+        game.eventBus().publish(new CreateGameEvent(game));
         createPlayer();
     }
 

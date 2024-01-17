@@ -109,7 +109,7 @@ public class Game {
     public void finish(GameResult result) {
         validate(result != null, "result_is_null");
         this.result = result;
-        publishEvent(new GameFinishedEvent(this, result));
+        publishEvent(new FinishGameEvent(this, result));
     }
 
     void checkPlayersBeforeStart() {
@@ -180,7 +180,7 @@ public class Game {
         table.get(card.color()).add(card);
         if (card.value() == MAX_CARD_VALUE) {
             fireworks++;
-            publishEvent(new FireworkCreatedEvent(this, card));
+            publishEvent(new CreateFireworkEvent(this, card));
             if (blueTokens < MAX_BLUE_TOKENS) {
                 blueTokens++;
             }

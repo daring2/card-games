@@ -65,7 +65,7 @@ class GameTest {
         game.finish(GameResult.CANCEL);
         assertThat(game.result).isEqualTo(GameResult.CANCEL);
         assertThat(game.events).containsExactly(
-                new GameFinishedEvent(game, GameResult.CANCEL)
+                new FinishGameEvent(game, GameResult.CANCEL)
         );
     }
 
@@ -136,7 +136,7 @@ class GameTest {
         assertThat(game.result).isEqualTo(GameResult.CANCEL);
         assertThat(game.events).containsExactly(
                 new PlayerRemovedEvent(game, player1),
-                new GameFinishedEvent(game, GameResult.CANCEL)
+                new FinishGameEvent(game, GameResult.CANCEL)
         );
 
     }
@@ -333,7 +333,7 @@ class GameTest {
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
             assertThat(game.events).containsExactly(
-                    new FireworkCreatedEvent(game, card5)
+                    new CreateFireworkEvent(game, card5)
             );
         });
         checkGame(game -> {

@@ -19,7 +19,7 @@ public class GameEventProcessor implements AutoCloseable {
 
     public void process(GameEvent event) {
         switch (event) {
-            case GameCreatedEvent e -> {
+            case CreateGameEvent e -> {
                 session.sendMessage("game_created", e.game());
             }
             case PlayerAddedEvent e -> {
@@ -39,7 +39,7 @@ public class GameEventProcessor implements AutoCloseable {
             case GameStartedEvent ignored -> {
                 session.sendMessage("game_started");
             }
-            case GameFinishedEvent e -> {
+            case FinishGameEvent e -> {
                 if (e.result() == GameResult.CANCEL) {
                     session.sendMessage("game_canceled");
                 } else {
