@@ -22,21 +22,21 @@ public class GameEventProcessor implements AutoCloseable {
             case CreateGameEvent e -> {
                 session.sendMessage("game_created", e.game());
             }
-            case PlayerAddedEvent e -> {
+            case AddPlayerEvent e -> {
                 if (e.player() == session.player) {
                     session.sendMessage("current_player_joined");
                 } else {
                     session.sendMessage("player_joined", e.player());
                 }
             }
-            case PlayerRemovedEvent e -> {
+            case RemovePlayerEvent e -> {
                 if (e.player() == session.player) {
                     session.sendMessage("current_player_left");
                 } else {
                     session.sendMessage("player_left", e.player());
                 }
             }
-            case GameStartedEvent ignored -> {
+            case StartGameEvent ignored -> {
                 session.sendMessage("game_started");
             }
             case FinishGameEvent e -> {
@@ -46,7 +46,7 @@ public class GameEventProcessor implements AutoCloseable {
                     session.sendMessage("game_finished", e.result());
                 }
             }
-            case TurnStartedEvent e -> processTurnStarted(e);
+            case StartTurnEvent e -> processStartTurnEvent(e);
             case DiscardCardEvent e -> {
                 session.sendMessage("player_discarded_card", e.player(), e.card());
             }
@@ -54,7 +54,7 @@ public class GameEventProcessor implements AutoCloseable {
         }
     }
 
-    void processTurnStarted(TurnStartedEvent event) {
+    void processStartTurnEvent(StartTurnEvent event) {
         var turnInfo = session.messages().getMessage(
                 "turn_info",
                 game.currentPlayer(),

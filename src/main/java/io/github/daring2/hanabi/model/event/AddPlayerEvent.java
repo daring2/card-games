@@ -1,9 +1,10 @@
 package io.github.daring2.hanabi.model.event;
 
 import io.github.daring2.hanabi.model.Game;
+import io.github.daring2.hanabi.model.Player;
 
-public record TurnStartedEvent(
+public record AddPlayerEvent(
         Game game,
-        int turn
+        Player player
 ) implements GameEvent {
 }

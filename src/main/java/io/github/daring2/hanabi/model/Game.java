@@ -76,14 +76,14 @@ public class Game {
         checkNotStarted();
         validate(players.size() < MAX_PLAYERS, "too_many_players");
         players.add(player);
-        publishEvent(new PlayerAddedEvent(this, player));
+        publishEvent(new AddPlayerEvent(this, player));
     }
 
     public void removePlayer(Player player) {
         var removed = players.remove(player);
         if (!removed)
             return;
-        publishEvent(new PlayerRemovedEvent(this, player));
+        publishEvent(new RemovePlayerEvent(this, player));
         if (started && result == null) {
             finish(GameResult.CANCEL);
         }
@@ -102,7 +102,7 @@ public class Game {
             players.forEach(this::takeCard);
         }
         started = true;
-        publishEvent(new GameStartedEvent(this));
+        publishEvent(new StartGameEvent(this));
         startNextTurn();
     }
 
@@ -211,7 +211,7 @@ public class Game {
     void startNextTurn() {
         checkActive();
         turn++;
-        publishEvent(new TurnStartedEvent(this, turn));
+        publishEvent(new StartTurnEvent(this, turn));
     }
 
     public Player currentPlayer() {

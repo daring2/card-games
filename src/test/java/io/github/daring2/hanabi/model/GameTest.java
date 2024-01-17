@@ -32,10 +32,10 @@ class GameTest {
         game.addPlayer(new Player("p1"));
         game.start();
         assertThat(game.events).containsExactly(
-                new PlayerAddedEvent(game, game.players.get(0)),
-                new PlayerAddedEvent(game, game.players.get(1)),
-                new GameStartedEvent(game),
-                new TurnStartedEvent(game, 1)
+                new AddPlayerEvent(game, game.players.get(0)),
+                new AddPlayerEvent(game, game.players.get(1)),
+                new StartGameEvent(game),
+                new StartTurnEvent(game, 1)
         );
         for (Color color : Color.valueList) {
             assertThat(game.table.get(color)).singleElement()
@@ -92,7 +92,7 @@ class GameTest {
         players.forEach(game::addPlayer);
         assertThat(game.players).isEqualTo(players);
         assertThat(game.events).zipSatisfy(players, (event, player) -> {
-            assertThat(event).isEqualTo(new PlayerAddedEvent(game, player));
+            assertThat(event).isEqualTo(new AddPlayerEvent(game, player));
         });
 
         assertThatThrownBy(() -> game.addPlayer(new Player("p5")))
@@ -120,7 +120,7 @@ class GameTest {
         game.events.clear();
         game.removePlayer(player1);
         assertThat(game.players).containsExactly(players.get(0), players.get(2));
-        assertThat(game.events).containsExactly(new PlayerRemovedEvent(game, player1));
+        assertThat(game.events).containsExactly(new RemovePlayerEvent(game, player1));
 
         game.events.clear();
         game.removePlayer(player1);
@@ -135,7 +135,7 @@ class GameTest {
         assertThat(game.players).containsExactly(players.get(0), players.get(2));
         assertThat(game.result).isEqualTo(GameResult.CANCEL);
         assertThat(game.events).containsExactly(
-                new PlayerRemovedEvent(game, player1),
+                new RemovePlayerEvent(game, player1),
                 new FinishGameEvent(game, GameResult.CANCEL)
         );
 
@@ -208,7 +208,7 @@ class GameTest {
         assertThat(game.blueTokens).isEqualTo(2);
         assertThat(game.events).containsExactly(
                 new DiscardCardEvent(game, player0, cards.get(0)),
-                new TurnStartedEvent(game, 2)
+                new StartTurnEvent(game, 2)
         );
 
         var player1 = game.players.get(1);
@@ -245,7 +245,7 @@ class GameTest {
             verify(game, times(1)).takeCard(player0);
             assertThat(game.events).containsExactly(
                     new PlayCardEvent(game, player0, card0),
-                    new TurnStartedEvent(game, 2)
+                    new StartTurnEvent(game, 2)
             );
         });
         checkGame(it -> {
@@ -399,14 +399,14 @@ class GameTest {
         game.startNextTurn();
         assertThat(game.turn).isEqualTo(1);
         assertThat(game.events).containsExactly(
-                new TurnStartedEvent(game, 1)
+                new StartTurnEvent(game, 1)
         );
 
         game.events.clear();
         game.startNextTurn();
         assertThat(game.turn).isEqualTo(2);
         assertThat(game.events).containsExactly(
-                new TurnStartedEvent(game, 2)
+                new StartTurnEvent(game, 2)
         );
 
         game.result = GameResult.WIN;
