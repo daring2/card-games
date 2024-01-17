@@ -1,9 +1,6 @@
 package io.github.daring2.hanabi.telegram;
 
-import io.github.daring2.hanabi.model.Game;
-import io.github.daring2.hanabi.model.GameException;
-import io.github.daring2.hanabi.model.GameMessages;
-import io.github.daring2.hanabi.model.Player;
+import io.github.daring2.hanabi.model.*;
 import io.github.daring2.hanabi.model.event.GameCreatedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,6 +71,7 @@ public class UserSession {
             case "/join" -> processJoinCommand(command);
             case "/leave" -> processLeaveCommand();
             case "/start" -> processStartCommand();
+            case "/discard" -> processDiscardCommand(command);
             default -> processInvalidCommand(command);
         }
     }
@@ -114,11 +112,20 @@ public class UserSession {
     }
 
     void processStartCommand() {
-        if (game == null) {
-            sendMessage("game_is_null");
-            return;
-        }
+        checkGameNotNull();
         game.start();
+    }
+
+    void processDiscardCommand(UserCommand command) {
+        checkGameNotNull();
+        var cardIndex = command.getIndexArgument(1) - 1;
+        game.discardCard(player, cardIndex);
+    }
+
+    void checkGameNotNull() {
+        if (game == null) {
+            throw new GameException("game_is_null");
+        }
     }
 
     void processInvalidCommand(UserCommand command) {
