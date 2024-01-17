@@ -132,6 +132,7 @@ public class Game {
             var card = player.removeCard(cardIndex);
             discard.add(card);
             takeCard(player);
+            publishEvent(new CardDiscardedEvent(this, player, card));
         });
     }
 

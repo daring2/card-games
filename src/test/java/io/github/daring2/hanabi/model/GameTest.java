@@ -198,11 +198,17 @@ class GameTest {
 
         game.started = true;
         checkCardIndexError(() -> game.discardCard(player0, -1));
+
+        game.events.clear();
         game.discardCard(player0, 0);
         assertThat(player0.cards).map(Card::value)
                 .containsExactly(2, 4, 6, 8, 10);
         assertThat(game.discard).map(Card::value)
                 .containsExactly(0);
+        assertThat(game.events).containsExactly(
+                new CardDiscardedEvent(game, player0, cards.get(0)),
+                new TurnStartedEvent(game, 2)
+        );
 
         var player1 = game.players.get(1);
         game.discardCard(player1, 0);
