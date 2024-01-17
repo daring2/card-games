@@ -35,7 +35,7 @@ class UserCommandTest {
     void testGetIndexArgument() {
         var command = new UserCommand(List.of("a1", "2"));
         assertThat(command.getIndexArgument(0)).isEqualTo(-1);
-        assertThat(command.getIndexArgument(1)).isEqualTo(2);
+        assertThat(command.getIndexArgument(1)).isEqualTo(1);
         assertThat(command.getIndexArgument(3)).isEqualTo(-1);
     }
 

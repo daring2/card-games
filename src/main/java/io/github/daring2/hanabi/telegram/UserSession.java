@@ -71,6 +71,7 @@ public class UserSession {
             case "/join" -> processJoinCommand(command);
             case "/leave" -> processLeaveCommand();
             case "/start" -> processStartCommand();
+            case "/play_card" -> processPlayCardCommand(command);
             case "/discard" -> processDiscardCommand(command);
             default -> processInvalidCommand(command);
         }
@@ -116,9 +117,15 @@ public class UserSession {
         game.start();
     }
 
+    void processPlayCardCommand(UserCommand command) {
+        checkGameNotNull();
+        var cardIndex = command.getIndexArgument(1);
+        game.playCard(player, cardIndex);
+    }
+
     void processDiscardCommand(UserCommand command) {
         checkGameNotNull();
-        var cardIndex = command.getIndexArgument(1) - 1;
+        var cardIndex = command.getIndexArgument(1);
         game.discardCard(player, cardIndex);
     }
 

@@ -24,7 +24,7 @@ class UserCommand {
         var value = getArgument(index);
         if (!isNumeric(value))
             return -1;
-        return Integer.parseInt(value);
+        return Integer.parseInt(value) - 1;
     }
 
 }
