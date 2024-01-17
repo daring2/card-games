@@ -231,16 +231,22 @@ class GameTest {
         });
         checkGame(it -> {
             var game = spy(it);
+            game.events.clear();
             var player0 = game.players.get(0);
+            var card0 = player0.cards.get(0);
             game.playCard(player0, 0); // W-1
             assertThat(player0.cards).hasSize(5)
                     .first().isEqualTo(new Card(WHITE, 3));
             verify(game, times(1))
-                    .addCardToTable(new Card(WHITE, 1));
+                    .addCardToTable(card0);
             verify(game, times(0)).addRedToken();
             assertThat(game.redTokens).isEqualTo(0);
             assertThat(game.discard).isEmpty();
             verify(game, times(1)).takeCard(player0);
+            assertThat(game.events).containsExactly(
+                    new CardPlayedEvent(game, player0, card0),
+                    new TurnStartedEvent(game, 2)
+            );
         });
         checkGame(it -> {
             var game = spy(it);
