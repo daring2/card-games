@@ -205,6 +205,7 @@ class GameTest {
                 .containsExactly(2, 4, 6, 8, 10);
         assertThat(game.discard).map(Card::value)
                 .containsExactly(0);
+        assertThat(game.blueTokens).isEqualTo(2);
         assertThat(game.events).containsExactly(
                 new CardDiscardedEvent(game, player0, cards.get(0)),
                 new TurnStartedEvent(game, 2)
@@ -236,7 +237,7 @@ class GameTest {
                     .first().isEqualTo(new Card(WHITE, 3));
             verify(game, times(1))
                     .addCardToTable(new Card(WHITE, 1));
-            verify(game, times(0)).discardRedToken();
+            verify(game, times(0)).addRedToken();
             assertThat(game.redTokens).isEqualTo(0);
             assertThat(game.discard).isEmpty();
             verify(game, times(1)).takeCard(player0);
@@ -249,7 +250,7 @@ class GameTest {
                     .first().isEqualTo(new Card(WHITE, 1));
             verify(game, times(0))
                     .addCardToTable(new Card(WHITE, 1));
-            verify(game, times(1)).discardRedToken();
+            verify(game, times(1)).addRedToken();
             assertThat(game.discard).containsExactly(new Card(WHITE, 3));
             assertThat(game.redTokens).isEqualTo(1);
             verify(game, times(1)).takeCard(player0);
@@ -302,27 +303,35 @@ class GameTest {
                 .mapToObj(i -> new Card(WHITE, i))
                 .toList();
         checkGame(game -> {
+            game.events.clear();
             game.addCardToTable(cards.get(1));
             assertThat(game.table.get(WHITE)).isEqualTo(cards.subList(0, 2));
             assertThat(game.fireworks).isEqualTo(0);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
+            assertThat(game.events).isEmpty();
 
             game.addCardToTable(cards.get(2));
             assertThat(game.table.get(WHITE)).isEqualTo(cards.subList(0, 3));
             assertThat(game.fireworks).isEqualTo(0);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
+            assertThat(game.events).isEmpty();
         });
         checkGame(game -> {
-            game.addCardToTable(cards.get(5));
-            assertThat(game.table.get(WHITE))
-                    .containsExactly(cards.get(0), cards.get(5));
+            game.events.clear();
+            var card5 = cards.get(5);
+            game.addCardToTable(card5);
+            assertThat(game.table.get(WHITE)).containsExactly(cards.get(0), card5);
             assertThat(game.fireworks).isEqualTo(1);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
             assertThat(game.result).isNull();
+            assertThat(game.events).containsExactly(
+                    new FireworkCreatedEvent(game, card5)
+            );
         });
         checkGame(game -> {
+            game.events.clear();
             game.fireworks = MAX_FIREWORKS - 1;
             game.addCardToTable(cards.get(5));
             assertThat(game.table.get(WHITE))
@@ -335,17 +344,17 @@ class GameTest {
     }
 
     @Test
-    void testDiscardRedToken() {
+    void testAddRedToken() {
         var game = newGame();
         assertThat(game.redTokens).isEqualTo(0);
         assertThat(game.result).isNull();
 
-        game.discardRedToken();
+        game.addRedToken();
         assertThat(game.redTokens).isEqualTo(1);
         assertThat(game.result).isNull();
 
-        game.discardRedToken();
-        game.discardRedToken();
+        game.addRedToken();
+        game.addRedToken();
         assertThat(game.redTokens).isEqualTo(3);
         assertThat(game.result).isEqualTo(GameResult.LOSS);
     }

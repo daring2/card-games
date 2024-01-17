@@ -131,8 +131,9 @@ public class Game {
         performPlayerAction(player, () -> {
             var card = player.removeCard(cardIndex);
             discard.add(card);
-            takeCard(player);
+            blueTokens++;
             publishEvent(new CardDiscardedEvent(this, player, card));
+            takeCard(player);
         });
     }
 
@@ -140,13 +141,14 @@ public class Game {
         checkCardIndex(player, cardIndex);
         performPlayerAction(player, () -> {
             var card = player.removeCard(cardIndex);
+            publishEvent(new CardPlayedEvent(this, player, card));
             var tableCards = table.get(card.color());
             var lastValue = tableCards.getLast().value();
             if (card.value() == lastValue + 1) {
                 addCardToTable(card);
             } else {
                 discard.add(card);
-                discardRedToken();
+                addRedToken();
             }
             takeCard(player);
         });
@@ -178,6 +180,7 @@ public class Game {
         table.get(card.color()).add(card);
         if (card.value() == MAX_CARD_VALUE) {
             fireworks++;
+            publishEvent(new FireworkCreatedEvent(this, card));
             if (blueTokens < MAX_BLUE_TOKENS) {
                 blueTokens++;
             }
@@ -187,7 +190,7 @@ public class Game {
         }
     }
 
-    void discardRedToken() {
+    void addRedToken() {
         redTokens++;
         if (redTokens >= MAX_RED_TOKENS) {
             finish(GameResult.LOSS);
