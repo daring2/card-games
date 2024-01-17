@@ -207,7 +207,7 @@ class GameTest {
                 .containsExactly(0);
         assertThat(game.blueTokens).isEqualTo(2);
         assertThat(game.events).containsExactly(
-                new CardDiscardedEvent(game, player0, cards.get(0)),
+                new DiscardCardEvent(game, player0, cards.get(0)),
                 new TurnStartedEvent(game, 2)
         );
 
@@ -244,7 +244,7 @@ class GameTest {
             assertThat(game.discard).isEmpty();
             verify(game, times(1)).takeCard(player0);
             assertThat(game.events).containsExactly(
-                    new CardPlayedEvent(game, player0, card0),
+                    new PlayCardEvent(game, player0, card0),
                     new TurnStartedEvent(game, 2)
             );
         });

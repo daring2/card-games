@@ -4,7 +4,7 @@ import io.github.daring2.hanabi.model.Card;
 import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.Player;
 
-public record CardDiscardedEvent(
+public record DiscardCardEvent(
         Game game,
         Player player,
         Card card

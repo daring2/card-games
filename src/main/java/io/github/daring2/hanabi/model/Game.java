@@ -132,7 +132,7 @@ public class Game {
             var card = player.removeCard(cardIndex);
             discard.add(card);
             blueTokens++;
-            publishEvent(new CardDiscardedEvent(this, player, card));
+            publishEvent(new DiscardCardEvent(this, player, card));
             takeCard(player);
         });
     }
@@ -141,7 +141,7 @@ public class Game {
         checkCardIndex(player, cardIndex);
         performPlayerAction(player, () -> {
             var card = player.removeCard(cardIndex);
-            publishEvent(new CardPlayedEvent(this, player, card));
+            publishEvent(new PlayCardEvent(this, player, card));
             var tableCards = table.get(card.color());
             var lastValue = tableCards.getLast().value();
             if (card.value() == lastValue + 1) {
