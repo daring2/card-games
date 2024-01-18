@@ -32,7 +32,7 @@ public record CardInfo(
         @Override
         public String toString() {
                 var result = "";
-                result += color != null ? color.name().charAt(0) : "?";
+                result += color != null ? color.shortName : "?";
                 result += "-";
                 result += value != NULL_VALUE ? value : "?";
                 return result;

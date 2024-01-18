@@ -13,7 +13,7 @@ public record Card(
 
     @Override
     public String toString() {
-        return color.name().charAt(0) + "-" + value;
+        return color.shortName + "-" + value;
     }
 
 }
