@@ -269,7 +269,8 @@ class GameTest {
         var game = newGame();
         var player0 = game.players.get(0);
         var player1 = game.players.get(1);
-        checkGameNotStartedError(() -> game.suggest(player0, player1, new CardInfo(WHITE)));
+        var cardInfo = new CardInfo(WHITE);
+        checkGameNotStartedError(() -> game.suggest(player0, player1, cardInfo));
 
         game.start();
         assertThatThrownBy(() -> game.suggest(player0, player1, new CardInfo(WHITE, 1)))
@@ -277,17 +278,23 @@ class GameTest {
                 .hasMessage("invalid_suggestion");
 
         game.blueTokens = 0;
-        assertThatThrownBy(() -> game.suggest(player0, player1, new CardInfo(WHITE)))
+        assertThatThrownBy(() -> game.suggest(player0, player1, cardInfo))
                 .isInstanceOf(GameException.class)
                 .hasMessage("no_blue_tokens_available");
 
         game.blueTokens = 3;
-        assertThatThrownBy(() -> game.suggest(player0, player0, new CardInfo(WHITE)))
+        assertThatThrownBy(() -> game.suggest(player0, player0, cardInfo))
                 .isInstanceOf(GameException.class)
                 .hasMessage("invalid_target_player");
 
-        game.suggest(player0, player1, new CardInfo(WHITE));
+
+        game.events.clear();
+        game.suggest(player0, player1, cardInfo);
         assertThat(game.blueTokens).isEqualTo(2);
+        assertThat(game.events).containsExactly(
+                new SuggestEvent(game, player0, player1, cardInfo),
+                new StartTurnEvent(game, 2)
+        );
     }
 
     @Test

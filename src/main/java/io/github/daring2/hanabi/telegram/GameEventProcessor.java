@@ -59,6 +59,9 @@ public class GameEventProcessor implements AutoCloseable {
             case AddRedTokenEvent e -> {
                 session.sendMessage("red_token_added");
             }
+            case SuggestEvent e -> {
+                session.sendMessage("player_suggested_cards", e.player(), e.targetPlayer(), e.info());
+            }
             case DiscardCardEvent e -> {
                 session.sendMessage("player_discarded_card", e.player(), e.card());
             }
