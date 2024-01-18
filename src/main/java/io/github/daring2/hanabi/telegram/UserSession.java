@@ -13,8 +13,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Arrays;
 
+import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
+import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class UserSession {
 
@@ -126,7 +128,9 @@ public class UserSession {
 
     void processSuggestCommand(UserCommand command) {
         checkGameNotNull();
-        var playerIndex = command.getIndexArgument(1);
+        var targetPlayer = getPlayer(command.getIndexArgument(1));
+        var cardInfo = parseCardInfo(command.getArgument(2));
+        game.suggest(player, targetPlayer, cardInfo);
     }
 
     void processDiscardCommand(UserCommand command) {
@@ -203,11 +207,26 @@ public class UserSession {
         }
     }
 
-    void checkPlayerIndex(int index) {
+    Player getPlayer(int index) {
         var players = game.players();
         if (index < 0 || index >= players.size()) {
             throw new GameException("invalid_player_index");
         }
+        return players.get(index);
+    }
+
+    CardInfo parseCardInfo(String infoExp) {
+        if (isNumeric(infoExp)) {
+            var value = parseInt(infoExp);
+            if (value >= 1 && value <= MAX_CARD_VALUE)
+                return new CardInfo(value);
+        } else {
+            for (Color color : Color.valueList) {
+                if (color.shortName.equals(infoExp))
+                    return new CardInfo(color);
+            }
+        }
+        throw new GameException("invalid_suggestion");
     }
 
     GameMessages messages() {

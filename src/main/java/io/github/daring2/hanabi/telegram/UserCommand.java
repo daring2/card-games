@@ -2,6 +2,7 @@ package io.github.daring2.hanabi.telegram;
 
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 class UserCommand {
@@ -24,7 +25,7 @@ class UserCommand {
         var value = getArgument(index);
         if (!isNumeric(value))
             return -1;
-        return Integer.parseInt(value) - 1;
+        return parseInt(value) - 1;
     }
 
 }
