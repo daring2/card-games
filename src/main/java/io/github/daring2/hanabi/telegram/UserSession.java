@@ -72,6 +72,7 @@ public class UserSession {
             case "/leave" -> processLeaveCommand();
             case "/start" -> processStartCommand();
             case "/play_card" -> processPlayCardCommand(command);
+            case "/suggest" -> processSuggestCommand(command);
             case "/discard" -> processDiscardCommand(command);
             default -> processInvalidCommand(command);
         }
@@ -123,16 +124,15 @@ public class UserSession {
         game.playCard(player, cardIndex);
     }
 
+    void processSuggestCommand(UserCommand command) {
+        checkGameNotNull();
+        var playerIndex = command.getIndexArgument(1);
+    }
+
     void processDiscardCommand(UserCommand command) {
         checkGameNotNull();
         var cardIndex = command.getIndexArgument(1);
         game.discardCard(player, cardIndex);
-    }
-
-    void checkGameNotNull() {
-        if (game == null) {
-            throw new GameException("game_is_null");
-        }
     }
 
     void processInvalidCommand(UserCommand command) {
@@ -194,6 +194,19 @@ public class UserSession {
         } else {
             logger.error("Cannot process command: " + message.getText(), exception);
             sendMessage("command_error", exception.getMessage());
+        }
+    }
+
+    void checkGameNotNull() {
+        if (game == null) {
+            throw new GameException("game_is_null");
+        }
+    }
+
+    void checkPlayerIndex(int index) {
+        var players = game.players();
+        if (index < 0 || index >= players.size()) {
+            throw new GameException("invalid_player_index");
         }
     }
 

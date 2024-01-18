@@ -282,6 +282,10 @@ class GameTest {
                 .hasMessage("no_blue_tokens_available");
 
         game.blueTokens = 3;
+        assertThatThrownBy(() -> game.suggest(player0, player0, new CardInfo(WHITE)))
+                .isInstanceOf(GameException.class)
+                .hasMessage("invalid_target_player");
+
         game.suggest(player0, player1, new CardInfo(WHITE));
         assertThat(game.blueTokens).isEqualTo(2);
     }

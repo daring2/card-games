@@ -160,6 +160,7 @@ public class Game {
             CardInfo info
     ) {
         performPlayerAction(player, () -> {
+            validate(targetPlayer != player, "invalid_target_player");
             validate(info.isValidForSuggest(), "invalid_suggestion");
             validate(blueTokens > 0, "no_blue_tokens_available");
             blueTokens--;
