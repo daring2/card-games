@@ -5,6 +5,7 @@ import io.github.daring2.hanabi.model.GameResult;
 
 public record FinishGameEvent(
         Game game,
-        GameResult result
+        GameResult result,
+        int score
 ) implements GameEvent {
 }
