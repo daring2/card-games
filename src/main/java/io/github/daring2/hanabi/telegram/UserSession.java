@@ -68,14 +68,14 @@ public class UserSession {
         if (command == null)
             return;
         switch (command.name) {
-            case "/set_player_name" -> processSetPlayerNameCommand(command);
-            case "/create" -> processCreateCommand();
-            case "/join" -> processJoinCommand(command);
-            case "/leave" -> processLeaveCommand();
-            case "/start" -> processStartCommand();
-            case "/play_card" -> processPlayCardCommand(command);
-            case "/suggest" -> processSuggestCommand(command);
-            case "/discard" -> processDiscardCommand(command);
+            case "set_player_name" -> processSetPlayerNameCommand(command);
+            case "create" -> processCreateCommand();
+            case "join" -> processJoinCommand(command);
+            case "leave" -> processLeaveCommand();
+            case "start" -> processStartCommand();
+            case "play_card", "p" -> processPlayCardCommand(command);
+            case "suggest", "s" -> processSuggestCommand(command);
+            case "discard", "d" -> processDiscardCommand(command);
             default -> processInvalidCommand(command);
         }
     }

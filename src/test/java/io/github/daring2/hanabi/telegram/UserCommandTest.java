@@ -15,7 +15,7 @@ class UserCommandTest {
             assertThat(command.name).isEqualTo("a1");
             assertThat(command.arguments).isEqualTo(args1);
         });
-        var args2 = List.of("A1", "A2");
+        var args2 = List.of("/A1", "A2");
         assertThat(new UserCommand(args2)).satisfies(command -> {
             assertThat(command.name).isEqualTo("a1");
             assertThat(command.arguments).isEqualTo(args2);

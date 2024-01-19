@@ -4,6 +4,7 @@ import java.util.List;
 
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
+import static org.apache.commons.lang3.StringUtils.removeStart;
 
 class UserCommand {
 
@@ -11,7 +12,7 @@ class UserCommand {
     final List<String> arguments;
 
     UserCommand(List<String> arguments) {
-        this.name = arguments.getFirst().toLowerCase();
+        this.name = parseName(arguments.getFirst());
         this.arguments = arguments;
     }
 
@@ -26,6 +27,10 @@ class UserCommand {
         if (!isNumeric(value))
             return -1;
         return parseInt(value) - 1;
+    }
+
+    static String parseName(String argument) {
+        return removeStart(argument.toLowerCase(), "/");
     }
 
 }
