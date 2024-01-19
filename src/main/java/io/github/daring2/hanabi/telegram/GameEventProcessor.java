@@ -20,50 +20,44 @@ public class GameEventProcessor implements AutoCloseable {
     public void process(GameEvent event) {
         switch (event) {
             case CreateGameEvent e -> {
-                session.sendMessage("game_created", e.game());
+                sendMessage("game_created", e.game());
             }
             case AddPlayerEvent e -> {
                 if (e.player() == session.player) {
-                    session.sendMessage("current_player_joined");
+                    sendMessage("current_player_joined");
                 } else {
-                    session.sendMessage("player_joined", e.player());
+                    sendMessage("player_joined", e.player());
                 }
             }
             case RemovePlayerEvent e -> {
                 if (e.player() == session.player) {
-                    session.sendMessage("current_player_left");
+                    sendMessage("current_player_left");
                 } else {
-                    session.sendMessage("player_left", e.player());
+                    sendMessage("player_left", e.player());
                 }
             }
             case StartGameEvent ignored -> {
-                session.sendMessage("game_started");
+                sendMessage("game_started");
             }
-            case FinishGameEvent e -> {
-                if (e.result() == GameResult.CANCEL) {
-                    session.sendMessage("game_canceled");
-                } else {
-                    session.sendMessage("game_finished", e.result());
-                }
-            }
+            case FinishGameEvent e -> processFinishEvent(e);
             case StartTurnEvent e -> processStartTurnEvent(e);
             case PlayCardEvent e -> {
-                session.sendMessage("player_played_card", e.player(), e.card());
+                sendMessage("player_played_card", e.player(), e.card());
             }
             case AddCardToTableEvent e -> {
-                session.sendMessage("card_added_to_table", e.card());
+                sendMessage("card_added_to_table", e.card());
             }
             case CreateFireworkEvent e -> {
-                session.sendMessage("firework_created", e.card());
+                sendMessage("firework_created", e.card());
             }
             case AddRedTokenEvent e -> {
-                session.sendMessage("red_token_added");
+                sendMessage("red_token_added");
             }
             case SuggestEvent e -> {
-                session.sendMessage("player_suggested_cards", e.player(), e.targetPlayer(), e.info());
+                sendMessage("player_suggested_cards", e.player(), e.targetPlayer(), e.info());
             }
             case DiscardCardEvent e -> {
-                session.sendMessage("player_discarded_card", e.player(), e.card());
+                sendMessage("player_discarded_card", e.player(), e.card());
             }
             default -> {}
         }
@@ -86,6 +80,25 @@ public class GameEventProcessor implements AutoCloseable {
         game.players().forEach(table::addRow);
         table.addRow("table", game.tableCards());
         return table.buildText();
+    }
+
+    void processFinishEvent(FinishGameEvent event) {
+        var result = event.result();
+        if (result == GameResult.WIN) {
+            var scoreLevel = event.score() / 5;
+            var reaction = session.messages().getMessage(
+                    "firework_level" + scoreLevel
+            );
+            sendMessage("game_won", result, reaction);
+        } else if (result == GameResult.LOSS) {
+            sendMessage("game_lost", result);
+        } else {
+            sendMessage("game_canceled");
+        }
+    }
+
+    void sendMessage(String code, Object... args) {
+        session.sendMessage(code, args);
     }
 
     public void close() {

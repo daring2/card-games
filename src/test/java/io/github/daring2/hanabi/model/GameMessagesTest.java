@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static io.github.daring2.hanabi.model.GameResult.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -29,14 +30,14 @@ class GameMessagesTest {
         assertThat(messages.formatArgument(game)).isEqualTo(game.id);
         var player = new Player("p1");
         assertThat(messages.formatArgument(player)).isEqualTo("p1");
-        assertThat(messages.formatArgument(GameResult.WIN)).isEqualTo("победа");
+        assertThat(messages.formatArgument(WIN)).isEqualTo("фейерверк запущен");
     }
 
     @Test
     void testGetResultLabel() {
-        assertThat(messages.getResultLabel(GameResult.WIN)).isEqualTo("победа");
-        assertThat(messages.getResultLabel(GameResult.LOSS)).isEqualTo("поражение");
-        assertThat(messages.getResultLabel(GameResult.CANCEL)).isEqualTo("отмена");
+        assertThat(messages.getResultLabel(WIN)).isEqualTo("фейерверк запущен");
+        assertThat(messages.getResultLabel(LOSS)).isEqualTo("поражение");
+        assertThat(messages.getResultLabel(CANCEL)).isEqualTo("отмена");
     }
 
 }

@@ -44,14 +44,14 @@ class CardTableTest {
                 new Card(Color.RED, 2)
         ));
         assertThat(table.buildText()).isEqualTo(
-                "p1 W-1 R-2"
+                "1. p1 W-1 R-2"
         );
 
         table.addRow("p002", List.of(
                 new Card(Color.GREEN, 3)
         ));
         assertThat(table.buildText()).isEqualTo(
-                "p1   W-1 R-2\np002 G-3"
+                "1. p1   W-1 R-2\n2. p002 G-3"
         );
     }
 
