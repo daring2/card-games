@@ -65,8 +65,19 @@ class GameTest {
         game.finish(GameResult.CANCEL);
         assertThat(game.result).isEqualTo(GameResult.CANCEL);
         assertThat(game.events).containsExactly(
-                new FinishGameEvent(game, GameResult.CANCEL)
+                new FinishGameEvent(game, GameResult.CANCEL, 0)
         );
+    }
+
+    @Test
+    void testCalculateResultScore() {
+        var game = newGame();
+        game.start();
+        assertThat(game.calculateResultScore()).isEqualTo(0);
+        game.addCardToTable(new Card(WHITE, 1));
+        assertThat(game.calculateResultScore()).isEqualTo(1);
+        game.addCardToTable(new Card(RED, 2));
+        assertThat(game.calculateResultScore()).isEqualTo(3);
     }
 
     @Test
@@ -136,7 +147,7 @@ class GameTest {
         assertThat(game.result).isEqualTo(GameResult.CANCEL);
         assertThat(game.events).containsExactly(
                 new RemovePlayerEvent(game, player1),
-                new FinishGameEvent(game, GameResult.CANCEL)
+                new FinishGameEvent(game, GameResult.CANCEL, 0)
         );
 
     }
@@ -390,7 +401,7 @@ class GameTest {
         assertThat(game.events).containsExactly(
                 new AddRedTokenEvent(game, 2),
                 new AddRedTokenEvent(game, 3),
-                new FinishGameEvent(game, GameResult.LOSS)
+                new FinishGameEvent(game, GameResult.LOSS, 0)
         );
     }
 

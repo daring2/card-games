@@ -109,7 +109,17 @@ public class Game {
     public void finish(GameResult result) {
         validate(result != null, "result_is_null");
         this.result = result;
-        publishEvent(new FinishGameEvent(this, result));
+        publishEvent(new FinishGameEvent(
+                this,
+                result,
+                calculateResultScore()
+        ));
+    }
+
+    int calculateResultScore() {
+        return table.values().stream()
+                .mapToInt(it -> it.getLast().value())
+                .sum();
     }
 
     void checkPlayersBeforeStart() {
