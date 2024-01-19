@@ -86,6 +86,8 @@ class PlayerTest {
         var cardInfo = new CardInfo(WHITE, 0);
         player.knownCards.put(card, cardInfo);
         assertThat(player.getKnownCard(card)).isEqualTo(cardInfo);
+        assertThat(player.getKnownCard(new Card(WHITE, 1)))
+                .isEqualTo(CardInfo.EMPTY);
     }
 
 }

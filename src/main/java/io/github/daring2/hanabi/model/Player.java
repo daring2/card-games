@@ -8,7 +8,7 @@ public class Player {
 
     final String name;
     final List<Card> cards = new ArrayList<>();
-    final Map<Card, CardInfo> knownCards = new HashMap<>();
+    final Map<Card, CardInfo> knownCards = new IdentityHashMap<>();
 
     public Player(String name) {
         this.name = name;
