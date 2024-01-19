@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.apache.commons.lang3.StringUtils.rightPad;
 
@@ -34,8 +35,8 @@ class CardTable {
 
     String buildText() {
         var labelPad = calculateLabelPad();
-        return rows.stream()
-                .map(row -> buildRowText(row, labelPad))
+        return IntStream.range(0, rows.size())
+                .mapToObj(i -> buildRowText(i, labelPad))
                 .collect(Collectors.joining("\n"));
     }
 
@@ -46,8 +47,10 @@ class CardTable {
                 .orElse(0);
     }
 
-    String buildRowText(Row row, int labelPad) {
+    String buildRowText(int rowIndex, int labelPad) {
         var cells = new ArrayList<String>();
+        var row = rows.get(rowIndex);
+        cells.add((rowIndex + 1) + ".");
         cells.add(rightPad(row.label, labelPad));
         row.cards.forEach(card -> {
             cells.add(buildCardText(row.player, card));

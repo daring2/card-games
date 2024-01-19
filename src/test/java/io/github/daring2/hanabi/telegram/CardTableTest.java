@@ -69,13 +69,19 @@ class CardTableTest {
     @Test
     void testBuildRowText() {
         var table = new CardTable(null);
-        var row = new Row(null, "p1", List.of(
+        table.addRow("p1", List.of(
                 new Card(Color.WHITE, 1),
                 new Card(Color.RED, 2),
                 new Card(Color.GREEN, 3)
         ));
-        assertThat(table.buildRowText(row, 5)).isEqualTo(
-                "p1    W-1 R-2 G-3"
+        table.addRow("p2", List.of(
+                new Card(Color.BLUE, 4)
+        ));
+        assertThat(table.buildRowText(0, 5)).isEqualTo(
+                "1. p1    W-1 R-2 G-3"
+        );
+        assertThat(table.buildRowText(1, 3)).isEqualTo(
+                "2. p2  B-4"
         );
     }
 
