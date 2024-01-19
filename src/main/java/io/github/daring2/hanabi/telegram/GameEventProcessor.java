@@ -85,7 +85,7 @@ public class GameEventProcessor implements AutoCloseable {
     void processFinishEvent(FinishGameEvent event) {
         var result = event.result();
         if (result == GameResult.WIN) {
-            var scoreLevel = event.score() / 5;
+            var scoreLevel = (event.score() - 1) / 5;
             var reaction = session.messages().getMessage(
                     "firework_level" + scoreLevel
             );

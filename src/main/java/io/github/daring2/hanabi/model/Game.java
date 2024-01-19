@@ -106,7 +106,7 @@ public class Game {
         startNextTurn();
     }
 
-    public void finish(GameResult result) {
+    void finish(GameResult result) {
         validate(result != null, "result_is_null");
         this.result = result;
         publishEvent(new FinishGameEvent(
