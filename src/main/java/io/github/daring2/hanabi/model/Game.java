@@ -97,8 +97,8 @@ public class Game {
             cards.add(new Card(color, 0));
             table.put(color, cards);
         }
-        var initCardsCount = getInitCardsCount();
-        for (int i = 0; i < initCardsCount; i++) {
+        var initCards = getInitPlayerCardsCount();
+        for (int i = 0; i < initCards; i++) {
             players.forEach(this::takeCard);
         }
         started = true;
@@ -128,7 +128,7 @@ public class Game {
         validate(playersCount <= MAX_PLAYERS, "too_many_players");
     }
 
-    int getInitCardsCount() {
+    int getInitPlayerCardsCount() {
         return players.size() <= 3 ? 5 : 4;
     }
 

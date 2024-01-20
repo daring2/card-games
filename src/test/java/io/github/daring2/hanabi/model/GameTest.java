@@ -174,13 +174,13 @@ class GameTest {
     }
 
     @Test
-    void testGetInitCardsCount() {
+    void testGetInitPlayerCardsCount() {
         var game = newGame();
-        assertThat(game.getInitCardsCount()).isEqualTo(5);
+        assertThat(game.getInitPlayerCardsCount()).isEqualTo(5);
         game.addPlayer(new Player("p2"));
-        assertThat(game.getInitCardsCount()).isEqualTo(5);
+        assertThat(game.getInitPlayerCardsCount()).isEqualTo(5);
         game.addPlayer(new Player("p3"));
-        assertThat(game.getInitCardsCount()).isEqualTo(4);
+        assertThat(game.getInitPlayerCardsCount()).isEqualTo(4);
     }
 
     @Test
