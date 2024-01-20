@@ -227,7 +227,7 @@ public class Game {
 
     void startNextTurn() {
         checkActive();
-        if (turn == lastTurn) {
+        if (lastTurn > 0 && turn >= lastTurn) {
             finish(GameResult.LAUNCH);
             return;
         }

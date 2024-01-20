@@ -464,6 +464,7 @@ class GameTest {
         game.events.clear();
         game.startNextTurn();
         assertThat(game.turn).isEqualTo(1);
+        assertThat(game.result).isNull();
         assertThat(game.events).containsExactly(
                 new StartTurnEvent(game, 1)
         );
@@ -471,12 +472,19 @@ class GameTest {
         game.events.clear();
         game.startNextTurn();
         assertThat(game.turn).isEqualTo(2);
+        assertThat(game.result).isNull();
         assertThat(game.events).containsExactly(
                 new StartTurnEvent(game, 2)
         );
 
+        game.lastTurn = 2;
+        game.startNextTurn();
+        assertThat(game.turn).isEqualTo(2);
+        assertThat(game.result).isEqualTo(GameResult.LAUNCH);
+
         game.result = GameResult.LAUNCH;
         checkGameFinishedError(game::startNextTurn);
+
     }
 
     @Test
