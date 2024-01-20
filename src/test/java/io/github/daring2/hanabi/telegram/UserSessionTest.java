@@ -57,6 +57,7 @@ class UserSessionTest {
 
         checkInvalidSuggestionError(() -> session.parseCardInfo("A"));
         assertThat(session.parseCardInfo("W")).isEqualTo(new CardInfo(WHITE));
+        assertThat(session.parseCardInfo("w")).isEqualTo(new CardInfo(WHITE));
         assertThat(session.parseCardInfo("Y")).isEqualTo(new CardInfo(YELLOW));
         checkInvalidSuggestionError(() -> session.parseCardInfo("Z"));
     }

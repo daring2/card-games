@@ -222,7 +222,7 @@ public class UserSession {
                 return new CardInfo(value);
         } else {
             for (Color color : Color.valueList) {
-                if (color.shortName.equals(infoExp))
+                if (color.shortName.equalsIgnoreCase(infoExp))
                     return new CardInfo(color);
             }
         }
