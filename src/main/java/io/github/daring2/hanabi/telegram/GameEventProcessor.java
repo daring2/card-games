@@ -85,7 +85,7 @@ public class GameEventProcessor implements AutoCloseable {
     void processFinishEvent(FinishGameEvent event) {
         var result = event.result();
         if (result == GameResult.LAUNCH) {
-            var scoreLevel = (event.score() - 1) / 5;
+            var scoreLevel = calculateScoreLevel(event.score());
             var reaction = session.messages().getMessage(
                     "firework_level" + scoreLevel
             );
@@ -95,6 +95,12 @@ public class GameEventProcessor implements AutoCloseable {
         } else {
             sendMessage("game_canceled");
         }
+    }
+
+    int calculateScoreLevel(int score) {
+        if (score >= Game.MAX_SCORE)
+            return 5;
+        return (score - 1) / 5;
     }
 
     void sendMessage(String code, Object... args) {

@@ -15,6 +15,7 @@ public class Game {
     public static final int MAX_BLUE_TOKENS = 8;
     public static final int MAX_RED_TOKENS = 3;
     public static final int MAX_FIREWORKS = 5;
+    public static final int MAX_SCORE = 25;
 
     final String id = randomUUID().toString();
     final GameEventBus eventBus = new GameEventBus();
