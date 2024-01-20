@@ -174,13 +174,13 @@ class GameTest {
     }
 
     @Test
-    void testGetInitCards() {
+    void testGetInitCardsCount() {
         var game = newGame();
-        assertThat(game.getInitCards()).isEqualTo(5);
+        assertThat(game.getInitCardsCount()).isEqualTo(5);
         game.addPlayer(new Player("p2"));
-        assertThat(game.getInitCards()).isEqualTo(5);
+        assertThat(game.getInitCardsCount()).isEqualTo(5);
         game.addPlayer(new Player("p3"));
-        assertThat(game.getInitCards()).isEqualTo(4);
+        assertThat(game.getInitCardsCount()).isEqualTo(4);
     }
 
     @Test
@@ -374,7 +374,7 @@ class GameTest {
             assertThat(game.table.get(WHITE)).containsExactly(cards.get(0), cards.get(5));
             assertThat(game.fireworks).isEqualTo(MAX_FIREWORKS);
             assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
-            assertThat(game.result).isEqualTo(GameResult.WIN);
+            assertThat(game.result).isEqualTo(GameResult.LAUNCH);
         });
 
     }
@@ -418,14 +418,16 @@ class GameTest {
         assertThat(player0.cards).isEqualTo(cards.subList(0, 1));
         game.takeCard(player0);
         assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
-        game.result = GameResult.WIN;
+        game.result = GameResult.LAUNCH;
         game.takeCard(player0);
         assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
 
+        player0.cards.clear();
         game.deck.clear();
         game.result = null;
         game.takeCard(player0);
-        assertThat(game.result).isEqualTo(GameResult.LOSS);
+//        assertThat(game.result).isEqualTo(GameResult.LOSS);
+        assertThat(player0.cards).isEmpty();
     }
 
     @Test
@@ -449,7 +451,7 @@ class GameTest {
                 new StartTurnEvent(game, 2)
         );
 
-        game.result = GameResult.WIN;
+        game.result = GameResult.LAUNCH;
         checkGameFinishedError(game::startNextTurn);
     }
 
@@ -482,7 +484,7 @@ class GameTest {
         game.started = true;
         game.checkActive();
 
-        game.result = GameResult.WIN;
+        game.result = GameResult.LAUNCH;
         checkGameFinishedError(game::checkActive);
     }
 

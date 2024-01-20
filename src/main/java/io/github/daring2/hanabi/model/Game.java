@@ -97,8 +97,8 @@ public class Game {
             cards.add(new Card(color, 0));
             table.put(color, cards);
         }
-        var initCards = getInitCards();
-        for (int i = 0; i < initCards; i++) {
+        var initCardsCount = getInitCardsCount();
+        for (int i = 0; i < initCardsCount; i++) {
             players.forEach(this::takeCard);
         }
         started = true;
@@ -128,7 +128,7 @@ public class Game {
         validate(playersCount <= MAX_PLAYERS, "too_many_players");
     }
 
-    int getInitCards() {
+    int getInitCardsCount() {
         return players.size() <= 3 ? 5 : 4;
     }
 
@@ -199,7 +199,7 @@ public class Game {
             }
         }
         if (fireworks >= MAX_FIREWORKS) {
-            finish(GameResult.WIN);
+            finish(GameResult.LAUNCH);
         }
     }
 
@@ -216,7 +216,7 @@ public class Game {
             return;
         }
         if (deck.isEmpty()) {
-            finish(GameResult.LOSS);
+//            finish(GameResult.LAUNCH);
             return;
         }
         player.cards.add(deck.removeLast());

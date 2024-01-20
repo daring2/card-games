@@ -30,12 +30,12 @@ class GameMessagesTest {
         assertThat(messages.formatArgument(game)).isEqualTo(game.id);
         var player = new Player("p1");
         assertThat(messages.formatArgument(player)).isEqualTo("p1");
-        assertThat(messages.formatArgument(WIN)).isEqualTo("фейерверк запущен");
+        assertThat(messages.formatArgument(LAUNCH)).isEqualTo("фейерверк запущен");
     }
 
     @Test
     void testGetResultLabel() {
-        assertThat(messages.getResultLabel(WIN)).isEqualTo("фейерверк запущен");
+        assertThat(messages.getResultLabel(LAUNCH)).isEqualTo("фейерверк запущен");
         assertThat(messages.getResultLabel(LOSS)).isEqualTo("поражение");
         assertThat(messages.getResultLabel(CANCEL)).isEqualTo("отмена");
     }
