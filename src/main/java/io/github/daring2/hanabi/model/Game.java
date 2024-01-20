@@ -14,7 +14,7 @@ public class Game {
     public static final int MAX_CARD_VALUE = 5;
     public static final int MAX_BLUE_TOKENS = 8;
     public static final int MAX_RED_TOKENS = 3;
-    public static final int MAX_FIREWORKS = 8;
+    public static final int MAX_FIREWORKS = 5;
 
     final String id = randomUUID().toString();
     final GameEventBus eventBus = new GameEventBus();
@@ -30,6 +30,7 @@ public class Game {
     int fireworks;
     int blueTokens = MAX_BLUE_TOKENS;
     int redTokens;
+    int lastTurn = -1;
     GameResult result;
 
     public Game() {
@@ -216,14 +217,20 @@ public class Game {
             return;
         }
         if (deck.isEmpty()) {
-//            finish(GameResult.LAUNCH);
             return;
         }
         player.cards.add(deck.removeLast());
+        if (deck.isEmpty()) {
+            lastTurn = turn + players.size();
+        }
     }
 
     void startNextTurn() {
         checkActive();
+        if (turn == lastTurn) {
+            finish(GameResult.LAUNCH);
+            return;
+        }
         turn++;
         publishEvent(new StartTurnEvent(this, turn));
     }

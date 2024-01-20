@@ -47,6 +47,7 @@ class GameTest {
         }
         assertThat(game.turn).isEqualTo(1);
         assertThat(game.started).isTrue();
+        assertThat(game.lastTurn).isEqualTo(-1);
 
         checkGameStartedError(game::start);
     }
@@ -426,8 +427,31 @@ class GameTest {
         game.deck.clear();
         game.result = null;
         game.takeCard(player0);
-//        assertThat(game.result).isEqualTo(GameResult.LOSS);
         assertThat(player0.cards).isEmpty();
+    }
+
+    @Test
+    void testTakeLastCard() {
+        var game = newGame();
+        var cards = rangeClosed(1, 2)
+                .mapToObj(i -> new Card(WHITE, i))
+                .toList();
+        game.setDeck(cards.reversed());
+        var player0 = game.players.get(0);
+        player0.cards.clear();
+
+        game.turn = 10;
+        game.takeCard(player0);
+        assertThat(player0.cards).isEqualTo(cards.subList(0, 1));
+        assertThat(game.lastTurn).isEqualTo(-1);
+
+        game.takeCard(player0);
+        assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
+        assertThat(game.lastTurn).isEqualTo(12);
+
+        game.takeCard(player0);
+        assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
+        assertThat(game.lastTurn).isEqualTo(12);
     }
 
     @Test
