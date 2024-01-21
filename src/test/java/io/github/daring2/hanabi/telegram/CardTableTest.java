@@ -18,7 +18,7 @@ class CardTableTest {
 
     @Test
     void testAddRow() {
-        var table = new CardTable(null);
+        var table = new CardTable(null, true);
         var cards = rangeClosed(1, 5)
                 .mapToObj(i -> new Card(Color.WHITE, i))
                 .toList();
@@ -37,7 +37,7 @@ class CardTableTest {
 
     @Test
     void testTableText() {
-        var table = new CardTable(null);
+        var table = new CardTable(null, true);
 
         table.addRow("p1", List.of(
                 new Card(Color.WHITE, 1),
@@ -57,7 +57,7 @@ class CardTableTest {
 
     @Test
     void testCalculateLabelPad() {
-        var table = new CardTable(null);
+        var table = new CardTable(null, true);
         table.addRow("p1", List.of());
         assertThat(table.calculateLabelPad()).isEqualTo(2);
         table.addRow("p002", List.of());
@@ -68,7 +68,7 @@ class CardTableTest {
 
     @Test
     void testBuildRowText() {
-        var table = new CardTable(null);
+        var table = new CardTable(null, true);
         table.addRow("p1", List.of(
                 new Card(Color.WHITE, 1),
                 new Card(Color.RED, 2),
@@ -89,7 +89,7 @@ class CardTableTest {
     void testBuildCardText() {
         Player player0 = new Player("p0");
         Player player1 = new Player("p1");
-        var table = new CardTable(player0);
+        var table = new CardTable(player0, true);
 
         var card0 = new Card(Color.WHITE, 0);
         checkCardText(table, null, card0, null);
@@ -108,6 +108,21 @@ class CardTableTest {
 
         addKnownCard(player0, card1, new CardInfo(Color.WHITE, 1));
         checkCardText(table, player0, card1, "W-1");
+    }
+
+    @Test
+    void testMaskCards() {
+        Player player0 = new Player("p0");
+        Player player1 = new Player("p1");
+        var card1 = new Card(Color.WHITE, 1);
+
+        var table1 = new CardTable(player0, true);
+        checkCardText(table1, player0, card1, "?-?");
+        checkCardText(table1, player1, card1, "W-1");
+
+        var table2 = new CardTable(player0, false);
+        checkCardText(table2, player0, card1, "W-1");
+        checkCardText(table2, player1, card1, "W-1");
     }
 
     void checkCardText(

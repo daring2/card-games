@@ -14,11 +14,13 @@ import static org.apache.commons.lang3.StringUtils.rightPad;
 class CardTable {
 
     final Player targetPlayer;
+    final boolean maskCards;
 
     final List<Row> rows = new ArrayList<>();
 
-    CardTable(Player targetPlayer) {
+    CardTable(Player targetPlayer, boolean maskCards) {
         this.targetPlayer = targetPlayer;
+        this.maskCards = maskCards;
     }
 
     void addRow(String label, List<Card> cards) {
@@ -63,7 +65,8 @@ class CardTable {
     String buildCardText(Player player, Card card) {
         if (card.value() <= 0)
             return null;
-        if (player != null && player == targetPlayer) {
+        var isTargetPlayer = player != null && player == targetPlayer;
+        if (maskCards && isTargetPlayer) {
             var cardInfo = player.getKnownCard(card);
             return cardInfo.toString();
         } else {
