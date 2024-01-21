@@ -34,7 +34,7 @@ class UserCommandProcessor {
         command = parseCommand();
         if (command == null)
             return;
-        keyboard = new ActionKeyboard(session, command);
+        keyboard = session.createActionKeyboard(command);
         try {
             processCommand();
         } catch (Exception e) {

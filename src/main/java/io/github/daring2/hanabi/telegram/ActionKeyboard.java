@@ -25,11 +25,6 @@ class ActionKeyboard {
         this.session = session;
         this.command = command;
         this.markup = InlineKeyboardMarkup.builder();
-        addActionButtons();
-    }
-
-    public ActionKeyboard(UserSession session) {
-        this(session, UserCommand.empty());
     }
 
     void addActionButtons() {

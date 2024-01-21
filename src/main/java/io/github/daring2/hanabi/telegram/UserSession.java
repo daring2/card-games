@@ -75,7 +75,13 @@ class UserSession {
     }
 
     void showActionKeyboard() {
-        new ActionKeyboard(this).open();
+        createActionKeyboard(UserCommand.empty()).open();
+    }
+
+    ActionKeyboard createActionKeyboard(UserCommand command) {
+        var keyboard = new ActionKeyboard(this, command);
+        keyboard.addActionButtons();
+        return keyboard;
     }
 
     void leaveCurrentGame() {
