@@ -12,10 +12,12 @@ class UserCommand {
 
     final String name;
     final List<String> arguments;
+    final String expression;
 
     UserCommand(List<String> arguments) {
         this.name = parseName(arguments.getFirst());
         this.arguments = arguments;
+        this.expression = String.join(" ", arguments);
     }
 
     int getArgumentCount() {
