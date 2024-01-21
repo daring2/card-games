@@ -34,7 +34,7 @@ class UserActionHandler {
         var actionData = query.getData();
         switch (actionData) {
             case "play_card", "discard" -> {
-                var cardButtons = createCardActionButtons(session.player, actionData);
+                var cardButtons = createCardButtons(session.player, actionData);
                 var markup = InlineKeyboardMarkup.builder()
                         .keyboardRow(createPlayerActionButtons())
                         .keyboardRow(cardButtons)
@@ -53,8 +53,7 @@ class UserActionHandler {
         );
     }
 
-    List<InlineKeyboardButton> createCardActionButtons(Player player, String actionData) {
-        //TODO mask cards
+    List<InlineKeyboardButton> createCardButtons(Player player, String actionData) {
         return player.cards().stream()
                 .map(card -> createCardButton(card, actionData))
                 .toList();
@@ -65,9 +64,10 @@ class UserActionHandler {
         return createInlineButton(actionId, text);
     }
 
-    InlineKeyboardButton createCardButton(Card card, String actionData) {
+    InlineKeyboardButton createCardButton(Card card, String parentData) {
         var key = card.toString();
-        var data = actionData + " " + key;
+        var data = parentData + " " + key;
+        //TODO mask card text
         return createInlineButton(data, key);
     }
 
