@@ -5,6 +5,7 @@ import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -25,7 +26,7 @@ class UserActionHandler {
 
     final UserSession session;
 
-    String selectedAction;
+    String currentAction;
 
     UserActionHandler(UserSession session) {
         this.session = session;
@@ -35,13 +36,13 @@ class UserActionHandler {
         var markup = InlineKeyboardMarkup.builder()
                 .keyboardRow(createPlayerActionButtons(""))
                 .build();
-        selectedAction = null;
+        currentAction = null;
         showActions(markup);
     }
 
     void processCallbackQuery(CallbackQuery query) {
         var data = query.getData();
-        if (data == null || data.equals(selectedAction))
+        if (data == null || data.equals(currentAction))
             return;
         if (startsWith(data, PLAY_CARD)) {
             processCardActionCallback(query);
@@ -57,14 +58,14 @@ class UserActionHandler {
         var command = session.parseCommand(data);
         if (command.arguments.size() == 2) {
             session.tryProcessCommand(command);
-            selectedAction = null;
+            resetCurrentAction(query.getMessage());
             return;
         }
         var markup = InlineKeyboardMarkup.builder();
         markup.keyboardRow(createPlayerActionButtons(data));
         markup.keyboardRow(createCardButtons(session.player, data));
         updateActions(query.getMessage(), markup.build());
-        selectedAction = data;
+        currentAction = data;
     }
 
     void processSuggestCallback(CallbackQuery query) {
@@ -73,7 +74,7 @@ class UserActionHandler {
         var argumentCount = command.arguments.size();
         if (argumentCount == 3) {
             session.tryProcessCommand(command);
-            selectedAction = null;
+            resetCurrentAction(query.getMessage());
             return;
         }
 
@@ -85,7 +86,16 @@ class UserActionHandler {
             markup.keyboardRow(createColorButtons(data));
         }
         updateActions(query.getMessage(), markup.build());
-        selectedAction = data;
+        currentAction = data;
+    }
+
+    void resetCurrentAction(Message message) {
+        currentAction = null;
+        var deleteMessage = DeleteMessage.builder()
+                .chatId(message.getChatId())
+                .messageId(message.getMessageId())
+                .build();
+        session.bot.executeSync(deleteMessage);
     }
 
     List<InlineKeyboardButton> createPlayerActionButtons(String selectedAction) {
