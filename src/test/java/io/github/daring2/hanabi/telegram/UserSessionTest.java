@@ -47,28 +47,4 @@ class UserSessionTest {
                 .withMessage("invalid_player_index");
     }
 
-    @Test
-    void testParseCardInfo() {
-        var session = newSession();
-        checkInvalidSuggestionError(() -> session.parseCardInfo(null));
-        checkInvalidSuggestionError(() -> session.parseCardInfo(""));
-
-        checkInvalidSuggestionError(() -> session.parseCardInfo("0"));
-        assertThat(session.parseCardInfo("1")).isEqualTo(new CardInfo(1));
-        assertThat(session.parseCardInfo("5")).isEqualTo(new CardInfo(5));
-        checkInvalidSuggestionError(() -> session.parseCardInfo("6"));
-
-        checkInvalidSuggestionError(() -> session.parseCardInfo("A"));
-        assertThat(session.parseCardInfo("W")).isEqualTo(new CardInfo(WHITE));
-        assertThat(session.parseCardInfo("w")).isEqualTo(new CardInfo(WHITE));
-        assertThat(session.parseCardInfo("Y")).isEqualTo(new CardInfo(YELLOW));
-        checkInvalidSuggestionError(() -> session.parseCardInfo("Z"));
-    }
-
-    void checkInvalidSuggestionError(ThrowingCallable action) {
-        assertThatExceptionOfType(GameException.class)
-                .isThrownBy(action)
-                .withMessage("invalid_suggestion");
-    }
-
 }
