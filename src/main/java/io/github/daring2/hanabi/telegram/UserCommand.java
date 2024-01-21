@@ -20,10 +20,6 @@ class UserCommand {
         this.expression = String.join(" ", arguments);
     }
 
-    int getArgumentCount() {
-        return arguments.size();
-    }
-
     String getArgument(int index) {
         if (index >= arguments.size())
             return null;

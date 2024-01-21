@@ -98,7 +98,7 @@ class UserCommandProcessor {
     }
     void processPlayCardCommand() {
         checkGameNotNull();
-        if (command.getArgumentCount() < 2) {
+        if (command.arguments.size() < 2) {
             keyboard.addCardSelectButtons();
             openKeyboard();
             return;
@@ -110,7 +110,7 @@ class UserCommandProcessor {
 
     void processDiscardCommand() {
         checkGameNotNull();
-        if (command.getArgumentCount() < 2) {
+        if (command.arguments.size() < 2) {
             keyboard.addCardSelectButtons();
             openKeyboard();
             return;
@@ -122,8 +122,14 @@ class UserCommandProcessor {
 
     void processSuggestCommand() {
         checkGameNotNull();
-        if (command.getArgumentCount() < 3) {
-            //TODO show inline keyboard
+        var argumentsCount = command.arguments.size();
+        if (argumentsCount < 3) {
+            keyboard.addPlayerSelectButtons();
+            if (argumentsCount == 2) {
+                keyboard.addCardValueSelectButtons();
+                keyboard.addColorSelectButtons();
+            }
+            openKeyboard();
             return;
         }
         var playerIndex = command.getIndexArgument(1);

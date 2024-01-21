@@ -68,7 +68,7 @@ class ActionKeyboard {
 
     void addCardValueSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
-        for (int i = 0; i <= MAX_CARD_VALUE; i++) {
+        for (int i = 1; i <= MAX_CARD_VALUE; i++) {
             var data = command.expression + " " + i;
             buttons.add(createButton(data, "" + i));
         }
