@@ -43,7 +43,8 @@ class UserSession {
 
     void processMessage(Message message) {
         runWithLock(() ->{
-            var command = parseCommand(message.getText());
+            var text = message.getText();
+            var command = UserCommand.parse(text);
             if (command != null) {
                 tryProcessCommand(command);
             }
@@ -61,16 +62,6 @@ class UserSession {
         synchronized (lock) {
             action.run();
         }
-    }
-
-    UserCommand parseCommand(String text) {
-        if (isBlank(text))
-            return null;
-        var arguments = Arrays.stream(text.split(" "))
-                .map(String::trim)
-                .filter(StringUtils::isNotBlank)
-                .toList();
-        return new UserCommand(arguments);
     }
 
     void tryProcessCommand(UserCommand command) {

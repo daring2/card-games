@@ -20,12 +20,15 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 
 class UserActionHandler {
 
+    //TODO (!) refactor
+
     static final String PLAY_CARD = "play_card";
     static final String DISCARD = "discard";
     static final String SUGGEST = "suggest";
 
     final UserSession session;
 
+    //TODO replace with currentCommand
     String currentAction;
 
     UserActionHandler(UserSession session) {
@@ -55,7 +58,7 @@ class UserActionHandler {
 
     void processCardActionCallback(CallbackQuery query) {
         var data = query.getData();
-        var command = session.parseCommand(data);
+        var command = UserCommand.parse(data);
         if (command.arguments.size() == 2) {
             session.tryProcessCommand(command);
             resetCurrentAction(query.getMessage());
@@ -70,7 +73,7 @@ class UserActionHandler {
 
     void processSuggestCallback(CallbackQuery query) {
         var data = query.getData();
-        var command = session.parseCommand(data);
+        var command = UserCommand.parse(data);
         var argumentCount = command.arguments.size();
         if (argumentCount == 3) {
             session.tryProcessCommand(command);
@@ -99,6 +102,7 @@ class UserActionHandler {
     }
 
     List<InlineKeyboardButton> createPlayerActionButtons(String selectedAction) {
+        //TODO check game tokens
         var actionIds = List.of(PLAY_CARD, DISCARD, SUGGEST);
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (String actionId : actionIds) {

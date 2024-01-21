@@ -9,6 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UserCommandTest {
 
     @Test
+    void testParse() {
+        //TODO implement
+    }
+
+    @Test
     void testConstructor() {
         var args1 = List.of("a1", "a2");
         assertThat(new UserCommand(args1)).satisfies(command -> {
@@ -20,6 +25,14 @@ class UserCommandTest {
             assertThat(command.name).isEqualTo("a1");
             assertThat(command.arguments).isEqualTo(args2);
         });
+    }
+
+    @Test
+    void testIsEmpty() {
+        var command1 = new UserCommand(List.of());
+        assertThat(command1.isEmpty()).isTrue();
+        var command2 = new UserCommand(List.of("a1"));
+        assertThat(command1.isEmpty()).isTrue();
     }
 
     @Test
