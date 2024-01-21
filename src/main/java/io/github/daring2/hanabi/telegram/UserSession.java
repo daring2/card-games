@@ -14,7 +14,6 @@ class UserSession {
     final HanabiBot bot;
     final User user;
     final Long chatId;
-    final UserActionHandler actionHandler;
 
     String userName;
     Game game;
@@ -25,7 +24,6 @@ class UserSession {
         this.bot = bot;
         this.user = user;
         this.chatId = chatId;
-        this.actionHandler = new UserActionHandler(this);
         this.userName = user.getUserName();
     }
 
@@ -74,6 +72,10 @@ class UserSession {
     void createPlayer() {
         player = new Player(userName);
         game.addPlayer(player);
+    }
+
+    void showActionKeyboard() {
+        new ActionKeyboard(this).open();
     }
 
     void leaveCurrentGame() {

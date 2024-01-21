@@ -51,4 +51,8 @@ class UserCommand {
         return removeStart(argument.toLowerCase(), "/");
     }
 
+    static UserCommand empty() {
+        return new UserCommand(List.of(""));
+    }
+
 }

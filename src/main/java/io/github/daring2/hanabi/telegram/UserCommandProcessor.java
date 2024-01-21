@@ -4,7 +4,6 @@ import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -21,6 +20,9 @@ class UserCommandProcessor {
     final Game game;
     final Player player;
 
+    UserCommand command;
+    ActionKeyboard keyboard;
+
     UserCommandProcessor(UserSession session, Update update) {
         this.session = session;
         this.update = update;
@@ -29,13 +31,14 @@ class UserCommandProcessor {
     }
 
     void process() {
-        var command = parseCommand();
+        command = parseCommand();
         if (command == null)
             return;
+        keyboard = new ActionKeyboard(session, command);
         try {
-            processCommand(command);
+            processCommand();
         } catch (Exception e) {
-            processCommandError(command, e);
+            processCommandError(e);
         }
     }
 
@@ -51,21 +54,21 @@ class UserCommandProcessor {
         return UserCommand.parse(text);
     }
 
-    void processCommand(UserCommand command) {
+    void processCommand() {
         switch (command.name) {
-            case "set_player_name" -> processSetPlayerNameCommand(command);
+            case "set_player_name" -> processSetPlayerNameCommand();
             case "create" -> processCreateCommand();
-            case "join" -> processJoinCommand(command);
+            case "join" -> processJoinCommand();
             case "leave" -> processLeaveCommand();
             case "start" -> processStartCommand();
-            case "suggest", "s" -> processSuggestCommand(command);
-            case "play_card", "p" -> processPlayCardCommand(command);
-            case "discard", "d" -> processDiscardCommand(command);
-            default -> processInvalidCommand(command);
+            case "play_card", "p" -> processPlayCardCommand();
+            case "discard", "d" -> processDiscardCommand();
+            case "suggest", "s" -> processSuggestCommand();
+            default -> processInvalidCommand();
         }
     }
 
-    void processSetPlayerNameCommand(UserCommand command) {
+    void processSetPlayerNameCommand() {
         var name =  command.getArgument(1);
         if (isBlank(name)) {
             sendMessage("empty_player_name");
@@ -78,7 +81,7 @@ class UserCommandProcessor {
         session.createGame();
     }
 
-    void processJoinCommand(UserCommand command) {
+    void processJoinCommand() {
         var gameId = command.getArgument(1);
         session.joinGame(gameId);
     }
@@ -93,27 +96,31 @@ class UserCommandProcessor {
         checkGameNotNull();
         game.start();
     }
-    void processPlayCardCommand(UserCommand command) {
+    void processPlayCardCommand() {
         checkGameNotNull();
         if (command.getArgumentCount() < 2) {
-            //TODO show inline keyboard
+            keyboard.addCardSelectButtons();
+            openKeyboard();
             return;
         }
         var cardIndex = command.getIndexArgument(1);
         game.playCard(player, cardIndex);
+        closeKeyboard();
     }
 
-    void processDiscardCommand(UserCommand command) {
+    void processDiscardCommand() {
         checkGameNotNull();
         if (command.getArgumentCount() < 2) {
-            //TODO show inline keyboard
+            keyboard.addCardSelectButtons();
+            openKeyboard();
             return;
         }
         var cardIndex = command.getIndexArgument(1);
         game.discardCard(player, cardIndex);
+        closeKeyboard();
     }
 
-    void processSuggestCommand(UserCommand command) {
+    void processSuggestCommand() {
         checkGameNotNull();
         if (command.getArgumentCount() < 3) {
             //TODO show inline keyboard
@@ -123,13 +130,30 @@ class UserCommandProcessor {
         var targetPlayer = session.getPlayer(playerIndex);
         var cardInfo = parseCardInfo(command.getArgument(2));
         game.suggest(player, targetPlayer, cardInfo);
+        closeKeyboard();
     }
 
-    void processInvalidCommand(UserCommand command) {
+    void openKeyboard() {
+        var callback = update.getCallbackQuery();
+        if (callback != null) {
+            keyboard.update(callback.getMessage());
+        } else {
+            keyboard.open();
+        }
+    }
+
+    void closeKeyboard() {
+        var callback = update.getCallbackQuery();
+        if (callback != null) {
+            keyboard.close(callback.getMessage());
+        }
+    }
+
+    void processInvalidCommand() {
         sendMessage("invalid_command", command.name);
     }
 
-    void processCommandError(UserCommand command, Exception exception) {
+    void processCommandError(Exception exception) {
         if (exception instanceof GameException e) {
             var errorText = messages().getMessage(
                     "errors." + e.getCode(),
@@ -137,8 +161,7 @@ class UserCommandProcessor {
             );
             sendMessage("game_error", errorText);
         } else {
-            var text = Strings.join(command.arguments, ' ');
-            logger.error("Cannot process command: " + text, exception);
+            logger.error("Cannot process command: " + command.expression, exception);
             sendMessage("command_error", exception.getMessage());
         }
     }
