@@ -26,6 +26,9 @@ class UserCommandUtilsTest {
         checkInvalidSuggestionError(() -> parseCardInfo("A"));
         assertThat(parseCardInfo("W")).isEqualTo(new CardInfo(WHITE));
         assertThat(parseCardInfo("w")).isEqualTo(new CardInfo(WHITE));
+        assertThat(parseCardInfo("WHITE")).isEqualTo(new CardInfo(WHITE));
+        assertThat(parseCardInfo("White")).isEqualTo(new CardInfo(WHITE));
+        assertThat(parseCardInfo("white")).isEqualTo(new CardInfo(WHITE));
         assertThat(parseCardInfo("Y")).isEqualTo(new CardInfo(YELLOW));
         checkInvalidSuggestionError(() -> parseCardInfo("Z"));
     }

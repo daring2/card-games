@@ -19,6 +19,8 @@ public class UserCommandUtils {
             for (Color color : Color.valueList) {
                 if (color.shortName.equalsIgnoreCase(infoExp))
                     return new CardInfo(color);
+                if (color.name().equalsIgnoreCase(infoExp))
+                    return new CardInfo(color);
             }
         }
         throw new GameException("invalid_suggestion");
