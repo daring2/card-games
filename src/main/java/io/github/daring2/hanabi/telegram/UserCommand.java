@@ -4,8 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.String.join;
 import static org.apache.commons.lang3.StringUtils.*;
 
 class UserCommand {
@@ -14,10 +16,10 @@ class UserCommand {
     final List<String> arguments;
     final String expression; //TODO remove
 
-    UserCommand(List<String> arguments) {
-        this.name = arguments.getFirst();
+    UserCommand(String name, List<String> arguments) {
+        this.name = name;
         this.arguments = arguments;
-        this.expression = String.join(" ", arguments);
+        this.expression = name + " " + join(" ", arguments);
     }
 
     String getArgument(int index) {
@@ -36,17 +38,17 @@ class UserCommand {
     static UserCommand parse(String text) {
         if (isBlank(text))
             return null;
-        text = removeStart(text.toLowerCase(), "/");
         var arguments = Arrays.stream(text.split(" "))
                 .map(String::trim)
                 .map(String::toLowerCase)
                 .filter(StringUtils::isNotBlank)
-                .toList();
-        return new UserCommand(arguments);
+                .collect(Collectors.toList());
+        var name = removeStart(arguments.removeFirst(), "/");
+        return new UserCommand(name, arguments);
     }
 
     static UserCommand empty() {
-        return new UserCommand(List.of(""));
+        return new UserCommand("", List.of());
     }
 
 }

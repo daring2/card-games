@@ -69,7 +69,7 @@ class UserCommandProcessor {
     }
 
     void processSetPlayerNameCommand() {
-        var name =  command.getArgument(1);
+        var name =  command.getArgument(0);
         if (isBlank(name)) {
             sendMessage("empty_player_name");
             return;
@@ -82,7 +82,7 @@ class UserCommandProcessor {
     }
 
     void processJoinCommand() {
-        var gameId = command.getArgument(1);
+        var gameId = command.getArgument(0);
         session.joinGame(gameId);
     }
 
@@ -98,41 +98,41 @@ class UserCommandProcessor {
     }
     void processPlayCardCommand() {
         checkGameNotNull();
-        if (command.arguments.size() < 2) {
+        if (command.arguments.isEmpty()) {
             keyboard.addCardSelectButtons();
             updateKeyboard();
             return;
         }
-        var cardIndex = command.getIndexArgument(1);
+        var cardIndex = command.getIndexArgument(0);
         game.playCard(player, cardIndex);
     }
 
     void processDiscardCommand() {
         checkGameNotNull();
-        if (command.arguments.size() < 2) {
+        if (command.arguments.isEmpty()) {
             keyboard.addCardSelectButtons();
             updateKeyboard();
             return;
         }
-        var cardIndex = command.getIndexArgument(1);
+        var cardIndex = command.getIndexArgument(0);
         game.discardCard(player, cardIndex);
     }
 
     void processSuggestCommand() {
         checkGameNotNull();
         var argumentsCount = command.arguments.size();
-        if (argumentsCount < 3) {
+        if (argumentsCount < 2) {
             keyboard.addPlayerSelectButtons();
-            if (argumentsCount == 2) {
+            if (argumentsCount == 1) {
                 keyboard.addCardValueSelectButtons();
                 keyboard.addColorSelectButtons();
             }
             updateKeyboard();
             return;
         }
-        var playerIndex = command.getIndexArgument(1);
+        var playerIndex = command.getIndexArgument(0);
         var targetPlayer = session.getPlayer(playerIndex);
-        var cardInfo = parseCardInfo(command.getArgument(2));
+        var cardInfo = parseCardInfo(command.getArgument(1));
         game.suggest(player, targetPlayer, cardInfo);
     }
 

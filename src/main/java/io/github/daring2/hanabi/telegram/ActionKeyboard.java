@@ -56,7 +56,7 @@ class ActionKeyboard {
     void addPlayerSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         var players = session.game.players();
-        var selectedIndex = command.getIndexArgument(1);
+        var selectedIndex = command.getIndexArgument(0);
         for (int i = 0, size = players.size(); i < size; i++) {
             var player = players.get(i);
             if (player == session.player)
