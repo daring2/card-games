@@ -7,8 +7,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +36,11 @@ public class HanabiBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        processMessage(update);
+        processCallbackQuery(update);
+    }
+
+    void processMessage(Update update) {
         var message = update.getMessage();
         if (message == null)
             return;
@@ -41,7 +48,18 @@ public class HanabiBot extends TelegramLongPollingBot {
                 message.getChatId(),
                 id -> createUserSession(message)
         );
-        session.processUpdate(update);
+        session.processMessage(message);
+    }
+
+    void processCallbackQuery(Update update) {
+        var query = update.getCallbackQuery();
+        if (query == null)
+            return;
+        var chatId = query.getMessage().getChatId();
+        var session = sessions.get(chatId);
+        if (session != null) {
+            session.processCallbackQuery(query);
+        }
     }
 
     UserSession createUserSession(Message message) {
@@ -50,6 +68,14 @@ public class HanabiBot extends TelegramLongPollingBot {
                 message.getFrom(),
                 message.getChatId()
         );
+    }
+
+    void executeSync(BotApiMethod<?> method) {
+        try {
+            execute(method);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @ConfigurationProperties("hanabi-bot")

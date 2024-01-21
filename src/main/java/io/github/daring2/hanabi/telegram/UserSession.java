@@ -1,49 +1,47 @@
 package io.github.daring2.hanabi.telegram;
 
-import io.github.daring2.hanabi.model.*;
+import io.github.daring2.hanabi.model.Game;
+import io.github.daring2.hanabi.model.GameException;
+import io.github.daring2.hanabi.model.GameMessages;
+import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Arrays;
 
-import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
-import static java.lang.Integer.parseInt;
+import static io.github.daring2.hanabi.telegram.UserCommandUtils.parseCardInfo;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNumeric;
 
-public class UserSession {
+class UserSession {
 
     static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 
     final HanabiBot bot;
     final User user;
     final Long chatId;
-    final UserActions userActions;
+    final UserActions actionHandler;
 
     String userName;
     Game game;
     Player player;
     GameEventProcessor eventProcessor;
 
-    public UserSession(HanabiBot bot, User user, Long chatId) {
+    UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
         this.user = user;
         this.chatId = chatId;
-        this.userActions = new UserActions(this);
+        this.actionHandler = new UserActions(this);
         this.userName = user.getUserName();
     }
 
-    public void processUpdate(Update update) {
-        var lock = game != null ? game : this; //TODO refactor
-        synchronized (lock) {
-            var message = update.getMessage();
+    void processMessage(Message message) {
+        runWithLock(() ->{
             var command = parseCommand(message);
             if (command == null)
                 return;
@@ -52,6 +50,19 @@ public class UserSession {
             } catch (Exception e) {
                 processCommandError(message, e);
             }
+        });
+    }
+
+    void processCallbackQuery(CallbackQuery query) {
+        runWithLock(() ->{
+            actionHandler.processCallbackQuery(query);
+        });
+    }
+
+    void runWithLock(Runnable action) {
+        var lock = game != null ? game : this; //TODO refactor
+        synchronized (lock) {
+            action.run();
         }
     }
 
@@ -174,16 +185,12 @@ public class UserSession {
     }
 
     void sendText(String text, String parseMode) {
-        try {
-            var sendMessage = SendMessage.builder()
-                    .chatId(chatId)
-                    .text(text)
-                    .parseMode(parseMode)
-                    .build();
-            bot.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
+        var sendMessage = SendMessage.builder()
+                .chatId(chatId)
+                .text(text)
+                .parseMode(parseMode)
+                .build();
+        bot.executeSync(sendMessage);
     }
 
     void sendText(String text) {
@@ -215,20 +222,6 @@ public class UserSession {
             throw new GameException("invalid_player_index");
         }
         return players.get(index);
-    }
-
-    CardInfo parseCardInfo(String infoExp) {
-        if (isNumeric(infoExp)) {
-            var value = parseInt(infoExp);
-            if (value >= 1 && value <= MAX_CARD_VALUE)
-                return new CardInfo(value);
-        } else {
-            for (Color color : Color.valueList) {
-                if (color.shortName.equalsIgnoreCase(infoExp))
-                    return new CardInfo(color);
-            }
-        }
-        throw new GameException("invalid_suggestion");
     }
 
     GameMessages messages() {

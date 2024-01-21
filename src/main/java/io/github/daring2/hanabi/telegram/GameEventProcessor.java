@@ -77,7 +77,7 @@ class GameEventProcessor implements AutoCloseable {
         );
         session.sendText(turnInfo, "MarkdownV2");
         if (game.currentPlayer() == session.player) {
-            session.userActions.showCurrentPlayerActions();
+            session.actionHandler.showCurrentPlayerActions();
         }
     }
 
