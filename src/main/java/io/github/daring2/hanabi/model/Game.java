@@ -214,15 +214,14 @@ public class Game {
     }
 
     void takeCard(Player player) {
-        if (result != null) {
+        if (result != null)
             return;
-        }
-        if (deck.isEmpty()) {
+        if (deck.isEmpty())
             return;
-        }
         player.cards.add(deck.removeLast());
         if (deck.isEmpty()) {
             lastTurn = turn + players.size();
+            publishEvent(new DeckEmptyEvent(this));
         }
     }
 

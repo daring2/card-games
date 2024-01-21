@@ -440,18 +440,25 @@ class GameTest {
         var player0 = game.players.get(0);
         player0.cards.clear();
 
+        game.events.clear();
         game.turn = 10;
         game.takeCard(player0);
         assertThat(player0.cards).isEqualTo(cards.subList(0, 1));
         assertThat(game.lastTurn).isEqualTo(-1);
+        assertThat(game.events).isEmpty();
 
         game.takeCard(player0);
         assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
         assertThat(game.lastTurn).isEqualTo(12);
+        assertThat(game.events).containsExactly(
+                new DeckEmptyEvent(game)
+        );
 
+        game.events.clear();
         game.takeCard(player0);
         assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
         assertThat(game.lastTurn).isEqualTo(12);
+        assertThat(game.events).isEmpty();
     }
 
     @Test
