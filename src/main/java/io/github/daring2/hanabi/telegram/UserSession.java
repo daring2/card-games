@@ -42,7 +42,7 @@ class UserSession {
 
     void processMessage(Message message) {
         runWithLock(() ->{
-            var command = parseCommand(message);
+            var command = parseCommand(message.getText());
             if (command == null)
                 return;
             try {
@@ -66,8 +66,7 @@ class UserSession {
         }
     }
 
-    UserCommand parseCommand(Message message) {
-        var text = message.getText();
+    UserCommand parseCommand(String text) {
         if (isBlank(text))
             return null;
         var arguments = Arrays.stream(text.split(" "))
