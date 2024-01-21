@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
-import io.github.daring2.hanabi.model.Card;
+import io.github.daring2.hanabi.model.Color;
+import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,9 +14,14 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.stream.IntStream.rangeClosed;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 
 class UserActionHandler {
+
+    static final String PLAY_CARD = "play_card";
+    static final String DISCARD = "discard";
+    static final String SUGGEST = "suggest";
 
     final UserSession session;
 
@@ -26,68 +32,130 @@ class UserActionHandler {
     }
 
     void showCurrentPlayerActions() {
-        var text = messages().getMessage("select_action");
         var markup = InlineKeyboardMarkup.builder()
                 .keyboardRow(createPlayerActionButtons(""))
                 .build();
         selectedAction = null;
-        sendInlineKeyboard(text, markup);
+        showActions(markup);
     }
 
     void processCallbackQuery(CallbackQuery query) {
         var data = query.getData();
-        if (startsWith(data, selectedAction))
+        if (data == null || data.equals(selectedAction))
             return;
+        if (startsWith(data, PLAY_CARD)) {
+            processCardActionCallback(query);
+        } else if (startsWith(data, DISCARD)) {
+            processCardActionCallback(query);
+        } else if (startsWith(data, SUGGEST)) {
+            processSuggestCallback(query);
+        }
+    }
+
+    void processCardActionCallback(CallbackQuery query) {
+        var data = query.getData();
+        var command = session.parseCommand(data);
+        if (command.arguments.size() == 2) {
+            session.tryProcessCommand(command);
+            selectedAction = null;
+            return;
+        }
         var markup = InlineKeyboardMarkup.builder();
         markup.keyboardRow(createPlayerActionButtons(data));
-        switch (data) {
-            case "play_card", "discard" -> {
-                markup.keyboardRow(createCardButtons(session.player, data));
-            }
-            case "suggest" -> {
-                //TODO implement
-            }
+        markup.keyboardRow(createCardButtons(session.player, data));
+        updateActions(query.getMessage(), markup.build());
+        selectedAction = data;
+    }
+
+    void processSuggestCallback(CallbackQuery query) {
+        var data = query.getData();
+        var command = session.parseCommand(data);
+        var argumentCount = command.arguments.size();
+        if (argumentCount == 3) {
+            session.tryProcessCommand(command);
+            selectedAction = null;
+            return;
         }
-        updateInlineKeyboard(query.getMessage(), markup.build());
+
+        var markup = InlineKeyboardMarkup.builder();
+        markup.keyboardRow(createPlayerActionButtons(data));
+        markup.keyboardRow(createPlayerSelectButtons(data));
+        if (argumentCount == 2) {
+            markup.keyboardRow(createCardValueButtons(data));
+            markup.keyboardRow(createColorButtons(data));
+        }
+        updateActions(query.getMessage(), markup.build());
         selectedAction = data;
     }
 
     List<InlineKeyboardButton> createPlayerActionButtons(String selectedAction) {
-        var actionIds = List.of("play_card", "discard", "suggest");
+        var actionIds = List.of(PLAY_CARD, DISCARD, SUGGEST);
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (String actionId : actionIds) {
             var label = messages().getMessage("actions." + actionId);
             var isSelected = actionId.equalsIgnoreCase(selectedAction);
             var text = (isSelected ? "* " : "") + label; // use "✅" char
-            buttons.add(createInlineButton(actionId, text));
+            buttons.add(createButton(actionId, text));
         }
         return buttons;
     }
 
     List<InlineKeyboardButton> createCardButtons(Player player, String actionData) {
-        return player.cards().stream()
-                .map(card -> createCardButton(player, card, actionData))
+        var buttons = new ArrayList<InlineKeyboardButton>();
+        var cards = player.cards();
+        for (int i = 0, size = cards.size(); i < size; i++) {
+            var card = cards.get(i);
+            var data = actionData + " " + (i + 1);
+            var text = player.getKnownCard(card).toString();
+            buttons.add(createButton(data, text));
+        }
+        return buttons;
+    }
+
+    List<InlineKeyboardButton> createPlayerSelectButtons(String actionData) {
+        var buttons = new ArrayList<InlineKeyboardButton>();
+        var players = session.game.players();
+        for (int i = 0, size = players.size(); i < size; i++) {
+            var player = players.get(i);
+            if (player == session.player)
+                continue;
+            var data = actionData + " " + (i + 1);
+            buttons.add(createButton(data, player.name()));
+        }
+        return buttons;
+    }
+
+    List<InlineKeyboardButton> createCardValueButtons(String actionData) {
+        return rangeClosed(1, Game.MAX_CARD_VALUE)
+                .mapToObj(v -> createCardValueButton(v, actionData))
                 .toList();
     }
 
-    InlineKeyboardButton createCardButton(
-            Player player,
-            Card card,
-            String parentData
-    ) {
-        var data = parentData + " " + card;
-        var text = player.getKnownCard(card).toString();
-        return createInlineButton(data, text);
+    InlineKeyboardButton createCardValueButton(int value, String actionData) {
+        var data = actionData + " " + value;
+        return createButton(data, "" + value);
     }
 
-    InlineKeyboardButton createInlineButton(String data, String text) {
+    List<InlineKeyboardButton> createColorButtons(String actionData) {
+        return Color.valueList.stream()
+                .map(c -> createColorButton(c, actionData))
+                .toList();
+    }
+
+    InlineKeyboardButton createColorButton(Color color, String actionData) {
+        var data = actionData + " " + color.shortName;
+        return createButton(data, color.name());
+    }
+
+    InlineKeyboardButton createButton(String data, String text) {
         return InlineKeyboardButton.builder()
                 .callbackData(data)
                 .text(text)
                 .build();
     }
 
-    void sendInlineKeyboard(String text, InlineKeyboardMarkup markup) {
+    void showActions(InlineKeyboardMarkup markup) {
+        var text = messages().getMessage("select_action");
         var sendMessage = SendMessage.builder()
                 .chatId(session.chatId)
                 .replyMarkup(markup)
@@ -96,7 +164,7 @@ class UserActionHandler {
         session.bot.executeSync(sendMessage);
     }
 
-    void updateInlineKeyboard(Message message, InlineKeyboardMarkup markup) {
+    void updateActions(Message message, InlineKeyboardMarkup markup) {
         var editMessage = EditMessageReplyMarkup.builder()
                 .chatId(session.chatId)
                 .messageId(message.getMessageId())

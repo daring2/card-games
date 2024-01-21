@@ -6,6 +6,7 @@ import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -43,12 +44,8 @@ class UserSession {
     void processMessage(Message message) {
         runWithLock(() ->{
             var command = parseCommand(message.getText());
-            if (command == null)
-                return;
-            try {
-                processCommand(command);
-            } catch (Exception e) {
-                processCommandError(message, e);
+            if (command != null) {
+                tryProcessCommand(command);
             }
         });
     }
@@ -74,6 +71,14 @@ class UserSession {
                 .filter(StringUtils::isNotBlank)
                 .toList();
         return new UserCommand(arguments);
+    }
+
+    void tryProcessCommand(UserCommand command) {
+        try {
+            processCommand(command);
+        } catch (Exception e) {
+            processCommandError(command, e);
+        }
     }
 
     void processCommand(UserCommand command) {
@@ -196,7 +201,7 @@ class UserSession {
         sendText(text, null);
     }
 
-    void processCommandError(Message message, Exception exception) {
+    void processCommandError(UserCommand command, Exception exception) {
         if (exception instanceof GameException e) {
             var errorText = messages().getMessage(
                     "errors." + e.getCode(),
@@ -204,7 +209,8 @@ class UserSession {
             );
             sendMessage("game_error", errorText);
         } else {
-            logger.error("Cannot process command: " + message.getText(), exception);
+            var text = Strings.join(command.arguments, ' ');
+            logger.error("Cannot process command: " + text, exception);
             sendMessage("command_error", exception.getMessage());
         }
     }
