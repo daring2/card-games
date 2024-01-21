@@ -8,11 +8,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
-public class UserActions {
+class UserActions {
 
     final UserSession session;
 
-    public UserActions(UserSession session) {
+    UserActions(UserSession session) {
         this.session = session;
     }
 

@@ -5,19 +5,19 @@ import io.github.daring2.hanabi.model.GameResult;
 import io.github.daring2.hanabi.model.event.*;
 import io.github.daring2.hanabi.model.event.GameEventBus.Subscription;
 
-public class GameEventProcessor implements AutoCloseable {
+class GameEventProcessor implements AutoCloseable {
 
     final UserSession session;
     final Game game;
     final Subscription subscription;
 
-    public GameEventProcessor(UserSession session) {
+    GameEventProcessor(UserSession session) {
         this.session = session;
         game = session.game;
         subscription = game.eventBus().subscribe(this::process);
     }
 
-    public void process(GameEvent event) {
+    void process(GameEvent event) {
         switch (event) {
             case CreateGameEvent e -> {
                 sendMessage("game_created", e.game());

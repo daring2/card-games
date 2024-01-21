@@ -16,13 +16,13 @@ class UserCommand {
         this.arguments = arguments;
     }
 
-    public String getArgument(int index) {
+    String getArgument(int index) {
         if (index >= arguments.size())
             return null;
         return arguments.get(index);
     }
 
-    public int getIndexArgument(int index) {
+    int getIndexArgument(int index) {
         var value = getArgument(index);
         if (!isNumeric(value))
             return -1;

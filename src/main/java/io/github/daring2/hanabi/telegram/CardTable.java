@@ -17,7 +17,7 @@ class CardTable {
 
     final List<Row> rows = new ArrayList<>();
 
-    public CardTable(Player targetPlayer) {
+    CardTable(Player targetPlayer) {
         this.targetPlayer = targetPlayer;
     }
 
