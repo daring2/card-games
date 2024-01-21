@@ -28,14 +28,6 @@ class UserCommandTest {
     }
 
     @Test
-    void testIsEmpty() {
-        var command1 = new UserCommand(List.of());
-        assertThat(command1.isEmpty()).isTrue();
-        var command2 = new UserCommand(List.of("a1"));
-        assertThat(command1.isEmpty()).isTrue();
-    }
-
-    @Test
     void testGetArgument() {
         var command = new UserCommand(List.of("a1", "a2"));
         assertThat(command.name).isEqualTo("a1");

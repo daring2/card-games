@@ -18,10 +18,6 @@ class UserCommand {
         this.arguments = arguments;
     }
 
-    boolean isEmpty() {
-        return arguments.isEmpty();
-    }
-
     String getArgument(int index) {
         if (index >= arguments.size())
             return null;
@@ -37,7 +33,7 @@ class UserCommand {
 
     static UserCommand parse(String text) {
         if (isBlank(text))
-            return new UserCommand(List.of());
+            return null;
         var arguments = Arrays.stream(text.split(" "))
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
