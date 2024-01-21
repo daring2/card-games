@@ -39,7 +39,6 @@ class GameEventProcessor implements AutoCloseable {
             case StartGameEvent ignored -> {
                 sendMessage("game_started");
             }
-            case FinishGameEvent e -> processFinishEvent(e);
             case StartTurnEvent e -> processStartTurnEvent(e);
             case PlayCardEvent e -> {
                 sendMessage("player_played_card", e.player(), e.card());
@@ -62,12 +61,20 @@ class GameEventProcessor implements AutoCloseable {
             case DiscardCardEvent e -> {
                 sendMessage("player_discarded_card", e.player(), e.card());
             }
+            case FinishGameEvent e -> processFinishEvent(e);
             default -> {}
         }
     }
 
     void processStartTurnEvent(StartTurnEvent event) {
         session.finishTurn();
+        sendTurnInfo();
+        if (game.currentPlayer() == session.player) {
+            session.showActionKeyboard();
+        }
+    }
+
+    void sendTurnInfo() {
         var turnInfo = session.messages().getMessage(
                 "turn_info",
                 game.currentPlayer(),
@@ -80,9 +87,6 @@ class GameEventProcessor implements AutoCloseable {
                 turnInfo,
                 "MarkdownV2"
         );
-        if (game.currentPlayer() == session.player) {
-            session.showActionKeyboard();
-        }
     }
 
     String buildCardTableText() {
@@ -93,6 +97,7 @@ class GameEventProcessor implements AutoCloseable {
     }
 
     void processFinishEvent(FinishGameEvent event) {
+        session.finishTurn();
         var result = event.result();
         if (result == GameResult.LAUNCH) {
             var scoreLevel = calculateScoreLevel(event.score());
@@ -105,7 +110,7 @@ class GameEventProcessor implements AutoCloseable {
         } else {
             sendMessage("game_canceled");
         }
-        //TODO send table cards
+        sendTurnInfo();
     }
 
     int calculateScoreLevel(int score) {
