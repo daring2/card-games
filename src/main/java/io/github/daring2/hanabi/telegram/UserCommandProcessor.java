@@ -100,24 +100,22 @@ class UserCommandProcessor {
         checkGameNotNull();
         if (command.arguments.size() < 2) {
             keyboard.addCardSelectButtons();
-            openKeyboard();
+            updateKeyboard();
             return;
         }
         var cardIndex = command.getIndexArgument(1);
         game.playCard(player, cardIndex);
-        closeKeyboard();
     }
 
     void processDiscardCommand() {
         checkGameNotNull();
         if (command.arguments.size() < 2) {
             keyboard.addCardSelectButtons();
-            openKeyboard();
+            updateKeyboard();
             return;
         }
         var cardIndex = command.getIndexArgument(1);
         game.discardCard(player, cardIndex);
-        closeKeyboard();
     }
 
     void processSuggestCommand() {
@@ -129,30 +127,17 @@ class UserCommandProcessor {
                 keyboard.addCardValueSelectButtons();
                 keyboard.addColorSelectButtons();
             }
-            openKeyboard();
+            updateKeyboard();
             return;
         }
         var playerIndex = command.getIndexArgument(1);
         var targetPlayer = session.getPlayer(playerIndex);
         var cardInfo = parseCardInfo(command.getArgument(2));
         game.suggest(player, targetPlayer, cardInfo);
-        closeKeyboard();
     }
 
-    void openKeyboard() {
-        var callback = update.getCallbackQuery();
-        if (callback != null) {
-            keyboard.update(callback.getMessage());
-        } else {
-            keyboard.open();
-        }
-    }
-
-    void closeKeyboard() {
-        var callback = update.getCallbackQuery();
-        if (callback != null) {
-            keyboard.close(callback.getMessage());
-        }
+    void updateKeyboard() {
+        keyboard.update(session.turnInfoMessage);
     }
 
     void processInvalidCommand() {

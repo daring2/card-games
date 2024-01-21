@@ -6,6 +6,7 @@ import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -20,6 +21,8 @@ class UserSession {
     Game game;
     Player player;
     GameEventProcessor eventProcessor;
+
+    Message turnInfoMessage;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
@@ -76,7 +79,15 @@ class UserSession {
     }
 
     void showActionKeyboard() {
-        createActionKeyboard(UserCommand.empty()).open();
+        if (turnInfoMessage == null)
+            return;
+        createActionKeyboard(UserCommand.empty())
+                .update(turnInfoMessage);
+    }
+
+    void finishTurn() {
+        deleteMessage(turnInfoMessage);
+        turnInfoMessage = null;
     }
 
     ActionKeyboard createActionKeyboard(UserCommand command) {
@@ -109,6 +120,16 @@ class UserSession {
 
     Message sendText(String text) {
         return sendText(text, null);
+    }
+
+    void deleteMessage(Message message) {
+        if (message == null)
+            return;
+        var deleteMessage = DeleteMessage.builder()
+                .chatId(chatId)
+                .messageId(message.getMessageId())
+                .build();
+        bot.executeSync(deleteMessage);
     }
 
     Player getPlayer(int index) {

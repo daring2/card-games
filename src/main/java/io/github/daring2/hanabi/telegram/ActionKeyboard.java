@@ -18,7 +18,7 @@ import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 class ActionKeyboard {
 
     final UserSession session;
-    final UserCommand command;
+    final UserCommand command; //TODO remove
     final InlineKeyboardMarkupBuilder markupBuilder;
 
     ActionKeyboard(UserSession session, UserCommand command) {
@@ -114,14 +114,6 @@ class ActionKeyboard {
                 .replyMarkup(markup)
                 .build();
         session.bot.executeSync(editMessage);
-    }
-
-    void close(Message message) {
-        var deleteMessage = DeleteMessage.builder()
-                .chatId(session.chatId)
-                .messageId(message.getMessageId())
-                .build();
-        session.bot.executeSync(deleteMessage);
     }
 
     GameMessages messages() {

@@ -67,6 +67,7 @@ class GameEventProcessor implements AutoCloseable {
     }
 
     void processStartTurnEvent(StartTurnEvent event) {
+        session.finishTurn();
         var turnInfo = session.messages().getMessage(
                 "turn_info",
                 game.currentPlayer(),
@@ -75,7 +76,10 @@ class GameEventProcessor implements AutoCloseable {
                 game.redTokens(),
                 buildCardTableText()
         );
-        session.sendText(turnInfo, "MarkdownV2");
+        session.turnInfoMessage = session.sendText(
+                turnInfo,
+                "MarkdownV2"
+        );
         if (game.currentPlayer() == session.player) {
             session.showActionKeyboard();
         }
@@ -101,6 +105,7 @@ class GameEventProcessor implements AutoCloseable {
         } else {
             sendMessage("game_canceled");
         }
+        //TODO send table cards
     }
 
     int calculateScoreLevel(int score) {
