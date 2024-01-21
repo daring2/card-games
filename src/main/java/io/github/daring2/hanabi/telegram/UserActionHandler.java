@@ -10,11 +10,16 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 class UserActionHandler {
 
     final UserSession session;
+
+    String selectedAction;
 
     UserActionHandler(UserSession session) {
         this.session = session;
@@ -23,44 +28,46 @@ class UserActionHandler {
     void showCurrentPlayerActions() {
         var text = messages().getMessage("select_action");
         var markup = InlineKeyboardMarkup.builder()
-                .keyboardRow(createPlayerActionButtons())
+                .keyboardRow(createPlayerActionButtons(""))
                 .build();
+        selectedAction = null;
         sendInlineKeyboard(text, markup);
     }
 
     void processCallbackQuery(CallbackQuery query) {
-        var actionData = query.getData();
-        switch (actionData) {
+        var data = query.getData();
+        if (startsWith(data, selectedAction))
+            return;
+        var markup = InlineKeyboardMarkup.builder();
+        markup.keyboardRow(createPlayerActionButtons(data));
+        switch (data) {
             case "play_card", "discard" -> {
-                var cardButtons = createCardButtons(session.player, actionData);
-                var markup = InlineKeyboardMarkup.builder()
-                        .keyboardRow(createPlayerActionButtons())
-                        .keyboardRow(cardButtons)
-                        .build();
-                updateInlineKeyboard(query.getMessage(), markup);
+                markup.keyboardRow(createCardButtons(session.player, data));
             }
-            default -> {}
+            case "suggest" -> {
+                //TODO implement
+            }
         }
+        updateInlineKeyboard(query.getMessage(), markup.build());
+        selectedAction = data;
     }
 
-    List<InlineKeyboardButton> createPlayerActionButtons() {
-        //TODO mark selected action
-        return List.of(
-                createActionButton("play_card"),
-                createActionButton("discard"),
-                createActionButton("suggest")
-        );
+    List<InlineKeyboardButton> createPlayerActionButtons(String selectedAction) {
+        var actionIds = List.of("play_card", "discard", "suggest");
+        var buttons = new ArrayList<InlineKeyboardButton>();
+        for (String actionId : actionIds) {
+            var label = messages().getMessage("actions." + actionId);
+            var isSelected = actionId.equalsIgnoreCase(selectedAction);
+            var text = (isSelected ? "* " : "") + label; // use "✅" char
+            buttons.add(createInlineButton(actionId, text));
+        }
+        return buttons;
     }
 
     List<InlineKeyboardButton> createCardButtons(Player player, String actionData) {
         return player.cards().stream()
                 .map(card -> createCardButton(player, card, actionData))
                 .toList();
-    }
-
-    InlineKeyboardButton createActionButton(String actionId) {
-        var text = messages().getMessage("actions." + actionId);
-        return createInlineButton(actionId, text);
     }
 
     InlineKeyboardButton createCardButton(
