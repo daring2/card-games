@@ -19,12 +19,12 @@ class ActionKeyboard {
 
     final UserSession session;
     final UserCommand command;
-    final InlineKeyboardMarkupBuilder markup;
+    final InlineKeyboardMarkupBuilder markupBuilder;
 
     ActionKeyboard(UserSession session, UserCommand command) {
         this.session = session;
         this.command = command;
-        this.markup = InlineKeyboardMarkup.builder();
+        this.markupBuilder = InlineKeyboardMarkup.builder();
     }
 
     void addActionButtons() {
@@ -37,7 +37,7 @@ class ActionKeyboard {
             var text = (isSelected ? "* " : "") + label; // use "✅" char
             buttons.add(createButton(actionId, text));
         }
-        markup.keyboardRow(buttons);
+        markupBuilder.keyboardRow(buttons);
     }
 
     void addCardSelectButtons() {
@@ -50,20 +50,23 @@ class ActionKeyboard {
             var text = "" + player.getKnownCard(card);
             buttons.add(createButton(data, text));
         }
-        markup.keyboardRow(buttons);
+        markupBuilder.keyboardRow(buttons);
     }
 
     void addPlayerSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         var players = session.game.players();
+        var selectedIndex = command.getIndexArgument(1);
         for (int i = 0, size = players.size(); i < size; i++) {
             var player = players.get(i);
             if (player == session.player)
                 continue;
             var data = command.expression + " " + (i + 1);
-            buttons.add(createButton(data, player.name()));
+            var isSelected = i == selectedIndex;
+            var text = (isSelected ? "* " : "") + player.name();
+            buttons.add(createButton(data, text));
         }
-        markup.keyboardRow(buttons);
+        markupBuilder.keyboardRow(buttons);
     }
 
     void addCardValueSelectButtons() {
@@ -72,7 +75,7 @@ class ActionKeyboard {
             var data = command.expression + " " + i;
             buttons.add(createButton(data, "" + i));
         }
-        markup.keyboardRow(buttons);
+        markupBuilder.keyboardRow(buttons);
     }
 
     void addColorSelectButtons() {
@@ -81,7 +84,7 @@ class ActionKeyboard {
             var data = command.expression + " " + color.shortName;
             buttons.add(createButton(data, color.shortName));
         }
-        markup.keyboardRow(buttons);
+        markupBuilder.keyboardRow(buttons);
     }
 
     InlineKeyboardButton createButton(String data, String text) {
@@ -95,17 +98,20 @@ class ActionKeyboard {
         var text = messages().getMessage("select_action");
         var sendMessage = SendMessage.builder()
                 .chatId(session.chatId)
-                .replyMarkup(markup.build())
+                .replyMarkup(markupBuilder.build())
                 .text(text)
                 .build();
         session.bot.executeSync(sendMessage);
     }
 
     void update(Message message) {
+        var markup = markupBuilder.build();
+        if (markup.equals(message.getReplyMarkup()))
+            return; // TODO refactor
         var editMessage = EditMessageReplyMarkup.builder()
                 .chatId(session.chatId)
                 .messageId(message.getMessageId())
-                .replyMarkup(markup.build())
+                .replyMarkup(markup)
                 .build();
         session.bot.executeSync(editMessage);
     }
