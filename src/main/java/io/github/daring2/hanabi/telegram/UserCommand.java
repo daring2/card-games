@@ -15,7 +15,7 @@ class UserCommand {
     final String expression; //TODO remove
 
     UserCommand(List<String> arguments) {
-        this.name = parseName(arguments.getFirst());
+        this.name = arguments.getFirst();
         this.arguments = arguments;
         this.expression = String.join(" ", arguments);
     }
@@ -36,15 +36,13 @@ class UserCommand {
     static UserCommand parse(String text) {
         if (isBlank(text))
             return null;
+        text = removeStart(text.toLowerCase(), "/");
         var arguments = Arrays.stream(text.split(" "))
                 .map(String::trim)
+                .map(String::toLowerCase)
                 .filter(StringUtils::isNotBlank)
                 .toList();
         return new UserCommand(arguments);
-    }
-
-    static String parseName(String argument) {
-        return removeStart(argument.toLowerCase(), "/");
     }
 
     static UserCommand empty() {

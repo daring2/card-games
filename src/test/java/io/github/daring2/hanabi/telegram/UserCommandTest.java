@@ -10,22 +10,15 @@ class UserCommandTest {
 
     @Test
     void testParse() {
-        //TODO implement
-    }
-
-    @Test
-    void testConstructor() {
-        var args1 = List.of("a1", "a2");
-        assertThat(new UserCommand(args1)).satisfies(command -> {
+        assertThat(UserCommand.parse("a1 a2")).satisfies(command -> {
             assertThat(command.name).isEqualTo("a1");
-            assertThat(command.arguments).isEqualTo(args1);
+            assertThat(command.arguments).containsExactly("a1", "a2");
             assertThat(command.expression).isEqualTo("a1 a2");
         });
-        var args2 = List.of("/A1", "A2");
-        assertThat(new UserCommand(args2)).satisfies(command -> {
+        assertThat(UserCommand.parse("/A1 /A2")).satisfies(command -> {
             assertThat(command.name).isEqualTo("a1");
-            assertThat(command.arguments).isEqualTo(args2);
-            assertThat(command.expression).isEqualTo("/A1 A2");
+            assertThat(command.arguments).containsExactly("a1", "/a2");
+            assertThat(command.expression).isEqualTo("a1 /a2");
         });
     }
 
