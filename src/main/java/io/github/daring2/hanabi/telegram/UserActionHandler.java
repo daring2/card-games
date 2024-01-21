@@ -12,13 +12,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.List;
 
-class UserActions {
+class UserActionHandler {
 
     //TODO rename to UserActionHandler
 
     final UserSession session;
 
-    UserActions(UserSession session) {
+    UserActionHandler(UserSession session) {
         this.session = session;
     }
 
