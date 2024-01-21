@@ -4,6 +4,7 @@ import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameFactory;
 import io.github.daring2.hanabi.model.GameMessages;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@Profile("!test")
 public class HanabiBot extends TelegramLongPollingBot {
 
     final Context context;
