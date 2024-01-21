@@ -15,6 +15,7 @@ class GameMessagesTest {
 
     @Test
     void testGetMessage() {
+        assertThat(messages.getMessage("m1")).isEqualTo("m1");
         assertThat(messages.getMessage("m1", "a1", "a2"))
                 .isEqualTo("m1: [a1, a2]");
         assertThat(messages.getMessage("invalid_command", "c1"))

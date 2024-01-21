@@ -25,6 +25,7 @@ public class UserSession {
     final HanabiBot bot;
     final User user;
     final Long chatId;
+    final UserActions userActions;
 
     String userName;
     Game game;
@@ -35,6 +36,7 @@ public class UserSession {
         this.bot = bot;
         this.user = user;
         this.chatId = chatId;
+        this.userActions = new UserActions(this);
         this.userName = user.getUserName();
     }
 

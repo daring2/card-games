@@ -76,6 +76,9 @@ public class GameEventProcessor implements AutoCloseable {
                 buildCardTableText()
         );
         session.sendText(turnInfo, "MarkdownV2");
+        if (game.currentPlayer() == session.player) {
+            session.userActions.showCurrentPlayerActions();
+        }
     }
 
     String buildCardTableText() {

@@ -25,7 +25,10 @@ public class GameMessages {
                 Locale.getDefault()
         );
         if (message == null) {
-            message = code + ": " + Arrays.toString(args);
+            message = code;
+            if (args.length > 0) {
+                message += ": " + Arrays.toString(args);
+            }
         }
         return message;
     }
