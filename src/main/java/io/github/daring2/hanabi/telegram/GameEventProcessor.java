@@ -47,6 +47,9 @@ public class GameEventProcessor implements AutoCloseable {
             case AddCardToTableEvent e -> {
                 sendMessage("card_added_to_table", e.card());
             }
+            case DeckEmptyEvent e -> {
+                sendMessage("deck_is_empty");
+            }
             case CreateFireworkEvent e -> {
                 sendMessage("firework_created", e.card());
             }
