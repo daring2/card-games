@@ -1,29 +1,15 @@
 package io.github.daring2.hanabi.telegram;
 
-import io.github.daring2.hanabi.model.CardInfo;
 import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.Player;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 
-import static io.github.daring2.hanabi.model.Color.WHITE;
-import static io.github.daring2.hanabi.model.Color.YELLOW;
 import static io.github.daring2.hanabi.telegram.BotTestUtils.newSession;
 import static org.assertj.core.api.Assertions.*;
 
 class UserSessionTest {
-
-    @Test
-    void testCheckGameNotNull() {
-        var session = newSession();
-        assertThatExceptionOfType(GameException.class)
-                .isThrownBy(session::checkGameNotNull)
-                .withMessage("game_is_null");
-
-        session.game = new Game();
-        assertThatNoException().isThrownBy(session::checkGameNotNull);
-    }
 
     @Test
     void testGetPlayer() {

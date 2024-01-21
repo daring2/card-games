@@ -18,6 +18,10 @@ class UserCommand {
         this.arguments = arguments;
     }
 
+    int getArgumentCount() {
+        return arguments.size();
+    }
+
     String getArgument(int index) {
         if (index >= arguments.size())
             return null;

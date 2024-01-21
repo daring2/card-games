@@ -48,7 +48,7 @@ public class HanabiBot extends TelegramLongPollingBot {
                 message.getChatId(),
                 id -> createUserSession(message)
         );
-        session.processMessage(message);
+        session.processUpdate(update);
     }
 
     void processCallbackQuery(Update update) {
@@ -58,7 +58,7 @@ public class HanabiBot extends TelegramLongPollingBot {
         var chatId = query.getMessage().getChatId();
         var session = sessions.get(chatId);
         if (session != null) {
-            session.processCallbackQuery(query);
+            session.processUpdate(update);
         }
     }
 
