@@ -101,11 +101,12 @@ class GameEventProcessor implements AutoCloseable {
         sendTurnInfo(false);
         var result = event.result();
         if (result == GameResult.LAUNCH) {
-            var scoreLevel = calculateScoreLevel(event.score());
+            var score = event.score();
+            var scoreLevel = calculateScoreLevel(score);
             var reaction = session.messages().getMessage(
                     "firework_level" + scoreLevel
             );
-            sendMessage("firework_launched", result, reaction);
+            sendMessage("firework_launched", result, score, reaction);
         } else if (result == GameResult.LOSS) {
             sendMessage("game_lost", result);
         } else {
