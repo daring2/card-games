@@ -46,7 +46,7 @@ class ActionKeyboard {
         var cards = player.cards();
         for (int i = 0, size = cards.size(); i < size; i++) {
             var card = cards.get(i);
-            var data = command.expression + " " + (i + 1);
+            var data = command.name + " " + (i + 1);
             var text = "" + player.getKnownCard(card);
             buttons.add(createButton(data, text));
         }
@@ -61,7 +61,7 @@ class ActionKeyboard {
             var player = players.get(i);
             if (player == session.player)
                 continue;
-            var data = command.expression + " " + (i + 1);
+            var data = command.name + " " + (i + 1);
             var isSelected = i == selectedIndex;
             var text = (isSelected ? "* " : "") + player.name();
             buttons.add(createButton(data, text));
