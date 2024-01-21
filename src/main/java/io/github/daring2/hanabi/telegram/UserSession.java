@@ -5,23 +5,11 @@ import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.util.Arrays;
-
-import static io.github.daring2.hanabi.telegram.UserCommandUtils.parseCardInfo;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 class UserSession {
-
-    static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 
     final HanabiBot bot;
     final User user;
@@ -41,19 +29,9 @@ class UserSession {
         this.userName = user.getUserName();
     }
 
-    void processMessage(Message message) {
-        runWithLock(() ->{
-            var text = message.getText();
-            var command = UserCommand.parse(text);
-            if (command != null) {
-                tryProcessCommand(command);
-            }
-        });
-    }
-
-    void processCallbackQuery(CallbackQuery query) {
-        runWithLock(() ->{
-            actionHandler.processCallbackQuery(query);
+    void processUpdate(Update update) {
+        runWithLock(() -> {
+            new UserCommandProcessor(this, update).process();
         });
     }
 
@@ -64,50 +42,22 @@ class UserSession {
         }
     }
 
-    void tryProcessCommand(UserCommand command) {
-        try {
-            processCommand(command);
-        } catch (Exception e) {
-            processCommandError(command, e);
-        }
-    }
-
-    void processCommand(UserCommand command) {
-        if (command == null)
-            return;
-        switch (command.name) {
-            case "set_player_name" -> processSetPlayerNameCommand(command);
-            case "create" -> processCreateCommand();
-            case "join" -> processJoinCommand(command);
-            case "leave" -> processLeaveCommand();
-            case "start" -> processStartCommand();
-            case "play_card", "p" -> processPlayCardCommand(command);
-            case "suggest", "s" -> processSuggestCommand(command);
-            case "discard", "d" -> processDiscardCommand(command);
-            default -> processInvalidCommand(command);
-        }
-    }
-
-    void processSetPlayerNameCommand(UserCommand command) {
-        var name =  command.getArgument(1);
-        if (isBlank(name)) {
-            sendMessage("empty_player_name");
-            return;
-        }
+    void updateUserName(String name) {
         userName = name;
         sendMessage("player_name_updated", userName);
     }
 
-    void processCreateCommand() {
-        createGame();
+    void createGame() {
+        leaveCurrentGame();
+        game = bot.context.gameFactory().create();
+        bot.games.put(game.id(), game);
         registerGameListener();
         game.eventBus().publish(new CreateGameEvent(game));
         createPlayer();
     }
 
-    void processJoinCommand(UserCommand command) {
+    void joinGame(String gameId) {
         leaveCurrentGame();
-        var gameId = command.getArgument(1);
         game = bot.games.get(gameId);
         if (game == null) {
             sendMessage("game_not_found", gameId);
@@ -115,46 +65,6 @@ class UserSession {
         }
         registerGameListener();
         createPlayer();
-    }
-
-    void processLeaveCommand() {
-        if (game == null)
-            return;
-        leaveCurrentGame();
-    }
-
-    void processStartCommand() {
-        checkGameNotNull();
-        game.start();
-    }
-
-    void processPlayCardCommand(UserCommand command) {
-        checkGameNotNull();
-        var cardIndex = command.getIndexArgument(1);
-        game.playCard(player, cardIndex);
-    }
-
-    void processSuggestCommand(UserCommand command) {
-        checkGameNotNull();
-        var targetPlayer = getPlayer(command.getIndexArgument(1));
-        var cardInfo = parseCardInfo(command.getArgument(2));
-        game.suggest(player, targetPlayer, cardInfo);
-    }
-
-    void processDiscardCommand(UserCommand command) {
-        checkGameNotNull();
-        var cardIndex = command.getIndexArgument(1);
-        game.discardCard(player, cardIndex);
-    }
-
-    void processInvalidCommand(UserCommand command) {
-        sendMessage("invalid_command", command.name);
-    }
-
-    void createGame() {
-        leaveCurrentGame();
-        game = bot.context.gameFactory().create();
-        bot.games.put(game.id(), game);
     }
 
     void registerGameListener() {
@@ -190,26 +100,6 @@ class UserSession {
 
     void sendText(String text) {
         sendText(text, null);
-    }
-
-    void processCommandError(UserCommand command, Exception exception) {
-        if (exception instanceof GameException e) {
-            var errorText = messages().getMessage(
-                    "errors." + e.getCode(),
-                    e.getArguments()
-            );
-            sendMessage("game_error", errorText);
-        } else {
-            var text = Strings.join(command.arguments, ' ');
-            logger.error("Cannot process command: " + text, exception);
-            sendMessage("command_error", exception.getMessage());
-        }
-    }
-
-    void checkGameNotNull() {
-        if (game == null) {
-            throw new GameException("game_is_null");
-        }
     }
 
     Player getPlayer(int index) {
