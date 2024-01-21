@@ -14,8 +14,6 @@ import java.util.List;
 
 class UserActionHandler {
 
-    //TODO rename to UserActionHandler
-
     final UserSession session;
 
     UserActionHandler(UserSession session) {
@@ -46,6 +44,7 @@ class UserActionHandler {
     }
 
     List<InlineKeyboardButton> createPlayerActionButtons() {
+        //TODO mark selected action
         return List.of(
                 createActionButton("play_card"),
                 createActionButton("discard"),
@@ -55,7 +54,7 @@ class UserActionHandler {
 
     List<InlineKeyboardButton> createCardButtons(Player player, String actionData) {
         return player.cards().stream()
-                .map(card -> createCardButton(card, actionData))
+                .map(card -> createCardButton(player, card, actionData))
                 .toList();
     }
 
@@ -64,11 +63,14 @@ class UserActionHandler {
         return createInlineButton(actionId, text);
     }
 
-    InlineKeyboardButton createCardButton(Card card, String parentData) {
-        var key = card.toString();
-        var data = parentData + " " + key;
-        //TODO mask card text
-        return createInlineButton(data, key);
+    InlineKeyboardButton createCardButton(
+            Player player,
+            Card card,
+            String parentData
+    ) {
+        var data = parentData + " " + card;
+        var text = player.getKnownCard(card).toString();
+        return createInlineButton(data, text);
     }
 
     InlineKeyboardButton createInlineButton(String data, String text) {
