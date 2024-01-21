@@ -12,7 +12,7 @@ class UserCommand {
 
     final String name;
     final List<String> arguments;
-    final String expression;
+    final String expression; //TODO remove
 
     UserCommand(List<String> arguments) {
         this.name = parseName(arguments.getFirst());

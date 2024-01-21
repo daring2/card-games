@@ -89,7 +89,7 @@ class ActionKeyboard {
 
     InlineKeyboardButton createButton(String data, String text) {
         return InlineKeyboardButton.builder()
-                .callbackData(data)
+                .callbackData(data.trim())
                 .text(text)
                 .build();
     }
