@@ -6,6 +6,7 @@ import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
@@ -92,22 +93,22 @@ class UserSession {
         game = null;
     }
 
-    void sendMessage(String code, Object... args) {
+    Message sendMessage(String code, Object... args) {
         var text = messages().getMessage(code, args);
-        sendText(text);
+        return sendText(text);
     }
 
-    void sendText(String text, String parseMode) {
+    Message sendText(String text, String parseMode) {
         var sendMessage = SendMessage.builder()
                 .chatId(chatId)
                 .text(text)
                 .parseMode(parseMode)
                 .build();
-        bot.executeSync(sendMessage);
+        return bot.executeSync(sendMessage);
     }
 
-    void sendText(String text) {
-        sendText(text, null);
+    Message sendText(String text) {
+        return sendText(text, null);
     }
 
     Player getPlayer(int index) {

@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -70,9 +71,9 @@ public class HanabiBot extends TelegramLongPollingBot {
         );
     }
 
-    void executeSync(BotApiMethod<?> method) {
+    <T extends Serializable> T executeSync(BotApiMethod<T> method) {
         try {
-            execute(method);
+            return execute(method);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
