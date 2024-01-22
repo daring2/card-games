@@ -13,10 +13,10 @@ class UserCommandTest {
             assertThat(command.arguments).containsExactly("a2", "a3");
             assertThat(command.expression).isEqualTo("a1 a2 a3");
         });
-        assertThat(UserCommand.parse("/A1 /A2 A3")).satisfies(command -> {
+        assertThat(UserCommand.parse("/A1 /A2 a3")).satisfies(command -> {
             assertThat(command.name).isEqualTo("a1");
-            assertThat(command.arguments).containsExactly("/a2", "a3");
-            assertThat(command.expression).isEqualTo("a1 /a2 a3");
+            assertThat(command.arguments).containsExactly("/A2", "a3");
+            assertThat(command.expression).isEqualTo("a1 /A2 a3");
         });
     }
 

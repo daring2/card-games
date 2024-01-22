@@ -40,10 +40,10 @@ class UserCommand {
             return null;
         var arguments = Arrays.stream(text.split(" "))
                 .map(String::trim)
-                .map(String::toLowerCase)
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
-        var name = removeStart(arguments.removeFirst(), "/");
+        var name = arguments.removeFirst();
+        name = removeStart(name.toLowerCase(), "/");
         return new UserCommand(name, arguments);
     }
 
