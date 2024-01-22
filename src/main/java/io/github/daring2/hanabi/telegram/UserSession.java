@@ -23,7 +23,7 @@ class UserSession {
     GameEventProcessor eventProcessor;
 
     Message turnInfoMessage;
-    String activeCommand;
+    UserCommand activeCommand;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
