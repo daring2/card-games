@@ -13,6 +13,8 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 class UserCommand {
 
+    //TODO convert to record
+
     final String name;
     final List<String> arguments;
     final String text; //TODO remove
@@ -20,7 +22,13 @@ class UserCommand {
     UserCommand(String name, List<String> arguments) {
         this.name = name;
         this.arguments = arguments;
-        this.text = name + " " + join(" ", arguments);
+        this.text = buildText();
+    }
+
+    String buildText() {
+        if (arguments.isEmpty())
+            return name;
+        return name + " " + join(" ", arguments);
     }
 
     String getArgument(int index) {
