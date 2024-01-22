@@ -37,4 +37,12 @@ class UserCommandTest {
         assertThat(command.getIndexArgument(2)).isEqualTo(-1);
     }
 
+    @Test
+    void testEquals() {
+        var command = UserCommand.parse("a1 a2");
+        assertThat(command).isEqualTo(UserCommand.parse("a1 a2"));
+        assertThat(command).isNotEqualTo(UserCommand.parse("a1 a3"));
+    }
+
+
 }
