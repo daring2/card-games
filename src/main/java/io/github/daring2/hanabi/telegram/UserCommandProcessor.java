@@ -155,7 +155,8 @@ class UserCommandProcessor {
             );
             sendMessage("game_error", errorText);
         } else {
-            logger.error("Cannot process command: " + command.text, exception);
+            var commandText = command.buildText();
+            logger.error("Cannot process command: " + commandText, exception);
             sendMessage("command_error", exception.getMessage());
         }
     }
