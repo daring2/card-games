@@ -14,12 +14,12 @@ class UserCommand {
 
     final String name;
     final List<String> arguments;
-    final String expression; //TODO remove
+    final String text; //TODO remove
 
     UserCommand(String name, List<String> arguments) {
         this.name = name;
         this.arguments = arguments;
-        this.expression = name + " " + join(" ", arguments);
+        this.text = name + " " + join(" ", arguments);
     }
 
     String getArgument(int index) {

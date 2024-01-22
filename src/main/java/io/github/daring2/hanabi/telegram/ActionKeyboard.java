@@ -3,7 +3,6 @@ package io.github.daring2.hanabi.telegram;
 import io.github.daring2.hanabi.model.Color;
 import io.github.daring2.hanabi.model.GameMessages;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -72,7 +71,7 @@ class ActionKeyboard {
     void addCardValueSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (int i = 1; i <= MAX_CARD_VALUE; i++) {
-            var data = command.expression + " " + i;
+            var data = command.text + " " + i;
             buttons.add(createButton(data, "" + i));
         }
         markupBuilder.keyboardRow(buttons);
@@ -81,7 +80,7 @@ class ActionKeyboard {
     void addColorSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (Color color : Color.valueList) {
-            var data = command.expression + " " + color.shortName;
+            var data = command.text + " " + color.shortName;
             buttons.add(createButton(data, color.shortName));
         }
         markupBuilder.keyboardRow(buttons);

@@ -152,7 +152,7 @@ class UserCommandProcessor {
             );
             sendMessage("game_error", errorText);
         } else {
-            logger.error("Cannot process command: " + command.expression, exception);
+            logger.error("Cannot process command: " + command.text, exception);
             sendMessage("command_error", exception.getMessage());
         }
     }
