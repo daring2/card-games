@@ -105,8 +105,6 @@ class ActionKeyboard {
 
     void update(Message message) {
         var markup = markupBuilder.build();
-        if (markup.equals(message.getReplyMarkup()))
-            return; // TODO refactor
         var editMessage = EditMessageReplyMarkup.builder()
                 .chatId(session.chatId)
                 .messageId(message.getMessageId())

@@ -23,6 +23,7 @@ class UserSession {
     GameEventProcessor eventProcessor;
 
     Message turnInfoMessage;
+    String activeCommand;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
@@ -88,6 +89,7 @@ class UserSession {
     void finishTurn() {
         deleteMessage(turnInfoMessage);
         turnInfoMessage = null;
+        activeCommand = null;
     }
 
     ActionKeyboard createActionKeyboard(UserCommand command) {

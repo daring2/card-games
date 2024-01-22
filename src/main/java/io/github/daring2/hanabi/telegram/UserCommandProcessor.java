@@ -34,6 +34,8 @@ class UserCommandProcessor {
         command = parseCommand();
         if (command == null)
             return;
+        if (command.text.equals(session.activeCommand))
+            return;
         keyboard = session.createActionKeyboard(command);
         try {
             processCommand();
@@ -137,6 +139,7 @@ class UserCommandProcessor {
     }
 
     void updateKeyboard() {
+        session.activeCommand = command.text;
         keyboard.update(session.turnInfoMessage);
     }
 
