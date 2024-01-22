@@ -21,6 +21,14 @@ class UserCommandTest {
     }
 
     @Test
+    void testBuildText() {
+        var command1 = UserCommand.parse("a1");
+        assertThat(command1.buildText()).isEqualTo("a1");
+        var command2 = UserCommand.parse("a1 a2 a3");
+        assertThat(command2.buildText()).isEqualTo("a1 a2 a3");
+    }
+
+    @Test
     void testGetArgument() {
         var command = UserCommand.parse("a1 a2 a3");
         assertThat(command.name).isEqualTo("a1");
