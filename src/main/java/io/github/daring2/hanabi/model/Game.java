@@ -153,10 +153,11 @@ public class Game {
         checkCardIndex(player, cardIndex);
         performPlayerAction(player, () -> {
             var card = player.removeCard(cardIndex);
-            publishEvent(new PlayCardEvent(this, player, card));
             var tableCards = table.get(card.color());
             var lastValue = tableCards.getLast().value();
-            if (card.value() == lastValue + 1) {
+            var isValid = card.value() == lastValue + 1;
+            publishEvent(new PlayCardEvent(this, player, card, isValid));
+            if (isValid) {
                 addCardToTable(card);
             } else {
                 discard.add(card);

@@ -256,23 +256,30 @@ class GameTest {
             assertThat(game.discard).isEmpty();
             verify(game, times(1)).takeCard(player0);
             assertThat(game.events).containsExactly(
-                    new PlayCardEvent(game, player0, card0),
+                    new PlayCardEvent(game, player0, card0, true),
                     new AddCardToTableEvent(game, card0),
                     new StartTurnEvent(game, 2)
             );
         });
         checkGame(it -> {
             var game = spy(it);
+            game.events.clear();
             var player0 = game.players.get(0);
+            var card1 = player0.cards.get(1);
             game.playCard(player0, 1); // W-3
             assertThat(player0.cards).hasSize(5)
                     .first().isEqualTo(new Card(WHITE, 1));
             verify(game, times(0))
                     .addCardToTable(new Card(WHITE, 1));
             verify(game, times(1)).addRedToken();
-            assertThat(game.discard).containsExactly(new Card(WHITE, 3));
+            assertThat(game.discard).containsExactly(card1);
             assertThat(game.redTokens).isEqualTo(1);
             verify(game, times(1)).takeCard(player0);
+            assertThat(game.events).containsExactly(
+                    new PlayCardEvent(game, player0, card1, false),
+                    new AddRedTokenEvent(game, 1),
+                    new StartTurnEvent(game, 2)
+            );
         });
     }
 

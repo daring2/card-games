@@ -40,21 +40,14 @@ class GameEventProcessor implements AutoCloseable {
                 sendMessage("game_started");
             }
             case StartTurnEvent e -> processStartTurnEvent(e);
-            case PlayCardEvent e -> {
-                sendMessage("player_played_card", e.player(), e.card());
-            }
-            case AddCardToTableEvent e -> {
-                //TODO merge with player_played_card
-                sendMessage("card_added_to_table", e.card());
-            }
+            case PlayCardEvent e -> processPlayCardEvent(e);
+//            case AddCardToTableEvent e -> {}
+//            case AddRedTokenEvent e -> {}
             case DeckEmptyEvent e -> {
                 sendMessage("deck_is_empty");
             }
             case CreateFireworkEvent e -> {
                 sendMessage("firework_created", e.card());
-            }
-            case AddRedTokenEvent e -> {
-                sendMessage("red_token_added");
             }
             case SuggestEvent e -> {
                 sendMessage("player_suggested_cards", e.player(), e.targetPlayer(), e.info());
@@ -97,6 +90,18 @@ class GameEventProcessor implements AutoCloseable {
         return table.buildText();
     }
 
+    void processPlayCardEvent(PlayCardEvent event) {
+        var card = event.card();
+        var text = getMessage("player_played_card", event.player(), card);
+        text += "\n";
+        if (event.isValid()) {
+            text += getMessage("card_added_to_table", card);
+        } else {
+            text += getMessage("red_token_added");
+        }
+        session.sendText(text);
+    }
+
     void processFinishEvent(FinishGameEvent event) {
         session.finishTurn();
         sendTurnInfo(false);
@@ -123,6 +128,10 @@ class GameEventProcessor implements AutoCloseable {
 
     void sendMessage(String code, Object... args) {
         session.sendMessage(code, args);
+    }
+
+    String getMessage(String code, Object... args) {
+        return session.messages().getMessage(code, args);
     }
 
     public void close() {
