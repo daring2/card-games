@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Color;
+import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameMessages;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -29,7 +30,7 @@ class ActionKeyboard {
     void addActionButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         //TODO check game tokens
-        var actionIds = List.of("play_card", "discard", "suggest");
+        var actionIds = getEnabledActionIds();
         for (String actionId : actionIds) {
             var label = messages().getMessage("actions." + actionId);
             var isSelected = actionId.equals(command.name);
@@ -37,6 +38,17 @@ class ActionKeyboard {
             buttons.add(createButton(actionId, text));
         }
         markupBuilder.keyboardRow(buttons);
+    }
+
+    List<String> getEnabledActionIds() {
+        var actionIds = new ArrayList<String>();
+        actionIds.add("play_card");
+        var blueTokens = session.game.blueTokens();
+        if (blueTokens < Game.MAX_BLUE_TOKENS)
+            actionIds.add("discard");
+        if (blueTokens > 0)
+            actionIds.add("suggest");
+        return actionIds;
     }
 
     void addCardSelectButtons() {
@@ -71,7 +83,7 @@ class ActionKeyboard {
     void addCardValueSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (int i = 1; i <= MAX_CARD_VALUE; i++) {
-            var data = command.text + " " + i;
+            var data = buildButtonData(1, "" + i);
             buttons.add(createButton(data, "" + i));
         }
         markupBuilder.keyboardRow(buttons);
@@ -80,10 +92,20 @@ class ActionKeyboard {
     void addColorSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (Color color : Color.valueList) {
-            var data = command.text + " " + color.shortName;
+            var data = buildButtonData(1, color.shortName);
             buttons.add(createButton(data, color.shortName));
         }
         markupBuilder.keyboardRow(buttons);
+    }
+
+    String buildButtonData(int index, String value) {
+        var args = new ArrayList<String>();
+        args.add(command.name);
+        command.arguments.stream()
+                .limit(index)
+                .forEach(args::add);
+        args.add(value);
+        return String.join(" ", args);
     }
 
     InlineKeyboardButton createButton(String data, String text) {

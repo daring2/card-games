@@ -36,7 +36,9 @@ class UserCommandProcessor {
             return;
         if (command.equals(session.activeCommand))
             return;
-        keyboard = session.createActionKeyboard(command);
+        if (game != null) {
+            keyboard = session.createActionKeyboard(command);
+        }
         try {
             processCommand();
         } catch (Exception e) {

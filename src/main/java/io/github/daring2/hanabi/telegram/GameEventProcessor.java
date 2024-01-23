@@ -44,6 +44,7 @@ class GameEventProcessor implements AutoCloseable {
                 sendMessage("player_played_card", e.player(), e.card());
             }
             case AddCardToTableEvent e -> {
+                //TODO merge with player_played_card
                 sendMessage("card_added_to_table", e.card());
             }
             case DeckEmptyEvent e -> {
