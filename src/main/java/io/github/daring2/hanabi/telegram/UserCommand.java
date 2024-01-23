@@ -4,26 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.String.join;
 import static org.apache.commons.lang3.StringUtils.*;
 
-class UserCommand {
-
-    //TODO convert to record
-
-    final String name;
-    final List<String> arguments;
-    final String text; //TODO remove
-
-    UserCommand(String name, List<String> arguments) {
-        this.name = name;
-        this.arguments = arguments;
-        this.text = buildText();
-    }
+record UserCommand(
+        String name,
+        List<String> arguments
+) {
 
     String buildText() {
         if (arguments.isEmpty())
@@ -42,19 +32,6 @@ class UserCommand {
         if (!isNumeric(value))
             return -1;
         return parseInt(value) - 1;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserCommand that = (UserCommand) o;
-        return Objects.equals(text, that.text);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(text);
     }
 
     static UserCommand parse(String text) {

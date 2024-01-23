@@ -33,7 +33,7 @@ class ActionKeyboard {
         var actionIds = getEnabledActionIds();
         for (String actionId : actionIds) {
             var label = messages().getMessage("actions." + actionId);
-            var isSelected = actionId.equals(command.name);
+            var isSelected = actionId.equals(command.name());
             var text = (isSelected ? "* " : "") + label; // use "✅" char
             buttons.add(createButton(actionId, text));
         }
@@ -57,7 +57,7 @@ class ActionKeyboard {
         var cards = player.cards();
         for (int i = 0, size = cards.size(); i < size; i++) {
             var card = cards.get(i);
-            var data = command.name + " " + (i + 1);
+            var data = command.name() + " " + (i + 1);
             var text = "" + player.getKnownCard(card);
             buttons.add(createButton(data, text));
         }
@@ -72,7 +72,7 @@ class ActionKeyboard {
             var player = players.get(i);
             if (player == session.player)
                 continue;
-            var data = command.name + " " + (i + 1);
+            var data = command.name() + " " + (i + 1);
             var isSelected = i == selectedIndex;
             var text = (isSelected ? "* " : "") + player.name();
             buttons.add(createButton(data, text));
@@ -100,8 +100,8 @@ class ActionKeyboard {
 
     String buildButtonData(int index, String value) {
         var args = new ArrayList<String>();
-        args.add(command.name);
-        command.arguments.stream()
+        args.add(command.name());
+        command.arguments().stream()
                 .limit(index)
                 .forEach(args::add);
         args.add(value);

@@ -59,7 +59,7 @@ class UserCommandProcessor {
     }
 
     void processCommand() {
-        switch (command.name) {
+        switch (command.name()) {
             case "set_player_name" -> processSetPlayerNameCommand();
             case "create" -> processCreateCommand();
             case "join" -> processJoinCommand();
@@ -102,7 +102,7 @@ class UserCommandProcessor {
     }
     void processPlayCardCommand() {
         checkGameNotNull();
-        if (command.arguments.isEmpty()) {
+        if (command.arguments().isEmpty()) {
             keyboard.addCardSelectButtons();
             updateKeyboard();
             return;
@@ -113,7 +113,7 @@ class UserCommandProcessor {
 
     void processDiscardCommand() {
         checkGameNotNull();
-        if (command.arguments.isEmpty()) {
+        if (command.arguments().isEmpty()) {
             keyboard.addCardSelectButtons();
             updateKeyboard();
             return;
@@ -124,7 +124,7 @@ class UserCommandProcessor {
 
     void processSuggestCommand() {
         checkGameNotNull();
-        var argumentsCount = command.arguments.size();
+        var argumentsCount = command.arguments().size();
         if (argumentsCount < 2) {
             keyboard.addPlayerSelectButtons();
             if (argumentsCount == 1) {
@@ -146,7 +146,7 @@ class UserCommandProcessor {
     }
 
     void processInvalidCommand() {
-        sendMessage("invalid_command", command.name);
+        sendMessage("invalid_command", command.name());
     }
 
     void processCommandError(Exception exception) {
