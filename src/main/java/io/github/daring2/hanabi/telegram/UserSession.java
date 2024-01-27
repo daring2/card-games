@@ -5,6 +5,7 @@ import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
+import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -12,8 +13,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import static org.apache.commons.lang3.StringUtils.firstNonEmpty;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class UserSession {
+
+    static final Logger logger = getLogger(UserSession.class);
 
     final HanabiBot bot;
     final User user;
@@ -89,7 +93,11 @@ class UserSession {
     }
 
     void finishTurn() {
-        deleteMessage(turnInfoMessage);
+        try {
+            deleteMessage(turnInfoMessage);
+        } catch (Exception e) {
+            logger.warn("Cannot delete message", e);
+        }
         turnInfoMessage = null;
         activeCommand = null;
     }
