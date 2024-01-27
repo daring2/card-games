@@ -59,12 +59,13 @@ class UserCommandProcessor {
     }
 
     void processCommand() {
+        //TODO handle start command
         switch (command.name()) {
             case "set_player_name" -> processSetPlayerNameCommand();
-            case "create" -> processCreateCommand();
-            case "join" -> processJoinCommand();
-            case "leave" -> processLeaveCommand();
-            case "start" -> processStartCommand();
+            case "create_game" -> processCreateCommand();
+            case "join_game" -> processJoinCommand();
+            case "leave_game" -> processLeaveCommand();
+            case "start_game" -> processStartCommand();
             case "play_card", "p" -> processPlayCardCommand();
             case "discard", "d" -> processDiscardCommand();
             case "suggest", "s" -> processSuggestCommand();
