@@ -11,6 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import static org.apache.commons.lang3.StringUtils.firstNonEmpty;
+
 class UserSession {
 
     final HanabiBot bot;
@@ -29,7 +31,7 @@ class UserSession {
         this.bot = bot;
         this.user = user;
         this.chatId = chatId;
-        this.userName = user.getUserName();
+        this.userName = firstNonEmpty(user.getUserName(), user.getFirstName());
     }
 
     void processUpdate(Update update) {
