@@ -41,10 +41,12 @@ class ActionKeyboard {
     }
 
     List<String> getEnabledActionIds() {
+        var game = session.game;
         var actionIds = new ArrayList<String>();
         actionIds.add("play_card");
-        var blueTokens = session.game.blueTokens();
-        if (blueTokens < Game.MAX_BLUE_TOKENS)
+        var blueTokens = game.blueTokens();
+        var maxBlueTokens = game.settings().getMaxBlueTokens();
+        if (blueTokens < maxBlueTokens)
             actionIds.add("discard");
         if (blueTokens > 0)
             actionIds.add("suggest");

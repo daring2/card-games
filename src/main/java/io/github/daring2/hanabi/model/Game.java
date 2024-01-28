@@ -10,9 +10,6 @@ import static java.util.UUID.randomUUID;
 public class Game {
 
     public static final int MAX_CARD_VALUE = 5;
-    public static final int MAX_BLUE_TOKENS = 8;
-    public static final int MAX_RED_TOKENS = 3;
-    public static final int MAX_FIREWORKS = 5;
     public static final int MAX_SCORE = 25;
 
     final GameSettings settings;
@@ -29,13 +26,14 @@ public class Game {
     boolean started;
     int turn;
     int fireworks;
-    int blueTokens = MAX_BLUE_TOKENS;
+    int blueTokens;
     int redTokens;
     int lastTurn = -1;
     GameResult result;
 
     public Game(GameSettings settings) {
         this.settings = settings;
+        this.blueTokens = settings.maxBlueTokens;
         eventBus.subscribe(events::add);
     }
 
@@ -45,6 +43,10 @@ public class Game {
 
     public String id() {
         return id;
+    }
+
+    public GameSettings settings() {
+        return settings;
     }
 
     public int deckSize() {
@@ -142,7 +144,7 @@ public class Game {
     public void discardCard(Player player, int cardIndex) {
         checkCardIndex(player, cardIndex);
         validate(
-                blueTokens < MAX_BLUE_TOKENS,
+                blueTokens < settings.maxBlueTokens,
                 "all_blue_tokens_in_game"
         );
         performPlayerAction(player, () -> {
@@ -202,11 +204,11 @@ public class Game {
         if (card.value() == MAX_CARD_VALUE) {
             fireworks++;
             publishEvent(new CreateFireworkEvent(this, card));
-            if (blueTokens < MAX_BLUE_TOKENS) {
+            if (blueTokens < settings.maxBlueTokens) {
                 blueTokens++;
             }
         }
-        if (fireworks >= MAX_FIREWORKS) {
+        if (fireworks >= settings.maxFireworks) {
             finish(GameResult.LAUNCH);
         }
     }
@@ -214,7 +216,7 @@ public class Game {
     void addRedToken() {
         redTokens++;
         publishEvent(new AddRedTokenEvent(this, redTokens));
-        if (redTokens >= MAX_RED_TOKENS) {
+        if (redTokens >= settings.maxRedTokens) {
             finish(GameResult.LOSS);
         }
     }

@@ -345,7 +345,7 @@ class GameTest {
             game.addCardToTable(card1);
             assertThat(game.table.get(WHITE)).isEqualTo(cards.subList(0, 2));
             assertThat(game.fireworks).isEqualTo(0);
-            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.blueTokens).isEqualTo(8);
             assertThat(game.result).isNull();
             assertThat(game.events).containsExactly(
                     new AddCardToTableEvent(game, card1)
@@ -356,7 +356,7 @@ class GameTest {
             game.addCardToTable(card2);
             assertThat(game.table.get(WHITE)).isEqualTo(cards.subList(0, 3));
             assertThat(game.fireworks).isEqualTo(0);
-            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.blueTokens).isEqualTo(8);
             assertThat(game.result).isNull();
             assertThat(game.events).containsExactly(
                     new AddCardToTableEvent(game, card2)
@@ -368,7 +368,7 @@ class GameTest {
             game.addCardToTable(card5);
             assertThat(game.table.get(WHITE)).containsExactly(cards.get(0), card5);
             assertThat(game.fireworks).isEqualTo(1);
-            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.blueTokens).isEqualTo(8);
             assertThat(game.result).isNull();
             assertThat(game.events).containsExactly(
                     new AddCardToTableEvent(game, card5),
@@ -377,11 +377,11 @@ class GameTest {
         });
         checkGame(game -> {
             game.events.clear();
-            game.fireworks = MAX_FIREWORKS - 1;
+            game.fireworks = 4;
             game.addCardToTable(cards.get(5));
             assertThat(game.table.get(WHITE)).containsExactly(cards.get(0), cards.get(5));
-            assertThat(game.fireworks).isEqualTo(MAX_FIREWORKS);
-            assertThat(game.blueTokens).isEqualTo(MAX_BLUE_TOKENS);
+            assertThat(game.fireworks).isEqualTo(5);
+            assertThat(game.blueTokens).isEqualTo(8);
             assertThat(game.result).isEqualTo(GameResult.LAUNCH);
         });
 
