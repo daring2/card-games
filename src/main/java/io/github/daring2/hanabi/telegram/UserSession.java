@@ -66,6 +66,8 @@ class UserSession {
     }
 
     void joinGame(String gameId) {
+        if (game != null && game.id().equals(gameId))
+            return;
         leaveCurrentGame();
         game = bot.games.get(gameId);
         if (game == null) {
