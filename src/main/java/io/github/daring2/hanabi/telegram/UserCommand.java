@@ -15,6 +15,10 @@ record UserCommand(
         List<String> arguments
 ) {
 
+    boolean isEmpty() {
+        return EMPTY.equals(this);
+    }
+
     String buildText() {
         if (arguments.isEmpty())
             return name;
@@ -36,7 +40,7 @@ record UserCommand(
 
     static UserCommand parse(String text) {
         if (isBlank(text))
-            return null;
+            return EMPTY;
         var arguments = Arrays.stream(text.split(" "))
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
@@ -45,6 +49,8 @@ record UserCommand(
         name = removeStart(name.toLowerCase(), "/");
         return new UserCommand(name, arguments);
     }
+
+    static final UserCommand EMPTY = empty();
 
     static UserCommand empty() {
         return new UserCommand("", List.of());

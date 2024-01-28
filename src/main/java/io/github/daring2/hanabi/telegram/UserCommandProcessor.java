@@ -32,7 +32,7 @@ class UserCommandProcessor {
 
     void process() {
         command = parseCommand();
-        if (command == null)
+        if (command .isEmpty())
             return;
         if (command.equals(session.activeCommand))
             return;

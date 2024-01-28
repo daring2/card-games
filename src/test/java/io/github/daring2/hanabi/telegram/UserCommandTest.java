@@ -8,6 +8,8 @@ class UserCommandTest {
 
     @Test
     void testParse() {
+        assertThat(UserCommand.parse("")).isEqualTo(UserCommand.EMPTY);
+        assertThat(UserCommand.parse("  ")).isEqualTo(UserCommand.EMPTY);
         assertThat(UserCommand.parse("a1 a2 a3")).satisfies(command -> {
             assertThat(command.name()).isEqualTo("a1");
             assertThat(command.arguments()).containsExactly("a2", "a3");

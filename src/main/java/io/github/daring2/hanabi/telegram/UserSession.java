@@ -88,7 +88,7 @@ class UserSession {
     void showActionKeyboard() {
         if (turnInfoMessage == null)
             return;
-        createActionKeyboard(UserCommand.empty())
+        createActionKeyboard(UserCommand.EMPTY)
                 .update(turnInfoMessage);
     }
 
