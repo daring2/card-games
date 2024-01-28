@@ -62,10 +62,10 @@ class UserCommandProcessor {
         //TODO handle start command
         switch (command.name()) {
             case "set_player_name" -> processSetPlayerNameCommand();
-            case "create_game" -> processCreateCommand();
-            case "join_game" -> processJoinCommand();
-            case "leave_game" -> processLeaveCommand();
-            case "start_game" -> processStartCommand();
+            case "create_game" -> processCreateGameCommand();
+            case "join_game" -> processJoinGameCommand();
+            case "leave_game" -> processLeaveGameCommand();
+            case "start_game" -> processStartGameCommand();
             case "play_card", "p" -> processPlayCardCommand();
             case "discard", "d" -> processDiscardCommand();
             case "suggest", "s" -> processSuggestCommand();
@@ -82,22 +82,22 @@ class UserCommandProcessor {
         session.updateUserName(name);
     }
 
-    void processCreateCommand() {
+    void processCreateGameCommand() {
         session.createGame();
     }
 
-    void processJoinCommand() {
+    void processJoinGameCommand() {
         var gameId = command.getArgument(0);
         session.joinGame(gameId);
     }
 
-    void processLeaveCommand() {
+    void processLeaveGameCommand() {
         if (game == null)
             return;
         session.leaveCurrentGame();
     }
 
-    void processStartCommand() {
+    void processStartGameCommand() {
         checkGameNotNull();
         game.start();
     }
