@@ -9,13 +9,13 @@ import static java.util.UUID.randomUUID;
 
 public class Game {
 
-    public static final int MIN_PLAYERS = 2;
-    public static final int MAX_PLAYERS = 5;
     public static final int MAX_CARD_VALUE = 5;
     public static final int MAX_BLUE_TOKENS = 8;
     public static final int MAX_RED_TOKENS = 3;
     public static final int MAX_FIREWORKS = 5;
     public static final int MAX_SCORE = 25;
+
+    final GameSettings settings;
 
     final String id = randomUUID().toString();
     final GameEventBus eventBus = new GameEventBus();
@@ -34,8 +34,13 @@ public class Game {
     int lastTurn = -1;
     GameResult result;
 
-    public Game() {
+    public Game(GameSettings settings) {
+        this.settings = settings;
         eventBus.subscribe(events::add);
+    }
+
+    public Game() {
+        this(new GameSettings());
     }
 
     public String id() {
@@ -76,7 +81,7 @@ public class Game {
 
     public void addPlayer(Player player) {
         checkNotStarted();
-        validate(players.size() < MAX_PLAYERS, "too_many_players");
+        validate(players.size() < settings.maxPlayers, "too_many_players");
         players.add(player);
         publishEvent(new AddPlayerEvent(this, player));
     }
@@ -126,8 +131,8 @@ public class Game {
 
     void checkPlayersBeforeStart() {
         var playersCount = players.size();
-        validate(playersCount >= MIN_PLAYERS, "not_enough_players");
-        validate(playersCount <= MAX_PLAYERS, "too_many_players");
+        validate(playersCount >= settings.minPlayers, "not_enough_players");
+        validate(playersCount <= settings.maxPlayers, "too_many_players");
     }
 
     int getInitPlayerCardsCount() {

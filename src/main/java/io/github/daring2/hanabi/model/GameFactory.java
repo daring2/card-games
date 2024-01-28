@@ -12,13 +12,14 @@ public class GameFactory {
     }
 
     public Game create() {
-        var game = new Game();
+        var game = new Game(context.gameSettings);
         game.setDeck(context.deckFactory.create());
         return game;
     }
 
     @Component
     public record Context(
+            GameSettings gameSettings,
             DeckFactory deckFactory
     ) {}
 

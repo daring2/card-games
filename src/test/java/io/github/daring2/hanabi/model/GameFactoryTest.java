@@ -10,6 +10,7 @@ class GameFactoryTest {
     @Test
     void testCreate() {
         var context = new GameFactory.Context(
+                new GameSettings(),
                 new DeckFactory()
         );
         var factory = new GameFactory(context);
