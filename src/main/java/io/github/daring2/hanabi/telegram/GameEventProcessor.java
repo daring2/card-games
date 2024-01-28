@@ -19,9 +19,7 @@ class GameEventProcessor implements AutoCloseable {
 
     void process(GameEvent event) {
         switch (event) {
-            case CreateGameEvent e -> {
-                sendMessage("game_created", e.game());
-            }
+            case CreateGameEvent e -> processCreateGameEvent(e);
             case AddPlayerEvent e -> {
                 if (e.player() == session.player) {
                     sendMessage("current_player_joined");
@@ -58,6 +56,12 @@ class GameEventProcessor implements AutoCloseable {
             case FinishGameEvent e -> processFinishEvent(e);
             default -> {}
         }
+    }
+
+    void processCreateGameEvent(CreateGameEvent event) {
+        var link = "https://t.me/hanabi_pbot" +
+                "?start=" + event.game().id();
+        sendMessage("game_created", link);
     }
 
     void processStartTurnEvent(StartTurnEvent event) {

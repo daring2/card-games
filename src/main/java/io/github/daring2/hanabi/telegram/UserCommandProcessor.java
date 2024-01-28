@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static io.github.daring2.hanabi.telegram.UserCommandUtils.parseCardInfo;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 class UserCommandProcessor {
 
@@ -61,6 +62,7 @@ class UserCommandProcessor {
     void processCommand() {
         //TODO handle start command
         switch (command.name()) {
+            case "start" -> processStartCommand();
             case "set_player_name" -> processSetPlayerNameCommand();
             case "create_game" -> processCreateGameCommand();
             case "join_game" -> processJoinGameCommand();
@@ -70,6 +72,13 @@ class UserCommandProcessor {
             case "discard", "d" -> processDiscardCommand();
             case "suggest", "s" -> processSuggestCommand();
             default -> processInvalidCommand();
+        }
+    }
+
+    void processStartCommand() {
+        var gameId = command.getArgument(0);
+        if (isNotBlank(gameId)) {
+            session.joinGame(gameId);
         }
     }
 
