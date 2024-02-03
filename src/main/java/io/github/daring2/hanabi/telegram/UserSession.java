@@ -23,19 +23,19 @@ class UserSession {
     final User user;
     final Long chatId;
 
-    String userName;
+    String playerName;
     Game game;
     Player player;
     GameEventProcessor eventProcessor;
 
     Message turnInfoMessage;
-    UserCommand activeCommand;
+    CommandArguments activeCommand;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
         this.user = user;
         this.chatId = chatId;
-        this.userName = firstNonEmpty(user.getUserName(), user.getFirstName());
+        this.playerName = firstNonEmpty(user.getUserName(), user.getFirstName());
     }
 
     void processUpdate(Update update) {
@@ -51,9 +51,9 @@ class UserSession {
         }
     }
 
-    void updateUserName(String name) {
-        userName = name;
-        sendMessage("player_name_updated", userName);
+    void updatePlayerName(String name) {
+        playerName = name;
+        sendMessage("player_name_updated", playerName);
     }
 
     void createGame() {
@@ -83,14 +83,14 @@ class UserSession {
     }
 
     void createPlayer() {
-        player = new Player(userName);
+        player = new Player(playerName);
         game.addPlayer(player);
     }
 
     void showActionKeyboard() {
         if (turnInfoMessage == null)
             return;
-        createActionKeyboard(UserCommand.EMPTY)
+        createActionKeyboard(CommandArguments.EMPTY)
                 .update(turnInfoMessage);
     }
 
@@ -104,7 +104,7 @@ class UserSession {
         activeCommand = null;
     }
 
-    ActionKeyboard createActionKeyboard(UserCommand command) {
+    ActionKeyboard createActionKeyboard(CommandArguments command) {
         var keyboard = new ActionKeyboard(this, command);
         keyboard.addActionButtons();
         return keyboard;

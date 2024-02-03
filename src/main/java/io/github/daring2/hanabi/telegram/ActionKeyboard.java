@@ -1,7 +1,6 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Color;
-import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameMessages;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -18,12 +17,12 @@ import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 class ActionKeyboard {
 
     final UserSession session;
-    final UserCommand command; //TODO remove
+    final CommandArguments commandArgs; //TODO remove
     final InlineKeyboardMarkupBuilder markupBuilder;
 
-    ActionKeyboard(UserSession session, UserCommand command) {
+    ActionKeyboard(UserSession session, CommandArguments commandArgs) {
         this.session = session;
-        this.command = command;
+        this.commandArgs = commandArgs;
         this.markupBuilder = InlineKeyboardMarkup.builder();
     }
 
@@ -33,7 +32,7 @@ class ActionKeyboard {
         var actionIds = getEnabledActionIds();
         for (String actionId : actionIds) {
             var label = messages().getMessage("actions." + actionId);
-            var isSelected = actionId.equals(command.name());
+            var isSelected = actionId.equals(commandArgs.name());
             var text = (isSelected ? "* " : "") + label; // use "✅" char
             buttons.add(createButton(actionId, text));
         }
@@ -59,7 +58,7 @@ class ActionKeyboard {
         var cards = player.cards();
         for (int i = 0, size = cards.size(); i < size; i++) {
             var card = cards.get(i);
-            var data = command.name() + " " + (i + 1);
+            var data = commandArgs.name() + " " + (i + 1);
             var text = "" + player.getKnownCard(card);
             buttons.add(createButton(data, text));
         }
@@ -69,12 +68,12 @@ class ActionKeyboard {
     void addPlayerSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         var players = session.game.players();
-        var selectedIndex = command.getIndexArgument(1);
+        var selectedIndex = commandArgs.getIndexValue(1);
         for (int i = 0, size = players.size(); i < size; i++) {
             var player = players.get(i);
             if (player == session.player)
                 continue;
-            var data = command.name() + " " + (i + 1);
+            var data = commandArgs.name() + " " + (i + 1);
             var isSelected = i == selectedIndex;
             var text = (isSelected ? "* " : "") + player.name();
             buttons.add(createButton(data, text));
@@ -102,8 +101,8 @@ class ActionKeyboard {
 
     String buildButtonData(int index, String value) {
         var args = new ArrayList<String>();
-        command.arguments().stream()
-                .limit(index)
+        commandArgs.arguments().stream()
+                .limit(index + 1)
                 .forEach(args::add);
         args.add(value);
         return String.join(" ", args);

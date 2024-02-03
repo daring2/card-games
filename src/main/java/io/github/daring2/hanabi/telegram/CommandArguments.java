@@ -10,15 +10,11 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.join;
 import static org.apache.commons.lang3.StringUtils.*;
 
-record UserCommand(
+record CommandArguments(
         List<String> arguments
 ) {
 
-    String name() {
-        return getArgument(0);
-    }
-
-    int argumentsCount() {
+    int size() {
         return arguments.size();
     }
 
@@ -26,24 +22,28 @@ record UserCommand(
         return EMPTY.equals(this);
     }
 
-    String buildText() {
-        return join(" ", arguments);
+    String name() {
+        return get(0);
     }
 
-    String getArgument(int index) {
+    String get(int index) {
         if (index >= arguments.size())
             return null;
         return arguments.get(index);
     }
 
-    int getIndexArgument(int index) {
-        var value = getArgument(index);
+    int getIndexValue(int index) {
+        var value = get(index);
         if (!isNumeric(value))
             return -1;
         return parseInt(value) - 1;
     }
 
-    static UserCommand parse(String text) {
+    String buildText() {
+        return join(" ", arguments);
+    }
+
+    static CommandArguments parseCommand(String text) {
         if (isBlank(text))
             return EMPTY;
         var arguments = Arrays.stream(text.split(" "))
@@ -53,13 +53,13 @@ record UserCommand(
         var name = arguments.getFirst();
         name = removeStart(name.toLowerCase(), "/");
         arguments.set(0, name);
-        return new UserCommand(arguments);
+        return new CommandArguments(arguments);
     }
 
-    static final UserCommand EMPTY = empty();
+    static final CommandArguments EMPTY = empty();
 
-    static UserCommand empty() {
-        return new UserCommand(List.of());
+    static CommandArguments empty() {
+        return new CommandArguments(List.of());
     }
 
 }
