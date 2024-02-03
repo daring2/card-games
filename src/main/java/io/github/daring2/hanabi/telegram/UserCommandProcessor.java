@@ -76,14 +76,14 @@ class UserCommandProcessor {
     }
 
     void processStartCommand() {
-        var gameId = command.getArgument(0);
+        var gameId = command.getArgument(1);
         if (isNotBlank(gameId)) {
             session.joinGame(gameId);
         }
     }
 
     void processSetPlayerNameCommand() {
-        var name =  command.getArgument(0);
+        var name =  command.getArgument(1);
         if (isBlank(name)) {
             sendMessage("empty_player_name");
             return;
@@ -96,7 +96,7 @@ class UserCommandProcessor {
     }
 
     void processJoinGameCommand() {
-        var gameId = command.getArgument(0);
+        var gameId = command.getArgument(1);
         session.joinGame(gameId);
     }
 
@@ -112,41 +112,41 @@ class UserCommandProcessor {
     }
     void processPlayCardCommand() {
         checkGameNotNull();
-        if (command.arguments().isEmpty()) {
+        if (command.argumentsCount() < 2) {
             keyboard.addCardSelectButtons();
             updateKeyboard();
             return;
         }
-        var cardIndex = command.getIndexArgument(0);
+        var cardIndex = command.getIndexArgument(1);
         game.playCard(player, cardIndex);
     }
 
     void processDiscardCommand() {
         checkGameNotNull();
-        if (command.arguments().isEmpty()) {
+        if (command.argumentsCount() < 2) {
             keyboard.addCardSelectButtons();
             updateKeyboard();
             return;
         }
-        var cardIndex = command.getIndexArgument(0);
+        var cardIndex = command.getIndexArgument(1);
         game.discardCard(player, cardIndex);
     }
 
     void processSuggestCommand() {
         checkGameNotNull();
-        var argumentsCount = command.arguments().size();
-        if (argumentsCount < 2) {
+        var argumentsCount = command.argumentsCount();
+        if (argumentsCount < 3) {
             keyboard.addPlayerSelectButtons();
-            if (argumentsCount == 1) {
+            if (argumentsCount == 2) {
                 keyboard.addCardValueSelectButtons();
                 keyboard.addColorSelectButtons();
             }
             updateKeyboard();
             return;
         }
-        var playerIndex = command.getIndexArgument(0);
+        var playerIndex = command.getIndexArgument(1);
         var targetPlayer = session.getPlayer(playerIndex);
-        var cardInfo = parseCardInfo(command.getArgument(1));
+        var cardInfo = parseCardInfo(command.getArgument(2));
         game.suggest(player, targetPlayer, cardInfo);
     }
 

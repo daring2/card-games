@@ -11,18 +11,23 @@ import static java.lang.String.join;
 import static org.apache.commons.lang3.StringUtils.*;
 
 record UserCommand(
-        String name,
         List<String> arguments
 ) {
+
+    String name() {
+        return getArgument(0);
+    }
+
+    int argumentsCount() {
+        return arguments.size();
+    }
 
     boolean isEmpty() {
         return EMPTY.equals(this);
     }
 
     String buildText() {
-        if (arguments.isEmpty())
-            return name;
-        return name + " " + join(" ", arguments);
+        return join(" ", arguments);
     }
 
     String getArgument(int index) {
@@ -45,15 +50,16 @@ record UserCommand(
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.toList());
-        var name = arguments.removeFirst();
+        var name = arguments.getFirst();
         name = removeStart(name.toLowerCase(), "/");
-        return new UserCommand(name, arguments);
+        arguments.set(0, name);
+        return new UserCommand(arguments);
     }
 
     static final UserCommand EMPTY = empty();
 
     static UserCommand empty() {
-        return new UserCommand("", List.of());
+        return new UserCommand(List.of());
     }
 
 }

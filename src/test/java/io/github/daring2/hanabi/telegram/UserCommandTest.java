@@ -12,12 +12,24 @@ class UserCommandTest {
         assertThat(UserCommand.parse("  ")).isEqualTo(UserCommand.EMPTY);
         assertThat(UserCommand.parse("a1 a2 a3")).satisfies(command -> {
             assertThat(command.name()).isEqualTo("a1");
-            assertThat(command.arguments()).containsExactly("a2", "a3");
+            assertThat(command.arguments()).containsExactly("a1", "a2", "a3");
         });
-        assertThat(UserCommand.parse("/A1 /A2 a3")).satisfies(command -> {
+        assertThat(UserCommand.parse("/A1 /A2")).satisfies(command -> {
             assertThat(command.name()).isEqualTo("a1");
-            assertThat(command.arguments()).containsExactly("/A2", "a3");
+            assertThat(command.arguments()).containsExactly("a1", "/A2");
         });
+    }
+
+    @Test
+    void testName() {
+        assertThat(UserCommand.parse("").name()).isNull();
+        assertThat(UserCommand.parse("a1 a2").name()).isEqualTo("a1");
+    }
+
+    @Test
+    void testArgumentsCount() {
+        assertThat(UserCommand.parse("").argumentsCount()).isEqualTo(0);
+        assertThat(UserCommand.parse("a1 a2").argumentsCount()).isEqualTo(2);
     }
 
     @Test
@@ -32,17 +44,19 @@ class UserCommandTest {
     void testGetArgument() {
         var command = UserCommand.parse("a1 a2 a3");
         assertThat(command.name()).isEqualTo("a1");
-        assertThat(command.getArgument(0)).isEqualTo("a2");
-        assertThat(command.getArgument(1)).isEqualTo("a3");
-        assertThat(command.getArgument(2)).isNull();
+        assertThat(command.getArgument(0)).isEqualTo("a1");
+        assertThat(command.getArgument(1)).isEqualTo("a2");
+        assertThat(command.getArgument(2)).isEqualTo("a3");
+        assertThat(command.getArgument(3)).isNull();
     }
 
     @Test
     void testGetIndexArgument() {
         var command = UserCommand.parse("a1 a2 3");
         assertThat(command.getIndexArgument(0)).isEqualTo(-1);
-        assertThat(command.getIndexArgument(1)).isEqualTo(2);
-        assertThat(command.getIndexArgument(2)).isEqualTo(-1);
+        assertThat(command.getIndexArgument(1)).isEqualTo(-1);
+        assertThat(command.getIndexArgument(2)).isEqualTo(2);
+        assertThat(command.getIndexArgument(3)).isEqualTo(-1);
     }
 
     @Test

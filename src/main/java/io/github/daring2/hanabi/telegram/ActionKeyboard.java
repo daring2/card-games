@@ -69,7 +69,7 @@ class ActionKeyboard {
     void addPlayerSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         var players = session.game.players();
-        var selectedIndex = command.getIndexArgument(0);
+        var selectedIndex = command.getIndexArgument(1);
         for (int i = 0, size = players.size(); i < size; i++) {
             var player = players.get(i);
             if (player == session.player)
@@ -102,7 +102,6 @@ class ActionKeyboard {
 
     String buildButtonData(int index, String value) {
         var args = new ArrayList<String>();
-        args.add(command.name());
         command.arguments().stream()
                 .limit(index)
                 .forEach(args::add);
