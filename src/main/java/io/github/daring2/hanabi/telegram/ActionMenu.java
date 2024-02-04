@@ -53,7 +53,7 @@ public class ActionMenu {
         session.bot.executeSync(sendMessage);
     }
 
-    void update(Message message) {
+    void updateKeyboard(Message message) {
         var editMessage = EditMessageReplyMarkup.builder()
                 .chatId(session.chatId)
                 .messageId(message.getMessageId())

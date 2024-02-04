@@ -20,7 +20,7 @@ public class SuggestCommand extends BaseCommand {
                 keyboard().addCardValueSelectButtons();
                 keyboard().addColorSelectButtons();
             }
-            session.updateMenu();
+            session.updateKeyboard();
             return;
         }
         var playerIndex = arguments.getIndexValue(1);

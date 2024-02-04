@@ -68,7 +68,7 @@ class GameEventProcessor implements AutoCloseable {
         session.finishTurn();
         sendTurnInfo(true);
         if (game.currentPlayer() == session.player) {
-            session.showCommandsMenu();
+            session.showCommandsKeyboard();
         }
     }
 

@@ -13,7 +13,7 @@ public class PlayCardCommand extends BaseCommand {
         checkGameNotNull();
         if (arguments.size() < 2) {
             keyboard().addCardSelectButtons();
-            session.updateMenu();
+            session.updateKeyboard();
             return;
         }
         var cardIndex = arguments.getIndexValue(1);

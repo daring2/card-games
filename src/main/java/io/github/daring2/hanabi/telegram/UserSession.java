@@ -110,14 +110,14 @@ public class UserSession {
         game.addPlayer(player);
     }
 
-    void showCommandsMenu() {
+    void showCommandsKeyboard() {
         commandProcessor.buildCommandsMenu();
-        menu.update(turnInfoMessage);
+        menu.updateKeyboard(turnInfoMessage);
     }
 
-    public void updateMenu() {
+    public void updateKeyboard() {
         commandProcessor.activeCommand = commandArgs;
-        menu.update(turnInfoMessage);
+        menu.updateKeyboard(turnInfoMessage);
     }
 
     void finishTurn() {
