@@ -16,6 +16,8 @@ import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 
 class ActionKeyboard {
 
+    //TODO refactor, remove?
+
     final UserSession session;
     final CommandArguments commandArgs; //TODO remove
     final InlineKeyboardMarkupBuilder markupBuilder;

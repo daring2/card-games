@@ -104,8 +104,8 @@ class UserSession {
         activeCommand = null;
     }
 
-    ActionKeyboard createActionKeyboard(CommandArguments command) {
-        var keyboard = new ActionKeyboard(this, command);
+    ActionKeyboard createActionKeyboard(CommandArguments commandArgs) {
+        var keyboard = new ActionKeyboard(this, commandArgs);
         keyboard.addActionButtons();
         return keyboard;
     }
