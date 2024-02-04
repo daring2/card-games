@@ -27,6 +27,7 @@ public class UserSession {
 
     final CommandRegistry commandRegistry = new CommandRegistry(this);
     final CommandProcessor commandProcessor = new CommandProcessor(this);
+    final ActionMenu menu = new ActionMenu(this);
     final ActionKeyboard keyboard = new ActionKeyboard(this);
 
     String playerName;
