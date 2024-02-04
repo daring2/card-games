@@ -116,6 +116,7 @@ public class UserSession {
     }
 
     public void updateKeyboard() {
+        commandProcessor.activeCommand = commandArgs;
         keyboard.update(turnInfoMessage);
     }
 

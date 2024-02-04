@@ -21,7 +21,7 @@ class CommandProcessor {
     final UserSession session;
 
     Update update;
-    CommandArguments activeCommand;
+    CommandArguments activeCommand; //TODO remove
 
     CommandProcessor(UserSession session) {
         this.session = session;
@@ -58,7 +58,6 @@ class CommandProcessor {
     }
 
     void processCommand() {
-        //TODO handle start command
         switch (commandArgs().name()) {
             case "start" -> processStartCommand();
             case "set_player_name" -> processSetPlayerNameCommand();
@@ -112,7 +111,7 @@ class CommandProcessor {
         checkGameNotNull();
         if (commandArgs().size() < 2) {
             keyboard().addCardSelectButtons();
-            updateKeyboard();
+            session.updateKeyboard();
             return;
         }
         var cardIndex = commandArgs().getIndexValue(1);
@@ -123,7 +122,7 @@ class CommandProcessor {
         checkGameNotNull();
         if (commandArgs().size() < 2) {
             keyboard().addCardSelectButtons();
-            updateKeyboard();
+            session.updateKeyboard();
             return;
         }
         var cardIndex = commandArgs().getIndexValue(1);
@@ -139,18 +138,13 @@ class CommandProcessor {
                 keyboard().addCardValueSelectButtons();
                 keyboard().addColorSelectButtons();
             }
-            updateKeyboard();
+            session.updateKeyboard();
             return;
         }
         var playerIndex = commandArgs().getIndexValue(1);
         var targetPlayer = session.getPlayer(playerIndex);
         var cardInfo = parseCardInfo(commandArgs().get(2));
         game().suggest(player(), targetPlayer, cardInfo);
-    }
-
-    void updateKeyboard() {
-        activeCommand = commandArgs();
-        session.updateKeyboard();
     }
 
     void processInvalidCommand() {
