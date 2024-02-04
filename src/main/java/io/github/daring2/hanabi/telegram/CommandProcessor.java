@@ -150,7 +150,7 @@ class CommandProcessor {
 
     void updateKeyboard() {
         activeCommand = commandArgs();
-        keyboard().update(session.turnInfoMessage);
+        session.updateKeyboard();
     }
 
     void processInvalidCommand() {

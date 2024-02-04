@@ -54,6 +54,10 @@ public class UserSession {
         return player;
     }
 
+    public ActionKeyboard keyboard() {
+        return keyboard;
+    }
+
     void processUpdate(Update update) {
         runWithLock(() -> {
             commandProcessor.process(update);
@@ -103,11 +107,15 @@ public class UserSession {
         game.addPlayer(player);
     }
 
-    void showActionKeyboard() {
+    void showKeyboard() {
         if (turnInfoMessage == null)
             return;
         keyboard.reset();
         keyboard.addActionButtons();
+        keyboard.update(turnInfoMessage);
+    }
+
+    public void updateKeyboard() {
         keyboard.update(turnInfoMessage);
     }
 
@@ -157,7 +165,7 @@ public class UserSession {
         bot.executeSync(deleteMessage);
     }
 
-    Player getPlayer(int index) {
+    public Player getPlayer(int index) {
         var players = game.players();
         if (index < 0 || index >= players.size()) {
             throw new GameException("invalid_player_index");

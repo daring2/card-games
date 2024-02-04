@@ -15,7 +15,7 @@ import java.util.List;
 
 import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 
-class ActionKeyboard {
+public class ActionKeyboard {
 
     //TODO refactor, remove?
 
@@ -57,7 +57,7 @@ class ActionKeyboard {
         return actionIds;
     }
 
-    void addCardSelectButtons() {
+    public void addCardSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         var player = session.player;
         var cards = player.cards();
@@ -70,7 +70,7 @@ class ActionKeyboard {
         markupBuilder.keyboardRow(buttons);
     }
 
-    void addPlayerSelectButtons() {
+    public void addPlayerSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         var players = session.game.players();
         var selectedIndex = commandArgs().getIndexValue(1);
@@ -86,7 +86,7 @@ class ActionKeyboard {
         markupBuilder.keyboardRow(buttons);
     }
 
-    void addCardValueSelectButtons() {
+    public void addCardValueSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (int i = 1; i <= MAX_CARD_VALUE; i++) {
             var data = buildButtonData(1, "" + i);
@@ -95,7 +95,7 @@ class ActionKeyboard {
         markupBuilder.keyboardRow(buttons);
     }
 
-    void addColorSelectButtons() {
+    public void addColorSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         for (Color color : Color.valueList) {
             var data = buildButtonData(1, color.shortName);
