@@ -17,7 +17,6 @@ class CommandProcessor {
 
     Update update;
     CommandArguments commandArgs;
-    CommandArguments activeCommand; //TODO remove
 
     CommandProcessor(UserSession session) {
         this.session = session;
@@ -26,9 +25,9 @@ class CommandProcessor {
     void process(Update update) {
         this.update = update;
         buildCommandArgs();
-        if (commandArgs.isEmpty() || commandArgs.equals(activeCommand))
+        if (commandArgs.isEmpty())
             return;
-        buildCommandsMenu();
+        session.resetMenu();
         try {
             processCommand();
         } catch (Exception e) {
@@ -49,8 +48,16 @@ class CommandProcessor {
         session.commandArgs = commandArgs;
     }
 
+    void processCommand() {
+        var command = session.commandRegistry.find(commandArgs);
+        if (command != null) {
+            command.execute(commandArgs);
+        } else {
+            processInvalidCommand();
+        }
+    }
+
     void buildCommandsMenu() {
-        session.menu.reset();
         var commands = session.commandRegistry.commands();
         var commandArgs = session.commandArgs;
         for (var command : commands) {
@@ -60,15 +67,6 @@ class CommandProcessor {
             var label = messages().getMessage("commands." + name);
             var selected = name.equals(commandArgs.name());
             session.menu.addItem(0, name, label, selected);
-        }
-    }
-
-    void processCommand() {
-        var command = session.commandRegistry.find(commandArgs);
-        if (command != null) {
-            command.execute(commandArgs);
-        } else {
-            processInvalidCommand();
         }
     }
 

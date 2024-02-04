@@ -56,6 +56,7 @@ class GameEventProcessor implements AutoCloseable {
             case FinishGameEvent e -> processFinishEvent(e);
             default -> {}
         }
+        updateMenu(event);
     }
 
     void processCreateGameEvent(CreateGameEvent event) {
@@ -67,9 +68,6 @@ class GameEventProcessor implements AutoCloseable {
     void processStartTurnEvent(StartTurnEvent event) {
         session.finishTurn();
         sendTurnInfo(true);
-        if (game.currentPlayer() == session.player) {
-            session.showCommandsKeyboard();
-        }
     }
 
     void sendTurnInfo(boolean maskCards) {
@@ -128,6 +126,16 @@ class GameEventProcessor implements AutoCloseable {
         if (score >= Game.MAX_SCORE)
             return 5;
         return (score - 1) / 5;
+    }
+
+    void updateMenu(GameEvent event) {
+        session.resetMenu();
+        session.menu.updateChatMenu();
+        if (event instanceof StartTurnEvent) {
+            if (game.currentPlayer() == session.player) {
+                session.updateKeyboard();
+            }
+        }
     }
 
     void sendMessage(String code, Object... args) {

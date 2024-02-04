@@ -23,7 +23,7 @@ public class ActionMenu {
         this.session = session;
     }
 
-    public void reset() {
+    public void clear() {
         items.clear();
     }
 
@@ -84,13 +84,16 @@ public class ActionMenu {
                 .build();
     }
 
-    void updateMenu() {
+    void updateChatMenu() {
         //TODO check if menu is changed
+        var commands = buildBotCommands();
+        if (commands.isEmpty())
+            return;
         var scope = BotCommandScopeChat.builder()
                 .chatId(session.chatId)
                 .build();
         var editMessage = SetMyCommands.builder()
-                .commands(buildBotCommands())
+                .commands(commands)
                 .scope(scope)
                 .build();
         session.bot.executeSync(editMessage);
