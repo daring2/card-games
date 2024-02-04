@@ -10,15 +10,17 @@ import java.util.stream.Collectors;
 public class CommandRegistry {
 
     final UserSession session;
-    final Map<String, UserCommand> commands;
+    final List<UserCommand> commands;
+    final Map<String, UserCommand> commandsMap;
 
     public CommandRegistry(UserSession session) {
         this.session = session;
         commands = createCommands();
+        commandsMap = buildCommandsMap();
     }
 
-    Map<String, UserCommand> createCommands() {
-        var commands = List.of(
+    List<UserCommand> createCommands() {
+        return List.of(
                 new StartBotCommand(session),
                 new SetPlayerNameCommand(session),
                 new CreateGameCommand(session),
@@ -29,13 +31,20 @@ public class CommandRegistry {
                 new DiscardCommand(session),
                 new SuggestCommand(session)
         );
+    }
+
+    Map<String, UserCommand> buildCommandsMap() {
         return commands.stream().collect(
                 Collectors.toMap(UserCommand::name, Function.identity())
         );
     }
 
-    public UserCommand find(CommandArguments commandArgs) {
-        return commands.get(commandArgs.name());
+    public List<UserCommand> commands() {
+        return commands;
+    }
+
+    public UserCommand find(CommandArguments args) {
+        return commandsMap.get(args.name());
     }
 
 }
