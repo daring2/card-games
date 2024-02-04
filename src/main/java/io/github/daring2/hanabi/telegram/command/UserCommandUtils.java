@@ -1,4 +1,4 @@
-package io.github.daring2.hanabi.telegram;
+package io.github.daring2.hanabi.telegram.command;
 
 import io.github.daring2.hanabi.model.CardInfo;
 import io.github.daring2.hanabi.model.Color;
@@ -10,7 +10,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 public class UserCommandUtils {
 
-    static CardInfo parseCardInfo(String infoExp) {
+    public static CardInfo parseCardInfo(String infoExp) {
         if (isNumeric(infoExp)) {
             var value = parseInt(infoExp);
             if (value >= 1 && value <= MAX_CARD_VALUE)

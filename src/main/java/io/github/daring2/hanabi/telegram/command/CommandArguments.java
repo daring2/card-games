@@ -1,4 +1,4 @@
-package io.github.daring2.hanabi.telegram;
+package io.github.daring2.hanabi.telegram.command;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,40 +10,40 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.join;
 import static org.apache.commons.lang3.StringUtils.*;
 
-record CommandArguments(
+public record CommandArguments(
         List<String> arguments
 ) {
 
-    int size() {
+    public int size() {
         return arguments.size();
     }
 
-    boolean isEmpty() {
+    public boolean isEmpty() {
         return EMPTY.equals(this);
     }
 
-    String name() {
+    public String name() {
         return get(0);
     }
 
-    String get(int index) {
+    public String get(int index) {
         if (index >= arguments.size())
             return null;
         return arguments.get(index);
     }
 
-    int getIndexValue(int index) {
+    public int getIndexValue(int index) {
         var value = get(index);
         if (!isNumeric(value))
             return -1;
         return parseInt(value) - 1;
     }
 
-    String buildText() {
+    public String buildText() {
         return join(" ", arguments);
     }
 
-    static CommandArguments parseCommand(String text) {
+    public static CommandArguments parseCommand(String text) {
         if (isBlank(text))
             return EMPTY;
         var arguments = Arrays.stream(text.split(" "))
@@ -56,9 +56,9 @@ record CommandArguments(
         return new CommandArguments(arguments);
     }
 
-    static final CommandArguments EMPTY = empty();
+    public static final CommandArguments EMPTY = empty();
 
-    static CommandArguments empty() {
+    public static CommandArguments empty() {
         return new CommandArguments(List.of());
     }
 

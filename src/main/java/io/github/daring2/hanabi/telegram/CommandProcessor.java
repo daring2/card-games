@@ -4,12 +4,13 @@ import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
+import io.github.daring2.hanabi.telegram.command.CommandArguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import static io.github.daring2.hanabi.telegram.CommandArguments.parseCommand;
-import static io.github.daring2.hanabi.telegram.UserCommandUtils.parseCardInfo;
+import static io.github.daring2.hanabi.telegram.command.CommandArguments.parseCommand;
+import static io.github.daring2.hanabi.telegram.command.UserCommandUtils.parseCardInfo;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

@@ -1,8 +1,8 @@
-package io.github.daring2.hanabi.telegram;
+package io.github.daring2.hanabi.telegram.command;
 
 import org.junit.jupiter.api.Test;
 
-import static io.github.daring2.hanabi.telegram.CommandArguments.parseCommand;
+import static io.github.daring2.hanabi.telegram.command.CommandArguments.parseCommand;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CommandArgumentsTest {

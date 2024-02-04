@@ -1,4 +1,4 @@
-package io.github.daring2.hanabi.telegram;
+package io.github.daring2.hanabi.telegram.command;
 
 import io.github.daring2.hanabi.model.CardInfo;
 import io.github.daring2.hanabi.model.GameException;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.github.daring2.hanabi.model.Color.WHITE;
 import static io.github.daring2.hanabi.model.Color.YELLOW;
-import static io.github.daring2.hanabi.telegram.UserCommandUtils.parseCardInfo;
+import static io.github.daring2.hanabi.telegram.command.UserCommandUtils.parseCardInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
