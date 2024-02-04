@@ -26,6 +26,7 @@ class UserSession {
     String playerName;
     Game game;
     Player player;
+    CommandProcessor commandProcessor;
     GameEventProcessor eventProcessor;
 
     Message turnInfoMessage;
@@ -35,12 +36,17 @@ class UserSession {
         this.bot = bot;
         this.user = user;
         this.chatId = chatId;
-        this.playerName = firstNonEmpty(user.getUserName(), user.getFirstName());
+        this.playerName = buildUserName(user);
+        this.commandProcessor = new CommandProcessor(this);
+    }
+
+    String buildUserName(User user) {
+        return firstNonEmpty(user.getUserName(), user.getFirstName());
     }
 
     void processUpdate(Update update) {
         runWithLock(() -> {
-            new UserCommandProcessor(this, update).process();
+            commandProcessor.process(update);
         });
     }
 

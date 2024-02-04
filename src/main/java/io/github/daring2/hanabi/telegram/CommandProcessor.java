@@ -13,32 +13,28 @@ import static io.github.daring2.hanabi.telegram.UserCommandUtils.parseCardInfo;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-class UserCommandProcessor {
+class CommandProcessor {
 
     static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 
     final UserSession session;
-    final Update update;
-    final Game game;
-    final Player player;
 
+    Update update;
     CommandArguments commandArgs;
     ActionKeyboard keyboard;
 
-    UserCommandProcessor(UserSession session, Update update) {
+    CommandProcessor(UserSession session) {
         this.session = session;
-        this.update = update;
-        this.game = session.game;
-        this.player = session.player;
     }
 
-    void process() {
+    void process(Update update) {
+        this.update = update;
         commandArgs = buildCommandArgs();
         if (commandArgs.isEmpty())
             return;
         if (commandArgs.equals(session.activeCommand))
             return;
-        if (game != null) {
+        if (game() != null) {
             keyboard = session.createActionKeyboard(commandArgs);
         }
         try {
@@ -102,14 +98,14 @@ class UserCommandProcessor {
     }
 
     void processLeaveGameCommand() {
-        if (game == null)
+        if (game() == null)
             return;
         session.leaveCurrentGame();
     }
 
     void processStartGameCommand() {
         checkGameNotNull();
-        game.start();
+        game().start();
     }
     void processPlayCardCommand() {
         checkGameNotNull();
@@ -119,7 +115,7 @@ class UserCommandProcessor {
             return;
         }
         var cardIndex = commandArgs.getIndexValue(1);
-        game.playCard(player, cardIndex);
+        game().playCard(player(), cardIndex);
     }
 
     void processDiscardCommand() {
@@ -130,7 +126,7 @@ class UserCommandProcessor {
             return;
         }
         var cardIndex = commandArgs.getIndexValue(1);
-        game.discardCard(player, cardIndex);
+        game().discardCard(player(), cardIndex);
     }
 
     void processSuggestCommand() {
@@ -148,7 +144,7 @@ class UserCommandProcessor {
         var playerIndex = commandArgs.getIndexValue(1);
         var targetPlayer = session.getPlayer(playerIndex);
         var cardInfo = parseCardInfo(commandArgs.get(2));
-        game.suggest(player, targetPlayer, cardInfo);
+        game().suggest(player(), targetPlayer, cardInfo);
     }
 
     void updateKeyboard() {
@@ -175,7 +171,7 @@ class UserCommandProcessor {
     }
 
     void checkGameNotNull() {
-        if (game == null) {
+        if (game() == null) {
             throw new GameException("game_is_null");
         }
     }
@@ -183,6 +179,14 @@ class UserCommandProcessor {
     void sendMessage(String code, Object... args) {
         var text = messages().getMessage(code, args);
         session.sendText(text);
+    }
+
+    Game game() {
+        return session.game;
+    }
+
+    Player player() {
+        return session.player;
     }
 
     GameMessages messages() {
