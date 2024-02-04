@@ -22,7 +22,7 @@ public class DiscardCommand extends BaseCommand {
     }
 
     public boolean isVisibleInMenu() {
-        if (!isGameActive())
+        if (!isCurrentPlayer())
             return false;
         var blueTokens = game().blueTokens();
         var maxBlueTokens = game().settings().getMaxBlueTokens();

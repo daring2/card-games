@@ -36,6 +36,12 @@ public abstract class BaseCommand implements UserCommand {
         return game() != null && game().isActive();
     }
 
+    boolean isCurrentPlayer() {
+        if (!isGameActive())
+            return false;
+        return game().currentPlayer() == session.player();
+    }
+
     void checkGameNotNull() {
         if (game() == null) {
             throw new GameException("game_is_null");
