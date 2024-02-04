@@ -53,6 +53,16 @@ class GameTest {
     }
 
     @Test
+    void testActive() {
+        var game = newGame();
+        assertThat(game.isActive()).isFalse();
+        game.started = true;
+        assertThat(game.isActive()).isTrue();
+        game.result = GameResult.CANCEL;
+        assertThat(game.isActive()).isFalse();
+    }
+
+    @Test
     void testFinish() {
         var game = newGame();
         assertThatThrownBy(() -> game.finish(null))
