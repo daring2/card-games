@@ -3,7 +3,6 @@ package io.github.daring2.hanabi.telegram.command;
 import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.Player;
-import io.github.daring2.hanabi.telegram.ActionKeyboard;
 import io.github.daring2.hanabi.telegram.UserSession;
 
 public abstract class BaseCommand implements UserCommand {
@@ -26,10 +25,6 @@ public abstract class BaseCommand implements UserCommand {
 
     Player player() {
         return session.player();
-    }
-
-    ActionKeyboard keyboard() {
-        return session.keyboard();
     }
 
     void addCardSelectMenu() {

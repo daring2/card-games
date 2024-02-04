@@ -1,8 +1,10 @@
 package io.github.daring2.hanabi.telegram.command;
 
+import io.github.daring2.hanabi.model.Color;
 import io.github.daring2.hanabi.telegram.ActionMenu;
 import io.github.daring2.hanabi.telegram.UserSession;
 
+import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 import static io.github.daring2.hanabi.telegram.command.UserCommandUtils.parseCardInfo;
 
 public class SuggestCommand extends BaseCommand {
@@ -19,8 +21,8 @@ public class SuggestCommand extends BaseCommand {
             session.resetMenu();
             addPlayerSelectMenu(arguments);
             if (argumentsCount == 2) {
-                keyboard().addCardValueSelectButtons();
-                keyboard().addColorSelectButtons();
+                addCardValueSelectMenu(arguments);
+                addColorSelectMenu(arguments);
             }
             session.updateKeyboard();
             return;
@@ -36,13 +38,29 @@ public class SuggestCommand extends BaseCommand {
         var selectedIndex = arguments.getIndexValue(1);
         for (int i = 0, size = players.size(); i < size; i++) {
             var player = players.get(i);
-//            if (player == session.player())
-//                continue;
+            if (player == session.player())
+                continue;
             var data = name + " " + (i + 1);
             var isSelected = i == selectedIndex;
             session.menu().addItem(1, new ActionMenu.Item(
                     data,  player.name(), isSelected
             ));
+        }
+    }
+
+    void addCardValueSelectMenu(CommandArguments arguments) {
+        var playerIndex = arguments.get(1);
+        for (int i = 1; i <= MAX_CARD_VALUE; i++) {
+            var data = name + " " + playerIndex + " " + i;
+            session.menu().addItem(2, data,  "" + i);
+        }
+    }
+
+    void addColorSelectMenu(CommandArguments arguments) {
+        var playerIndex = arguments.get(1);
+        for (Color color : Color.valueList) {
+            var data = name + " " + playerIndex + " " + color.shortName;
+            session.menu().addItem(3, data,  color.shortName);
         }
     }
 
