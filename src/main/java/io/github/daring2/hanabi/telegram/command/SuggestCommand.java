@@ -31,7 +31,7 @@ public class SuggestCommand extends BaseCommand {
     }
 
     public boolean isVisibleInMenu() {
-        if (!isGameStarted())
+        if (!isGameActive())
             return false;
         return game().blueTokens() > 0;
     }

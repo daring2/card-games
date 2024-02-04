@@ -53,6 +53,10 @@ public class Game {
         return started;
     }
 
+    public boolean isActive() {
+        return started && result == null;
+    }
+
     public int deckSize() {
         return deck.size();
     }

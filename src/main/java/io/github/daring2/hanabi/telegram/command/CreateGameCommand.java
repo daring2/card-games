@@ -15,7 +15,7 @@ public class CreateGameCommand extends BaseCommand {
 
     @Override
     public boolean isVisibleInMenu() {
-        return game() == null;
+        return !isGameActive();
     }
 
 }

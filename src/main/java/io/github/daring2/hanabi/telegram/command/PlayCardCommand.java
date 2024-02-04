@@ -23,7 +23,7 @@ public class PlayCardCommand extends BaseCommand {
 
     @Override
     public boolean isVisibleInMenu() {
-        return isGameStarted();
+        return isGameActive();
     }
 
 }
