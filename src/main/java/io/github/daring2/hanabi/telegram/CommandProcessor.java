@@ -27,6 +27,9 @@ class CommandProcessor {
         buildCommandArgs();
         if (commandArgs.isEmpty())
             return;
+        if (commandArgs.equals(session.commandArgs))
+            return;
+        session.commandArgs = commandArgs;
         try {
             processCommand();
         } catch (Exception e) {
@@ -44,7 +47,6 @@ class CommandProcessor {
             text = message.getText();
         }
         commandArgs = parseCommand(text);
-        session.commandArgs = commandArgs;
     }
 
     void processCommand() {
