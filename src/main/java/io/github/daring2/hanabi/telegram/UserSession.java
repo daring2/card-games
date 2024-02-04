@@ -34,7 +34,7 @@ public class UserSession {
     Player player;
     GameEventProcessor eventProcessor;
 
-    CommandArguments commandArgs;
+    CommandArguments commandArgs; //TODO remove
     Message turnInfoMessage;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
