@@ -28,10 +28,7 @@ class CommandProcessor {
         buildCommandArgs();
         if (commandArgs.isEmpty() || commandArgs.equals(activeCommand))
             return;
-        if (session.game != null) {
-            keyboard().reset();
-            keyboard().addActionButtons();
-        }
+        buildCommandsMenu();
         try {
             processCommand();
         } catch (Exception e) {
@@ -50,6 +47,20 @@ class CommandProcessor {
         }
         commandArgs = parseCommand(text);
         session.commandArgs = commandArgs;
+    }
+
+    void buildCommandsMenu() {
+        session.menu.reset();
+        var commands = session.commandRegistry.commands();
+        var commandArgs = session.commandArgs;
+        for (var command : commands) {
+            if (!command.isVisibleInMenu())
+                continue;
+            var name = command.name();
+            var label = messages().getMessage("commands." + name);
+            var selected = name.equals(commandArgs.name());
+            session.menu.addItem(0, name, label, selected);
+        }
     }
 
     void processCommand() {
@@ -77,10 +88,6 @@ class CommandProcessor {
             logger.error("Cannot process command: " + commandText, exception);
             session.sendMessage("command_error", exception.getMessage());
         }
-    }
-
-    ActionKeyboard keyboard() {
-        return session.keyboard;
     }
 
     GameMessages messages() {

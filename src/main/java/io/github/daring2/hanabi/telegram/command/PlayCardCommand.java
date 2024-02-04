@@ -13,11 +13,16 @@ public class PlayCardCommand extends BaseCommand {
         checkGameNotNull();
         if (arguments.size() < 2) {
             keyboard().addCardSelectButtons();
-            session.updateKeyboard();
+            session.updateMenu();
             return;
         }
         var cardIndex = arguments.getIndexValue(1);
         game().playCard(player(), cardIndex);
+    }
+
+    @Override
+    public boolean isVisibleInMenu() {
+        return isGameStarted();
     }
 
 }

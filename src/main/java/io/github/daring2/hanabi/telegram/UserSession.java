@@ -110,25 +110,18 @@ public class UserSession {
         game.addPlayer(player);
     }
 
-    void showKeyboard() {
-        if (turnInfoMessage == null)
-            return;
-        keyboard.reset();
-        keyboard.addActionButtons();
-        keyboard.update(turnInfoMessage);
+    void showCommandsMenu() {
+        commandProcessor.buildCommandsMenu();
+        menu.update(turnInfoMessage);
     }
 
-    public void updateKeyboard() {
+    public void updateMenu() {
         commandProcessor.activeCommand = commandArgs;
-        keyboard.update(turnInfoMessage);
+        menu.update(turnInfoMessage);
     }
 
     void finishTurn() {
-        try {
-            deleteMessage(turnInfoMessage);
-        } catch (Exception e) {
-            logger.warn("Cannot delete message", e);
-        }
+        deleteMessage(turnInfoMessage);
         turnInfoMessage = null;
         commandProcessor.activeCommand = null;
     }
@@ -162,11 +155,15 @@ public class UserSession {
     void deleteMessage(Message message) {
         if (message == null)
             return;
-        var deleteMessage = DeleteMessage.builder()
-                .chatId(chatId)
-                .messageId(message.getMessageId())
-                .build();
-        bot.executeSync(deleteMessage);
+        try {
+            var deleteMessage = DeleteMessage.builder()
+                    .chatId(chatId)
+                    .messageId(message.getMessageId())
+                    .build();
+            bot.executeSync(deleteMessage);
+        } catch (Exception e) {
+            logger.warn("Cannot delete message", e);
+        }
     }
 
     public Player getPlayer(int index) {

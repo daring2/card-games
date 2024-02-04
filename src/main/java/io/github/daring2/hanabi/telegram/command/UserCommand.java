@@ -6,4 +6,8 @@ public interface UserCommand {
 
     void execute(CommandArguments arguments);
 
+    default boolean isVisibleInMenu() {
+        return false;
+    }
+
 }

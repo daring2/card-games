@@ -20,13 +20,19 @@ public class SuggestCommand extends BaseCommand {
                 keyboard().addCardValueSelectButtons();
                 keyboard().addColorSelectButtons();
             }
-            session.updateKeyboard();
+            session.updateMenu();
             return;
         }
         var playerIndex = arguments.getIndexValue(1);
         var targetPlayer = session.getPlayer(playerIndex);
         var cardInfo = parseCardInfo(arguments.get(2));
         game().suggest(player(), targetPlayer, cardInfo);
+    }
+
+    public boolean isVisibleInMenu() {
+        if (!isGameStarted())
+            return false;
+        return game().blueTokens() > 0;
     }
 
 }

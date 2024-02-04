@@ -13,4 +13,9 @@ public class CreateGameCommand extends BaseCommand {
         session.createGame();
     }
 
+    @Override
+    public boolean isVisibleInMenu() {
+        return game() == null;
+    }
+
 }

@@ -32,6 +32,10 @@ public abstract class BaseCommand implements UserCommand {
         return session.keyboard();
     }
 
+    boolean isGameStarted() {
+        return game() != null && game().isStarted();
+    }
+
     void checkGameNotNull() {
         if (game() == null) {
             throw new GameException("game_is_null");

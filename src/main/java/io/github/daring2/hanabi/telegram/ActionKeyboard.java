@@ -23,33 +23,6 @@ public class ActionKeyboard {
         this.menu = session.menu;
     }
 
-    void reset() {
-        menu.reset();
-    }
-
-    void addActionButtons() {
-        //TODO check game tokens
-        var actionIds = getEnabledActionIds();
-        for (String actionId : actionIds) {
-            var label = messages().getMessage("actions." + actionId);
-            var isSelected = actionId.equals(commandArgs().name());
-            menu.addItem(0, actionId, label, isSelected);
-        }
-    }
-
-    List<String> getEnabledActionIds() {
-        var game = session.game;
-        var actionIds = new ArrayList<String>();
-        actionIds.add("play_card");
-        var blueTokens = game.blueTokens();
-        var maxBlueTokens = game.settings().getMaxBlueTokens();
-        if (blueTokens < maxBlueTokens)
-            actionIds.add("discard");
-        if (blueTokens > 0)
-            actionIds.add("suggest");
-        return actionIds;
-    }
-
     public void addCardSelectButtons() {
         var player = session.player;
         var cards = player.cards();
@@ -97,23 +70,8 @@ public class ActionKeyboard {
         return String.join(" ", args);
     }
 
-    InlineKeyboardButton createButton(String data, String text) {
-        return InlineKeyboardButton.builder()
-                .callbackData(data.trim())
-                .text(text)
-                .build();
-    }
-
-    void update(Message message) {
-        session.menu.update(message);
-    }
-
     CommandArguments commandArgs() {
         return session.commandArgs;
-    }
-
-    GameMessages messages() {
-        return session.messages();
     }
 
 }

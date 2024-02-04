@@ -14,4 +14,9 @@ public class StartGameCommand extends BaseCommand {
         game().start();
     }
 
+    @Override
+    public boolean isVisibleInMenu() {
+        return game() != null && !game().isStarted();
+    }
+
 }

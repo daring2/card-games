@@ -49,6 +49,10 @@ public class Game {
         return settings;
     }
 
+    public boolean isStarted() {
+        return started;
+    }
+
     public int deckSize() {
         return deck.size();
     }

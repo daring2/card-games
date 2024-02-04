@@ -13,11 +13,19 @@ public class DiscardCommand extends BaseCommand {
         checkGameNotNull();
         if (arguments.size() < 2) {
             keyboard().addCardSelectButtons();
-            session.updateKeyboard();
+            session.updateMenu();
             return;
         }
         var cardIndex = arguments.getIndexValue(1);
         game().discardCard(player(), cardIndex);
+    }
+
+    public boolean isVisibleInMenu() {
+        if (!isGameStarted())
+            return false;
+        var blueTokens = game().blueTokens();
+        var maxBlueTokens = game().settings().getMaxBlueTokens();
+        return blueTokens < maxBlueTokens;
     }
 
 }
