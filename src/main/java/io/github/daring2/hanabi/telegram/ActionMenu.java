@@ -34,24 +34,15 @@ public class ActionMenu {
         items.get(row).add(item);
     }
 
-    public void addItem(
-            int row,
-            String data,
-            String label,
-            boolean selected
-    ) {
-        addItem(row, new Item(data, label, selected));
-    }
-
     public void addItem(int row, String data, String label) {
-        addItem(row, data, label, false);
+        addItem(row, new Item(data, label, false));
     }
 
     public void addCommandItem(UserCommand command) {
         var name = command.name();
         var label = messages().getMessage("commands." + name);
         var selected = name.equals(session.commandArgs.name());
-        addItem(0, name, label, selected);
+        addItem(0, new Item(name, label, selected));
     }
 
     void open() {

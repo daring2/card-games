@@ -127,6 +127,7 @@ public class UserSession {
     }
 
     void finishTurn() {
+        commandArgs = CommandArguments.EMPTY;
         deleteMessage(turnInfoMessage);
         turnInfoMessage = null;
     }

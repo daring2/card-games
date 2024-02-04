@@ -43,7 +43,9 @@ public class ActionKeyboard {
                 continue;
             var data = commandArgs().name() + " " + (i + 1);
             var isSelected = i == selectedIndex;
-            menu.addItem(1, data,  player.name(), isSelected);
+            menu.addItem(1, new ActionMenu.Item(
+                    data,  player.name(), isSelected
+            ));
         }
     }
 
