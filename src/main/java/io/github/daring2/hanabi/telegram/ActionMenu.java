@@ -1,9 +1,12 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.GameMessages;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeChat;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -78,6 +81,33 @@ public class ActionMenu {
         return InlineKeyboardButton.builder()
                 .callbackData(item.data.trim())
                 .text(text)
+                .build();
+    }
+
+    void updateMenu() {
+        //TODO check if menu is changed
+        var scope = BotCommandScopeChat.builder()
+                .chatId(session.chatId)
+                .build();
+        var editMessage = SetMyCommands.builder()
+                .commands(buildBotCommands())
+                .scope(scope)
+                .build();
+        session.bot.executeSync(editMessage);
+    }
+
+    List<BotCommand> buildBotCommands() {
+        if (items.isEmpty())
+            return List.of();
+        return items.getFirst().stream()
+                .map(this::createBotCommand)
+                .toList();
+    }
+
+    BotCommand createBotCommand(Item item) {
+        return BotCommand.builder()
+                .command("/" + item.data)
+                .description(item.label)
                 .build();
     }
 
