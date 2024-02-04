@@ -19,21 +19,6 @@ public class ActionKeyboard {
         this.menu = session.menu;
     }
 
-    public void addPlayerSelectButtons() {
-        var players = session.game.players();
-        var selectedIndex = commandArgs().getIndexValue(1);
-        for (int i = 0, size = players.size(); i < size; i++) {
-            var player = players.get(i);
-            if (player == session.player)
-                continue;
-            var data = commandArgs().name() + " " + (i + 1);
-            var isSelected = i == selectedIndex;
-            menu.addItem(1, new ActionMenu.Item(
-                    data,  player.name(), isSelected
-            ));
-        }
-    }
-
     public void addCardValueSelectButtons() {
         for (int i = 1; i <= MAX_CARD_VALUE; i++) {
             var data = buildButtonData(1, "" + i);

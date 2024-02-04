@@ -32,7 +32,7 @@ public abstract class BaseCommand implements UserCommand {
         return session.keyboard();
     }
 
-    void addCardSelectMenuItems() {
+    void addCardSelectMenu() {
         var player = session.player();
         var cards = player.cards();
         for (int i = 0, size = cards.size(); i < size; i++) {
