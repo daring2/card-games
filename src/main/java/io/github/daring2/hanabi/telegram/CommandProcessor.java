@@ -21,6 +21,7 @@ class CommandProcessor {
 
     Update update;
     CommandArguments commandArgs;
+    CommandArguments activeCommand;
     ActionKeyboard keyboard;
 
     CommandProcessor(UserSession session) {
@@ -32,7 +33,7 @@ class CommandProcessor {
         commandArgs = buildCommandArgs();
         if (commandArgs.isEmpty())
             return;
-        if (commandArgs.equals(session.activeCommand))
+        if (commandArgs.equals(activeCommand))
             return;
         if (game() != null) {
             keyboard = session.createActionKeyboard(commandArgs);
@@ -148,7 +149,7 @@ class CommandProcessor {
     }
 
     void updateKeyboard() {
-        session.activeCommand = commandArgs;
+        activeCommand = commandArgs;
         keyboard.update(session.turnInfoMessage);
     }
 

@@ -30,7 +30,6 @@ class UserSession {
     GameEventProcessor eventProcessor;
 
     Message turnInfoMessage;
-    CommandArguments activeCommand;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
@@ -107,7 +106,7 @@ class UserSession {
             logger.warn("Cannot delete message", e);
         }
         turnInfoMessage = null;
-        activeCommand = null;
+        commandProcessor.activeCommand = null;
     }
 
     ActionKeyboard createActionKeyboard(CommandArguments commandArgs) {
