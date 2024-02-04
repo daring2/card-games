@@ -8,18 +8,18 @@ import static io.github.daring2.hanabi.telegram.BotTestUtils.newSession;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
-class UserCommandProcessorTest {
+class CommandProcessorTest {
 
     @Test
     void testCheckGameNotNull() {
         var session = newSession();
-        var processor1 = new UserCommandProcessor(session, null);
+        var processor1 = new CommandProcessor(session);
         assertThatExceptionOfType(GameException.class)
                 .isThrownBy(processor1::checkGameNotNull)
                 .withMessage("game_is_null");
 
         session.game = new Game();
-        var processor2 = new UserCommandProcessor(session, null);
+        var processor2 = new CommandProcessor(session);
         assertThatNoException().isThrownBy(processor2::checkGameNotNull);
     }
 
