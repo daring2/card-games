@@ -27,7 +27,6 @@ class CommandProcessor {
         buildCommandArgs();
         if (commandArgs.isEmpty())
             return;
-        session.resetMenu();
         try {
             processCommand();
         } catch (Exception e) {
@@ -54,19 +53,6 @@ class CommandProcessor {
             command.execute(commandArgs);
         } else {
             processInvalidCommand();
-        }
-    }
-
-    void buildCommandsMenu() {
-        var commands = session.commandRegistry.commands();
-        var commandArgs = session.commandArgs;
-        for (var command : commands) {
-            if (!command.isVisibleInMenu())
-                continue;
-            var name = command.name();
-            var label = messages().getMessage("commands." + name);
-            var selected = name.equals(commandArgs.name());
-            session.menu.addItem(0, name, label, selected);
         }
     }
 

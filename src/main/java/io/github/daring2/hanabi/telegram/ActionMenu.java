@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.GameMessages;
+import io.github.daring2.hanabi.telegram.command.UserCommand;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -44,6 +45,13 @@ public class ActionMenu {
 
     public void addItem(int row, String data, String label) {
         addItem(row, data, label, false);
+    }
+
+    public void addCommandItem(UserCommand command) {
+        var name = command.name();
+        var label = messages().getMessage("commands." + name);
+        var selected = name.equals(session.commandArgs.name());
+        addItem(0, name, label, selected);
     }
 
     void open() {

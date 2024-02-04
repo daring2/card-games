@@ -7,6 +7,7 @@ import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import io.github.daring2.hanabi.telegram.command.CommandArguments;
 import io.github.daring2.hanabi.telegram.command.CommandRegistry;
+import io.github.daring2.hanabi.telegram.command.UserCommand;
 import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -110,9 +111,15 @@ public class UserSession {
         game.addPlayer(player);
     }
 
-    void resetMenu() {
+    public void resetMenu() {
         menu.clear();
-        commandProcessor.buildCommandsMenu();
+        buildCommandsMenu();
+    }
+
+    void buildCommandsMenu() {
+        commandRegistry.commands().stream()
+                .filter(UserCommand::isVisibleInMenu)
+                .forEach(menu::addCommandItem);
     }
 
     public void updateKeyboard() {

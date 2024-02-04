@@ -12,6 +12,7 @@ public class DiscardCommand extends BaseCommand {
     public void execute(CommandArguments arguments) {
         checkGameNotNull();
         if (arguments.size() < 2) {
+            session.resetMenu();
             keyboard().addCardSelectButtons();
             session.updateKeyboard();
             return;

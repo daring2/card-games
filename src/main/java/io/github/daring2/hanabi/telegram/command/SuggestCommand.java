@@ -15,6 +15,7 @@ public class SuggestCommand extends BaseCommand {
         checkGameNotNull();
         var argumentsCount = arguments.size();
         if (argumentsCount < 3) {
+            session.resetMenu();
             keyboard().addPlayerSelectButtons();
             if (argumentsCount == 2) {
                 keyboard().addCardValueSelectButtons();

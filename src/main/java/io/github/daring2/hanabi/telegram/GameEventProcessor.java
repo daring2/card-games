@@ -26,6 +26,7 @@ class GameEventProcessor implements AutoCloseable {
                 } else {
                     sendMessage("player_joined", e.player());
                 }
+                updateChatMenu();
             }
             case RemovePlayerEvent e -> {
                 if (e.player() == session.player) {
@@ -33,6 +34,7 @@ class GameEventProcessor implements AutoCloseable {
                 } else {
                     sendMessage("player_left", e.player());
                 }
+                updateChatMenu();
             }
             case StartGameEvent ignored -> {
                 sendMessage("game_started");
@@ -53,21 +55,25 @@ class GameEventProcessor implements AutoCloseable {
             case DiscardCardEvent e -> {
                 sendMessage("player_discarded_card", e.player(), e.card());
             }
-            case FinishGameEvent e -> processFinishEvent(e);
+            case FinishGameEvent e -> processFinishGameEvent(e);
             default -> {}
         }
-        updateMenu(event);
     }
 
     void processCreateGameEvent(CreateGameEvent event) {
         var link = "https://t.me/hanabi_pbot" +
                 "?start=" + event.game().id();
         sendMessage("game_created", link);
+        updateChatMenu();
     }
 
     void processStartTurnEvent(StartTurnEvent event) {
         session.finishTurn();
         sendTurnInfo(true);
+        updateChatMenu();
+        if (game.currentPlayer() == session.player) {
+            session.updateKeyboard();
+        }
     }
 
     void sendTurnInfo(boolean maskCards) {
@@ -104,7 +110,7 @@ class GameEventProcessor implements AutoCloseable {
         session.sendText(text);
     }
 
-    void processFinishEvent(FinishGameEvent event) {
+    void processFinishGameEvent(FinishGameEvent event) {
         session.finishTurn();
         sendTurnInfo(false);
         var result = event.result();
@@ -120,6 +126,7 @@ class GameEventProcessor implements AutoCloseable {
         } else {
             sendMessage("game_canceled");
         }
+        updateChatMenu();
     }
 
     int calculateScoreLevel(int score) {
@@ -128,14 +135,9 @@ class GameEventProcessor implements AutoCloseable {
         return (score - 1) / 5;
     }
 
-    void updateMenu(GameEvent event) {
+    void updateChatMenu() {
         session.resetMenu();
         session.menu.updateChatMenu();
-        if (event instanceof StartTurnEvent) {
-            if (game.currentPlayer() == session.player) {
-                session.updateKeyboard();
-            }
-        }
     }
 
     void sendMessage(String code, Object... args) {
