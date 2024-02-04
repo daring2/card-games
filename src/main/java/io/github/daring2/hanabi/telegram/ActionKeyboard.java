@@ -20,13 +20,15 @@ class ActionKeyboard {
     //TODO refactor, remove?
 
     final UserSession session;
-    final CommandArguments commandArgs; //TODO remove
     final InlineKeyboardMarkupBuilder markupBuilder;
 
-    ActionKeyboard(UserSession session, CommandArguments commandArgs) {
+    ActionKeyboard(UserSession session) {
         this.session = session;
-        this.commandArgs = commandArgs;
         this.markupBuilder = InlineKeyboardMarkup.builder();
+    }
+
+    void reset() {
+        markupBuilder.clearKeyboard();
     }
 
     void addActionButtons() {
@@ -35,7 +37,7 @@ class ActionKeyboard {
         var actionIds = getEnabledActionIds();
         for (String actionId : actionIds) {
             var label = messages().getMessage("actions." + actionId);
-            var isSelected = actionId.equals(commandArgs.name());
+            var isSelected = actionId.equals(commandArgs().name());
             var text = (isSelected ? "* " : "") + label; // use "✅" char
             buttons.add(createButton(actionId, text));
         }
@@ -61,7 +63,7 @@ class ActionKeyboard {
         var cards = player.cards();
         for (int i = 0, size = cards.size(); i < size; i++) {
             var card = cards.get(i);
-            var data = commandArgs.name() + " " + (i + 1);
+            var data = commandArgs().name() + " " + (i + 1);
             var text = "" + player.getKnownCard(card);
             buttons.add(createButton(data, text));
         }
@@ -71,12 +73,12 @@ class ActionKeyboard {
     void addPlayerSelectButtons() {
         var buttons = new ArrayList<InlineKeyboardButton>();
         var players = session.game.players();
-        var selectedIndex = commandArgs.getIndexValue(1);
+        var selectedIndex = commandArgs().getIndexValue(1);
         for (int i = 0, size = players.size(); i < size; i++) {
             var player = players.get(i);
             if (player == session.player)
                 continue;
-            var data = commandArgs.name() + " " + (i + 1);
+            var data = commandArgs().name() + " " + (i + 1);
             var isSelected = i == selectedIndex;
             var text = (isSelected ? "* " : "") + player.name();
             buttons.add(createButton(data, text));
@@ -104,7 +106,7 @@ class ActionKeyboard {
 
     String buildButtonData(int index, String value) {
         var args = new ArrayList<String>();
-        commandArgs.arguments().stream()
+        commandArgs().arguments().stream()
                 .limit(index + 1)
                 .forEach(args::add);
         args.add(value);
@@ -136,6 +138,10 @@ class ActionKeyboard {
                 .replyMarkup(markup)
                 .build();
         session.bot.executeSync(editMessage);
+    }
+
+    CommandArguments commandArgs() {
+        return session.commandArgs;
     }
 
     GameMessages messages() {

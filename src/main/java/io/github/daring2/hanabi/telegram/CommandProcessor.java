@@ -21,9 +21,7 @@ class CommandProcessor {
     final UserSession session;
 
     Update update;
-    CommandArguments commandArgs;
     CommandArguments activeCommand;
-    ActionKeyboard keyboard;
 
     CommandProcessor(UserSession session) {
         this.session = session;
@@ -31,13 +29,14 @@ class CommandProcessor {
 
     void process(Update update) {
         this.update = update;
-        commandArgs = buildCommandArgs();
-        if (commandArgs.isEmpty())
+        buildCommandArgs();
+        if (commandArgs().isEmpty())
             return;
-        if (commandArgs.equals(activeCommand))
+        if (commandArgs().equals(activeCommand))
             return;
         if (game() != null) {
-            keyboard = session.createActionKeyboard(commandArgs);
+            keyboard().reset();
+            keyboard().addActionButtons();
         }
         try {
             processCommand();
@@ -46,7 +45,7 @@ class CommandProcessor {
         }
     }
 
-    CommandArguments buildCommandArgs() {
+    void buildCommandArgs() {
         var text = "";
         var message = update.getMessage();
         var callback = update.getCallbackQuery();
@@ -55,12 +54,12 @@ class CommandProcessor {
         } else if (message != null) {
             text = message.getText();
         }
-        return parseCommand(text);
+        session.commandArgs = parseCommand(text);
     }
 
     void processCommand() {
         //TODO handle start command
-        switch (commandArgs.name()) {
+        switch (commandArgs().name()) {
             case "start" -> processStartCommand();
             case "set_player_name" -> processSetPlayerNameCommand();
             case "create_game" -> processCreateGameCommand();
@@ -75,14 +74,14 @@ class CommandProcessor {
     }
 
     void processStartCommand() {
-        var gameId = commandArgs.get(1);
+        var gameId = commandArgs().get(1);
         if (isNotBlank(gameId)) {
             session.joinGame(gameId);
         }
     }
 
     void processSetPlayerNameCommand() {
-        var playerName = commandArgs.get(1);
+        var playerName = commandArgs().get(1);
         if (isBlank(playerName)) {
             sendMessage("empty_player_name");
             return;
@@ -95,7 +94,7 @@ class CommandProcessor {
     }
 
     void processJoinGameCommand() {
-        var gameId = commandArgs.get(1);
+        var gameId = commandArgs().get(1);
         session.joinGame(gameId);
     }
 
@@ -111,51 +110,51 @@ class CommandProcessor {
     }
     void processPlayCardCommand() {
         checkGameNotNull();
-        if (commandArgs.size() < 2) {
-            keyboard.addCardSelectButtons();
+        if (commandArgs().size() < 2) {
+            keyboard().addCardSelectButtons();
             updateKeyboard();
             return;
         }
-        var cardIndex = commandArgs.getIndexValue(1);
+        var cardIndex = commandArgs().getIndexValue(1);
         game().playCard(player(), cardIndex);
     }
 
     void processDiscardCommand() {
         checkGameNotNull();
-        if (commandArgs.size() < 2) {
-            keyboard.addCardSelectButtons();
+        if (commandArgs().size() < 2) {
+            keyboard().addCardSelectButtons();
             updateKeyboard();
             return;
         }
-        var cardIndex = commandArgs.getIndexValue(1);
+        var cardIndex = commandArgs().getIndexValue(1);
         game().discardCard(player(), cardIndex);
     }
 
     void processSuggestCommand() {
         checkGameNotNull();
-        var argumentsCount = commandArgs.size();
+        var argumentsCount = commandArgs().size();
         if (argumentsCount < 3) {
-            keyboard.addPlayerSelectButtons();
+            keyboard().addPlayerSelectButtons();
             if (argumentsCount == 2) {
-                keyboard.addCardValueSelectButtons();
-                keyboard.addColorSelectButtons();
+                keyboard().addCardValueSelectButtons();
+                keyboard().addColorSelectButtons();
             }
             updateKeyboard();
             return;
         }
-        var playerIndex = commandArgs.getIndexValue(1);
+        var playerIndex = commandArgs().getIndexValue(1);
         var targetPlayer = session.getPlayer(playerIndex);
-        var cardInfo = parseCardInfo(commandArgs.get(2));
+        var cardInfo = parseCardInfo(commandArgs().get(2));
         game().suggest(player(), targetPlayer, cardInfo);
     }
 
     void updateKeyboard() {
-        activeCommand = commandArgs;
-        keyboard.update(session.turnInfoMessage);
+        activeCommand = commandArgs();
+        keyboard().update(session.turnInfoMessage);
     }
 
     void processInvalidCommand() {
-        sendMessage("invalid_command", commandArgs.name());
+        sendMessage("invalid_command", commandArgs().name());
     }
 
     void processCommandError(Exception exception) {
@@ -166,7 +165,7 @@ class CommandProcessor {
             );
             sendMessage("game_error", errorText);
         } else {
-            var commandText = commandArgs.buildText();
+            var commandText = commandArgs().buildText();
             logger.error("Cannot process command: " + commandText, exception);
             sendMessage("command_error", exception.getMessage());
         }
@@ -189,6 +188,14 @@ class CommandProcessor {
 
     Player player() {
         return session.player;
+    }
+
+    CommandArguments commandArgs() {
+        return session.commandArgs;
+    }
+
+    ActionKeyboard keyboard() {
+        return session.keyboard;
     }
 
     GameMessages messages() {

@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import static org.apache.commons.lang3.StringUtils.firstNonEmpty;
 import static org.slf4j.LoggerFactory.getLogger;
 
-class UserSession {
+public class UserSession {
 
     static final Logger logger = getLogger(UserSession.class);
 
@@ -24,12 +24,15 @@ class UserSession {
     final User user;
     final Long chatId;
 
+    final CommandProcessor commandProcessor = new CommandProcessor(this);
+    final ActionKeyboard keyboard = new ActionKeyboard(this);
+
     String playerName;
     Game game;
     Player player;
-    CommandProcessor commandProcessor;
     GameEventProcessor eventProcessor;
 
+    CommandArguments commandArgs;
     Message turnInfoMessage;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
@@ -37,11 +40,18 @@ class UserSession {
         this.user = user;
         this.chatId = chatId;
         this.playerName = buildUserName(user);
-        this.commandProcessor = new CommandProcessor(this);
     }
 
     String buildUserName(User user) {
         return firstNonEmpty(user.getUserName(), user.getFirstName());
+    }
+
+    public Game game() {
+        return game;
+    }
+
+    public Player player() {
+        return player;
     }
 
     void processUpdate(Update update) {
@@ -57,12 +67,12 @@ class UserSession {
         }
     }
 
-    void updatePlayerName(String name) {
+    public void updatePlayerName(String name) {
         playerName = name;
         sendMessage("player_name_updated", playerName);
     }
 
-    void createGame() {
+    public void createGame() {
         leaveCurrentGame();
         game = bot.context.gameFactory().create();
         bot.games.put(game.id(), game);
@@ -71,7 +81,7 @@ class UserSession {
         createPlayer();
     }
 
-    void joinGame(String gameId) {
+    public void joinGame(String gameId) {
         if (game != null && game.id().equals(gameId))
             return;
         leaveCurrentGame();
@@ -96,8 +106,9 @@ class UserSession {
     void showActionKeyboard() {
         if (turnInfoMessage == null)
             return;
-        createActionKeyboard(CommandArguments.EMPTY)
-                .update(turnInfoMessage);
+        keyboard.reset();
+        keyboard.addActionButtons();
+        keyboard.update(turnInfoMessage);
     }
 
     void finishTurn() {
@@ -110,13 +121,7 @@ class UserSession {
         commandProcessor.activeCommand = null;
     }
 
-    ActionKeyboard createActionKeyboard(CommandArguments commandArgs) {
-        var keyboard = new ActionKeyboard(this, commandArgs);
-        keyboard.addActionButtons();
-        return keyboard;
-    }
-
-    void leaveCurrentGame() {
+    public void leaveCurrentGame() {
         if (game == null)
             return;
         game.removePlayer(player);
@@ -124,7 +129,7 @@ class UserSession {
         game = null;
     }
 
-    Message sendMessage(String code, Object... args) {
+    public Message sendMessage(String code, Object... args) {
         var text = messages().getMessage(code, args);
         return sendText(text);
     }
