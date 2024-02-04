@@ -1,13 +1,9 @@
 package io.github.daring2.hanabi.telegram;
 
 import io.github.daring2.hanabi.model.Color;
-import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.telegram.command.CommandArguments;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 
@@ -21,17 +17,6 @@ public class ActionKeyboard {
     ActionKeyboard(UserSession session) {
         this.session = session;
         this.menu = session.menu;
-    }
-
-    public void addCardSelectButtons() {
-        var player = session.player;
-        var cards = player.cards();
-        for (int i = 0, size = cards.size(); i < size; i++) {
-            var card = cards.get(i);
-            var data = commandArgs().name() + " " + (i + 1);
-            var text = "" + player.getKnownCard(card);
-            menu.addItem(1, data, text);
-        }
     }
 
     public void addPlayerSelectButtons() {

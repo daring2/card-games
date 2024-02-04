@@ -13,7 +13,7 @@ public class PlayCardCommand extends BaseCommand {
         checkGameNotNull();
         if (arguments.size() < 2) {
             session.resetMenu();
-            keyboard().addCardSelectButtons();
+            addCardSelectMenuItems();
             session.updateKeyboard();
             return;
         }

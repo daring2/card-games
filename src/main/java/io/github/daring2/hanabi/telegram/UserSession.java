@@ -58,6 +58,10 @@ public class UserSession {
         return player;
     }
 
+    public ActionMenu menu() {
+        return menu;
+    }
+
     public ActionKeyboard keyboard() {
         return keyboard;
     }
