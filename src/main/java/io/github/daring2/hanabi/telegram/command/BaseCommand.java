@@ -37,4 +37,5 @@ public abstract class BaseCommand implements UserCommand {
             throw new GameException("game_is_null");
         }
     }
+
 }

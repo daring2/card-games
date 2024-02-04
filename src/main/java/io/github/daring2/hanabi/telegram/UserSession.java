@@ -6,6 +6,7 @@ import io.github.daring2.hanabi.model.GameMessages;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import io.github.daring2.hanabi.telegram.command.CommandArguments;
+import io.github.daring2.hanabi.telegram.command.CommandRegistry;
 import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -24,6 +25,7 @@ public class UserSession {
     final User user;
     final Long chatId;
 
+    final CommandRegistry commandRegistry = new CommandRegistry(this);
     final CommandProcessor commandProcessor = new CommandProcessor(this);
     final ActionKeyboard keyboard = new ActionKeyboard(this);
 

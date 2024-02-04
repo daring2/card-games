@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 
 public class BotTestUtils {
 
-    static UserSession newSession() {
+    public static UserSession newSession() {
         return new UserSession(null, new User(), 0L);
     }
 
