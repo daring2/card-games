@@ -43,7 +43,7 @@ public class SuggestCommand extends BaseCommand {
             var data = name + " " + (i + 1);
             var isSelected = i == selectedIndex;
             session.menu().addItem(1, new ActionMenu.Item(
-                    data,  player.name(), isSelected
+                    data,  player.name(), isSelected, true
             ));
         }
     }
@@ -68,6 +68,11 @@ public class SuggestCommand extends BaseCommand {
         if (!isCurrentPlayer())
             return false;
         return game().blueTokens() > 0;
+    }
+
+    @Override
+    public boolean isVisibleInKeyboard() {
+        return isVisibleInMenu();
     }
 
 }

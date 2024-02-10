@@ -29,4 +29,9 @@ public class DiscardCommand extends BaseCommand {
         return blueTokens < maxBlueTokens;
     }
 
+    @Override
+    public boolean isVisibleInKeyboard() {
+        return isVisibleInMenu();
+    }
+
 }

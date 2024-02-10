@@ -26,4 +26,9 @@ public class PlayCardCommand extends BaseCommand {
         return isCurrentPlayer();
     }
 
+    @Override
+    public boolean isVisibleInKeyboard() {
+        return isVisibleInMenu();
+    }
+
 }

@@ -116,9 +116,7 @@ public class UserSession {
     }
 
     void buildCommandsMenu() {
-        commandRegistry.commands().stream()
-                .filter(UserCommand::isVisibleInMenu)
-                .forEach(menu::addCommandItem);
+        commandRegistry.commands().forEach(menu::addCommandItem);
     }
 
     public void updateKeyboard() {
@@ -167,7 +165,7 @@ public class UserSession {
                     .build();
             bot.executeSync(deleteMessage);
         } catch (Exception e) {
-            logger.warn("Cannot delete message", e);
+            logger.warn("Cannot delete message: " + e);
         }
     }
 

@@ -10,4 +10,8 @@ public interface UserCommand {
         return false;
     }
 
+    default boolean isVisibleInKeyboard() {
+        return false;
+    }
+
 }

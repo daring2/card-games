@@ -23,4 +23,8 @@ public class StartGameCommand extends BaseCommand {
         return currentPlayers >= minPlayers;
     }
 
+    @Override
+    public boolean isVisibleInKeyboard() {
+        return super.isVisibleInMenu();
+    }
 }

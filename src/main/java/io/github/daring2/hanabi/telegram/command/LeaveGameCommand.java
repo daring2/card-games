@@ -13,4 +13,9 @@ public class LeaveGameCommand extends BaseCommand {
         session.leaveCurrentGame();
     }
 
+    @Override
+    public boolean isVisibleInMenu() {
+        return session.game() != null;
+    }
+
 }

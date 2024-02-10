@@ -35,14 +35,17 @@ public class ActionMenu {
     }
 
     public void addItem(int row, String data, String label) {
-        addItem(row, new Item(data, label, false));
+        addItem(row, new Item(data, label, false, true));
     }
 
     public void addCommandItem(UserCommand command) {
+        if (!command.isVisibleInMenu())
+            return;
         var name = command.name();
         var label = messages().getMessage("commands." + name);
         var selected = name.equals(session.commandArgs.name());
-        addItem(0, new Item(name, label, selected));
+        var button = command.isVisibleInKeyboard();
+        addItem(0, new Item(name, label, selected, button));
     }
 
     void open() {
@@ -120,7 +123,8 @@ public class ActionMenu {
     public record Item(
             String data,
             String label,
-            boolean selected
+            boolean selected,
+            boolean button
     ) {}
 
 

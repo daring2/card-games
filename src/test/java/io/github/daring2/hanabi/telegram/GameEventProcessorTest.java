@@ -3,7 +3,7 @@ package io.github.daring2.hanabi.telegram;
 import io.github.daring2.hanabi.model.Game;
 import org.junit.jupiter.api.Test;
 
-import static io.github.daring2.hanabi.telegram.BotTestUtils.newSession;
+import static io.github.daring2.hanabi.telegram.BotTestUtils.createTestSession;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +35,7 @@ class GameEventProcessorTest {
     }
 
     GameEventProcessor newProcessor() {
-        var session = newSession();
+        var session = createTestSession();
         session.game = new Game();
         return new GameEventProcessor(session);
     }
