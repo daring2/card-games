@@ -71,6 +71,7 @@ public class ActionMenu {
         var builder = InlineKeyboardMarkup.builder();
         for (var rowItems : items) {
             var buttons = rowItems.stream()
+                    .filter(it -> it.button)
                     .map(this::createButton)
                     .toList();
             builder.keyboardRow(buttons);
