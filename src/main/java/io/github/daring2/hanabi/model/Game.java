@@ -239,7 +239,7 @@ public class Game {
             if (settings.lastTurnOnEmptyDeck) {
                 lastTurn = turn + players.size();
             }
-            publishEvent(new DeckEmptyEvent(this));
+            publishEvent(new DeckEmptyEvent(this, lastTurn > 0));
         }
     }
 

@@ -41,11 +41,7 @@ class GameEventProcessor implements AutoCloseable {
             }
             case StartTurnEvent e -> processStartTurnEvent(e);
             case PlayCardEvent e -> processPlayCardEvent(e);
-//            case AddCardToTableEvent e -> {}
-//            case AddRedTokenEvent e -> {}
-            case DeckEmptyEvent e -> {
-                sendMessage("deck_is_empty");
-            }
+            case DeckEmptyEvent e -> processDeckEmptyEvent(e);
             case CreateFireworkEvent e -> {
                 sendMessage("firework_created", e.card());
             }
@@ -108,6 +104,13 @@ class GameEventProcessor implements AutoCloseable {
             text += getMessage("red_token_added");
         }
         session.sendText(text);
+    }
+
+    void processDeckEmptyEvent(DeckEmptyEvent event) {
+        var message = getMessage("deck_is_empty");
+        if (event.isLastTurn())
+            message += " " + getMessage("last_turn_warning");
+        session.sendText(message);
     }
 
     void processFinishGameEvent(FinishGameEvent event) {

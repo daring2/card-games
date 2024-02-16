@@ -58,7 +58,8 @@ public class GameSettings {
         return lastTurnOnEmptyDeck;
     }
 
-    public void setLastTurnOnEmptyDeck(boolean lastTurnOnEmptyDeck) {
+    void setLastTurnOnEmptyDeck(boolean lastTurnOnEmptyDeck) {
         this.lastTurnOnEmptyDeck = lastTurnOnEmptyDeck;
     }
+
 }

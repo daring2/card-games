@@ -468,7 +468,7 @@ class GameTest {
         assertThat(player0.cards).isEqualTo(cards.subList(0, 2));
         assertThat(game.lastTurn).isEqualTo(12);
         assertThat(game.events).containsExactly(
-                new DeckEmptyEvent(game)
+                new DeckEmptyEvent(game, true)
         );
 
         game.events.clear();
