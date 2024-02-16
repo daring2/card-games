@@ -9,7 +9,8 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 import static io.github.daring2.hanabi.model.Color.*;
-import static io.github.daring2.hanabi.model.Game.*;
+import static io.github.daring2.hanabi.model.GameTestUtils.checkCardIndexError;
+import static io.github.daring2.hanabi.model.GameTestUtils.newGame;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -642,30 +643,10 @@ class GameTest {
                 .hasMessage("not_enough_players");
     }
 
-    void checkCardIndexError(ThrowingCallable action) {
-        assertThatThrownBy(action)
-                .isInstanceOf(GameException.class)
-                .hasMessage("invalid_card_index");
-    }
-
     void checkGame(Consumer<Game> action) {
         var game = newGame();
         game.start();
         action.accept(game);
-    }
-
-    Game newGame() {
-        var cards = new ArrayList<Card>();
-        for (Color color : Color.valueList) {
-            for (int value = 1; value <= MAX_CARD_VALUE; value++) {
-                cards.add(new Card(color, value));
-            }
-        }
-        var game = new Game();
-        game.deck.addAll(cards.reversed());
-        game.addPlayer(new Player("p0"));
-        game.addPlayer(new Player("p1"));
-        return game;
     }
 
 }
