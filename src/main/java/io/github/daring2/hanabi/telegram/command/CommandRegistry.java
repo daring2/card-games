@@ -29,7 +29,8 @@ public class CommandRegistry {
                 new StartGameCommand(session),
                 new PlayCardCommand(session),
                 new DiscardCommand(session),
-                new SuggestCommand(session)
+                new SuggestCommand(session),
+                new LaunchFireworksCommand(session)
         );
     }
 

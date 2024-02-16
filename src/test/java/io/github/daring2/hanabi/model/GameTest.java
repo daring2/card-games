@@ -327,6 +327,27 @@ class GameTest {
     }
 
     @Test
+    void testLaunchFireworks() {
+        var game = newGame();
+        var player0 = game.players.get(0);
+        checkGameNotStartedError(() -> game.launchFireworks(player0));
+
+        game.start();
+        assertThatThrownBy(() -> game.launchFireworks(player0))
+                .isInstanceOf(GameException.class)
+                .hasMessage("deck_not_empty");
+
+        game.events.clear();
+        game.deck.clear();
+        assertThat(game.result).isNull();
+        game.launchFireworks(player0);
+        assertThat(game.result).isEqualTo(GameResult.LAUNCH);
+        assertThat(game.events).containsExactly(
+                new FinishGameEvent(game, GameResult.LAUNCH, 0)
+        );
+    }
+
+    @Test
     void testPerformPlayerAction() {
         var game = spy(newGame());
         doNothing().when(game).checkActive();

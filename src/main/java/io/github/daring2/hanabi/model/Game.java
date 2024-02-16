@@ -197,6 +197,13 @@ public class Game {
         });
     }
 
+    public void launchFireworks(Player player) {
+        performPlayerAction(player, () -> {
+            validate(deck.isEmpty(), "deck_not_empty");
+            finish(GameResult.LAUNCH);
+        });
+    }
+
     void performPlayerAction(Player player, Runnable action) {
         checkActive();
         checkCurrentPlayer(player);
