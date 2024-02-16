@@ -12,6 +12,8 @@ public class GameSettings {
     int maxRedTokens = 3;
     int maxFireworks = 5;
 
+    boolean lastTurnOnEmptyDeck = true;
+
     public int getMinPlayers() {
         return minPlayers;
     }
@@ -52,4 +54,11 @@ public class GameSettings {
         this.maxFireworks = maxFireworks;
     }
 
+    public boolean isLastTurnOnEmptyDeck() {
+        return lastTurnOnEmptyDeck;
+    }
+
+    public void setLastTurnOnEmptyDeck(boolean lastTurnOnEmptyDeck) {
+        this.lastTurnOnEmptyDeck = lastTurnOnEmptyDeck;
+    }
 }

@@ -236,7 +236,9 @@ public class Game {
             return;
         player.cards.add(deck.removeLast());
         if (deck.isEmpty()) {
-            lastTurn = turn + players.size();
+            if (settings.lastTurnOnEmptyDeck) {
+                lastTurn = turn + players.size();
+            }
             publishEvent(new DeckEmptyEvent(this));
         }
     }
@@ -252,6 +254,8 @@ public class Game {
     }
 
     public Player currentPlayer() {
+        if (players.isEmpty())
+            return null;
         return players.get((turn - 1) % players.size());
     }
 

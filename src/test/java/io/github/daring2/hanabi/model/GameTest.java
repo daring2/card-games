@@ -521,6 +521,8 @@ class GameTest {
         assertThat(game.currentPlayer()).isEqualTo(players.get(1));
         game.turn = 1;
         assertThat(game.currentPlayer()).isEqualTo(players.get(0));
+        players.clear();
+        assertThat(game.currentPlayer()).isEqualTo(null);
     }
 
     @Test
