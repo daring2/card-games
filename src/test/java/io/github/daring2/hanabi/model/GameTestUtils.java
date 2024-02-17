@@ -1,6 +1,7 @@
 package io.github.daring2.hanabi.model;
 
 import org.assertj.core.api.ThrowableAssert;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,16 @@ public class GameTestUtils {
         return game;
     }
 
-    static void checkCardIndexError(ThrowableAssert.ThrowingCallable action) {
+    static void checkCardIndexError(ThrowingCallable action) {
         assertThatThrownBy(action)
                 .isInstanceOf(GameException.class)
                 .hasMessage("invalid_card_index");
+    }
+
+    static void checkGameNotStartedError(ThrowingCallable action) {
+        assertThatThrownBy(action)
+                .isInstanceOf(GameException.class)
+                .hasMessage("game_not_started");
     }
 
     public static Player newPlayer(String name, List<Card> cards) {

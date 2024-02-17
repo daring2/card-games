@@ -9,8 +9,7 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 import static io.github.daring2.hanabi.model.Color.*;
-import static io.github.daring2.hanabi.model.GameTestUtils.checkCardIndexError;
-import static io.github.daring2.hanabi.model.GameTestUtils.newGame;
+import static io.github.daring2.hanabi.model.GameTestUtils.*;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -617,12 +616,6 @@ class GameTest {
         } else {
             game.checkCurrentPlayer(player);
         }
-    }
-
-    void checkGameNotStartedError(ThrowingCallable action) {
-        assertThatThrownBy(action)
-                .isInstanceOf(GameException.class)
-                .hasMessage("game_not_started");
     }
 
     void checkGameStartedError(ThrowingCallable action) {

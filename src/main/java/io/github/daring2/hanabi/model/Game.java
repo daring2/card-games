@@ -4,6 +4,7 @@ import io.github.daring2.hanabi.model.event.*;
 
 import java.util.*;
 
+import static io.github.daring2.hanabi.model.GameUtils.validate;
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
@@ -198,10 +199,7 @@ public class Game {
     }
 
     public void launchFireworks(Player player) {
-        performPlayerAction(player, () -> {
-            validate(deck.isEmpty(), "deck_not_empty");
-            finish(GameResult.LAUNCH);
-        });
+        new LaunchFireworksAction(this, player).execute();
     }
 
     void performPlayerAction(Player player, Runnable action) {
@@ -276,6 +274,7 @@ public class Game {
     }
 
     void checkCurrentPlayer(Player player) {
+        //TODO move to PlayerAction
         var currentPlayer = currentPlayer();
         validate(
                 player == currentPlayer,
@@ -286,12 +285,6 @@ public class Game {
     void checkCardIndex(Player player, int index) {
         if (index < 0 || index >= player.cards.size()) {
             throw new GameException("invalid_card_index");
-        }
-    }
-
-    void validate(boolean expression, String code, Object... args) {
-        if (!expression) {
-            throw new GameException(code, args);
         }
     }
 
