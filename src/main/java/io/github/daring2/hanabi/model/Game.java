@@ -161,32 +161,12 @@ public class Game {
         new PlayCardAction(this, player, cardIndex).execute();
     }
 
-    public void suggest(
-            Player player,
-            Player targetPlayer,
-            CardInfo info
-    ) {
-        performPlayerAction(player, () -> {
-            validate(targetPlayer != player, "invalid_target_player");
-            validate(info.isValidForSuggest(), "invalid_suggestion");
-            validate(blueTokens > 0, "no_blue_tokens_available");
-            publishEvent(new SuggestEvent(this, player, targetPlayer, info));
-            blueTokens--;
-            targetPlayer.addCardInfo(info);
-        });
+    public void suggest(Player player, Player targetPlayer, CardInfo info) {
+        new SuggestAction(this, player, targetPlayer, info).execute();
     }
 
     public void launchFireworks(Player player) {
         new LaunchFireworksAction(this, player).execute();
-    }
-
-    void performPlayerAction(Player player, Runnable action) {
-        checkActive();
-        checkCurrentPlayer(player);
-        action.run();
-        if (result != null)
-            return;
-        startNextTurn();
     }
 
     void addCardToTable(Card card) {

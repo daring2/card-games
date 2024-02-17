@@ -241,39 +241,6 @@ class GameTest {
     }
 
     @Test
-    void testSuggest() {
-        var game = newGame();
-        var player0 = game.players.get(0);
-        var player1 = game.players.get(1);
-        var cardInfo = new CardInfo(WHITE);
-        checkGameNotStartedError(() -> game.suggest(player0, player1, cardInfo));
-
-        game.start();
-        assertThatThrownBy(() -> game.suggest(player0, player1, new CardInfo(WHITE, 1)))
-                .isInstanceOf(GameException.class)
-                .hasMessage("invalid_suggestion");
-
-        game.blueTokens = 0;
-        assertThatThrownBy(() -> game.suggest(player0, player1, cardInfo))
-                .isInstanceOf(GameException.class)
-                .hasMessage("no_blue_tokens_available");
-
-        game.blueTokens = 3;
-        assertThatThrownBy(() -> game.suggest(player0, player0, cardInfo))
-                .isInstanceOf(GameException.class)
-                .hasMessage("invalid_target_player");
-
-
-        game.events.clear();
-        game.suggest(player0, player1, cardInfo);
-        assertThat(game.blueTokens).isEqualTo(2);
-        assertThat(game.events).containsExactly(
-                new SuggestEvent(game, player0, player1, cardInfo),
-                new StartTurnEvent(game, 2)
-        );
-    }
-
-    @Test
     void testLaunchFireworks() {
         var game = newGame();
         var player0 = game.players.get(0);
@@ -292,24 +259,6 @@ class GameTest {
         assertThat(game.events).containsExactly(
                 new FinishGameEvent(game, GameResult.LAUNCH, 0)
         );
-    }
-
-    @Test
-    void testPerformPlayerAction() {
-        var game = spy(newGame());
-        doNothing().when(game).checkActive();
-        doNothing().when(game).checkCurrentPlayer(any());
-        doNothing().when(game).startNextTurn();
-
-        var player0 = new Player("p0");
-        var actionCalls = new ArrayList<String>();
-        game.performPlayerAction(player0, () ->
-                actionCalls.add("a0")
-        );
-        verify(game).checkActive();
-        verify(game).checkCurrentPlayer(player0);
-        verify(game).startNextTurn();
-        assertThat(actionCalls).containsExactly("a0");
     }
 
     @Test
