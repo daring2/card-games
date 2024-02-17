@@ -1,10 +1,10 @@
 package io.github.daring2.hanabi.model;
 
-import org.assertj.core.api.ThrowableAssert;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static io.github.daring2.hanabi.model.Game.MAX_CARD_VALUE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,6 +23,12 @@ public class GameTestUtils {
         game.addPlayer(new Player("p0"));
         game.addPlayer(new Player("p1"));
         return game;
+    }
+
+    static void checkGame(Consumer<Game> action) {
+        var game = newGame();
+        game.start();
+        action.accept(game);
     }
 
     static void checkCardIndexError(ThrowingCallable action) {

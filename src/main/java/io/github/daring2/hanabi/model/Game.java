@@ -2,7 +2,10 @@ package io.github.daring2.hanabi.model;
 
 import io.github.daring2.hanabi.model.event.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 import static io.github.daring2.hanabi.model.GameUtils.validate;
 import static java.util.Collections.unmodifiableList;
@@ -155,21 +158,7 @@ public class Game {
     }
 
     public void playCard(Player player, int cardIndex) {
-        checkCardIndex(player, cardIndex);
-        performPlayerAction(player, () -> {
-            var card = player.removeCard(cardIndex);
-            var tableCards = table.get(card.color());
-            var lastValue = tableCards.getLast().value();
-            var isValid = card.value() == lastValue + 1;
-            publishEvent(new PlayCardEvent(this, player, card, isValid));
-            if (isValid) {
-                addCardToTable(card);
-            } else {
-                discard.add(card);
-                addRedToken();
-            }
-            takeCard(player);
-        });
+        new PlayCardAction(this, player, cardIndex).execute();
     }
 
     public void suggest(
