@@ -1,5 +1,7 @@
 package io.github.daring2.hanabi.model;
 
+import io.github.daring2.hanabi.model.event.GameEvent;
+
 abstract class PlayerAction {
 
     final Game game;
@@ -23,8 +25,18 @@ abstract class PlayerAction {
 
     abstract void perform();
 
+    void publishEvent(GameEvent event) {
+        game.publishEvent(event);
+    }
+
     void checkCurrentPlayer() {
         game.checkCurrentPlayer(player);
+    }
+
+    void checkCardIndex(int index) {
+        if (index < 0 || index >= player.cards.size()) {
+            throw new GameException("invalid_card_index");
+        }
     }
 
 }

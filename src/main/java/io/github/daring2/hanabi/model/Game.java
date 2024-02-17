@@ -151,18 +151,7 @@ public class Game {
     }
 
     public void discardCard(Player player, int cardIndex) {
-        checkCardIndex(player, cardIndex);
-        validate(
-                blueTokens < settings.maxBlueTokens,
-                "all_blue_tokens_in_game"
-        );
-        performPlayerAction(player, () -> {
-            var card = player.removeCard(cardIndex);
-            discard.add(card);
-            blueTokens++;
-            publishEvent(new DiscardCardEvent(this, player, card));
-            takeCard(player);
-        });
+        new DiscardCardAction(this, player, cardIndex).execute();
     }
 
     public void playCard(Player player, int cardIndex) {
