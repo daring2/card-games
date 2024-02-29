@@ -5,7 +5,6 @@ plugins {
 }
 
 group = 'io.github.daring2'
-version = '0.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = '21'
@@ -31,4 +30,12 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootBuildImage {
+    imageName = "docker.io/daring/hanabi-bot:${project.version}"
+    environment = [
+        "BP_JVM_VERSION": "21",
+        "BPL_JVM_THREAD_COUNT": "10"
+    ]
 }
