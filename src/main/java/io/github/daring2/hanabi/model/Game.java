@@ -231,15 +231,6 @@ public class Game {
         validate(result == null, "game_finished");
     }
 
-    void checkCurrentPlayer(Player player) {
-        //TODO move to PlayerAction
-        var currentPlayer = currentPlayer();
-        validate(
-                player == currentPlayer,
-                "player_not_current", currentPlayer
-        );
-    }
-
     void publishEvent(GameEvent event) {
         eventBus.publish(event);
     }

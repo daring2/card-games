@@ -2,6 +2,8 @@ package io.github.daring2.hanabi.model;
 
 import io.github.daring2.hanabi.model.event.GameEvent;
 
+import static io.github.daring2.hanabi.model.GameUtils.validate;
+
 abstract class PlayerAction {
 
     final Game game;
@@ -30,7 +32,11 @@ abstract class PlayerAction {
     }
 
     void checkCurrentPlayer() {
-        game.checkCurrentPlayer(player);
+        var currentPlayer = game.currentPlayer();
+        validate(
+                player == currentPlayer,
+                "player_not_current", currentPlayer
+        );
     }
 
     void checkCardIndex(int index) {

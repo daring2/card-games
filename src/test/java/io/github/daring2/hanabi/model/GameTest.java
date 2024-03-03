@@ -465,19 +465,6 @@ class GameTest {
     }
 
     @Test
-    void testCheckCurrentPlayer() {
-        var game = newGame();
-
-        game.turn = 1;
-        checkCurrentPlayerError(game, 0, false);
-        checkCurrentPlayerError(game, 1, true);
-
-        game.turn = 2;
-        checkCurrentPlayerError(game, 0, true);
-        checkCurrentPlayerError(game, 1, false);
-    }
-
-    @Test
     void testTableCards() {
         var game = newGame();
         assertThat(game.tableCards()).isEmpty();
@@ -500,19 +487,6 @@ class GameTest {
                 new Card(BLUE, 3),
                 new Card(YELLOW, 0)
         );
-    }
-
-    void checkCurrentPlayerError(Game game, int playerIndex, boolean error) {
-        var player = game.players.get(playerIndex);
-        if (error) {
-            assertThatThrownBy(() -> game.checkCurrentPlayer(player))
-                    .isInstanceOfSatisfying(GameException.class, e -> {
-                        assertThat(e.getCode()).isEqualTo("player_not_current");
-                        assertThat(e.getArguments()).containsExactly(game.currentPlayer());
-                    });
-        } else {
-            game.checkCurrentPlayer(player);
-        }
     }
 
     void checkGameStartedError(ThrowingCallable action) {
