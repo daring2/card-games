@@ -12,7 +12,7 @@ public class GameSettings {
     int maxRedTokens = 3;
     int maxFireworks = 5;
 
-    boolean lastTurnOnEmptyDeck = true;
+    boolean lastTurnOnEmptyDeck = false;
 
     public int getMinPlayers() {
         return minPlayers;

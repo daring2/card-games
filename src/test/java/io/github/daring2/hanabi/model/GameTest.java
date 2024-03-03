@@ -367,6 +367,7 @@ class GameTest {
     @Test
     void testTakeLastCard() {
         var game = newGame();
+        game.settings.lastTurnOnEmptyDeck = true;
         var cards = rangeClosed(1, 2)
                 .mapToObj(i -> new Card(WHITE, i))
                 .toList();
