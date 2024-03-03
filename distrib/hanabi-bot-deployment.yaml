@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hanabi-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hanabi-bot
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: hanabi-bot
+    spec:
+      containers:
+        - name: hanabi-bot
+          image: docker.io/daring/hanabi-bot:0.0.2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JAVA_OPTS
+              value: -Xmx192m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=128m
+            - name: BPL_JVM_THREAD_COUNT
+              value: "10"
+            - name: TZ
+              value: Europe/Moscow
+          volumeMounts:
+            - name: config
+              mountPath: /workspace/config
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 3
+      volumes:
+        - name: config
+          configMap:
+            name: hanabi-bot-config
