@@ -240,12 +240,6 @@ public class Game {
         );
     }
 
-    void checkCardIndex(Player player, int index) {
-        if (index < 0 || index >= player.cards.size()) {
-            throw new GameException("invalid_card_index");
-        }
-    }
-
     void publishEvent(GameEvent event) {
         eventBus.publish(event);
     }
