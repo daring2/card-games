@@ -1,5 +1,8 @@
 package io.github.daring2.hanabi.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
 import io.github.daring2.hanabi.model.event.*;
 
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import static io.github.daring2.hanabi.model.GameUtils.validate;
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
+@JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
 public class Game {
 
     public static final int MAX_CARD_VALUE = 5;
@@ -19,13 +23,14 @@ public class Game {
     final GameSettings settings;
 
     final String id = randomUUID().toString();
+    @JsonIgnore
     final GameEventBus eventBus = new GameEventBus();
-    final List<GameEvent> events = new ArrayList<>();
-
     final List<Card> deck = new ArrayList<>();
     final List<Player> players = new ArrayList<>();
     final Map<Color, List<Card>> table = new EnumMap<>(Color.class);
     final List<Card> discard = new ArrayList<>();
+    @JsonIgnore
+    final List<GameEvent> events = new ArrayList<>();
 
     boolean started;
     int turn;

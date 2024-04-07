@@ -1,17 +1,35 @@
 package io.github.daring2.hanabi.model;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
+
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.unmodifiableList;
+import static java.util.UUID.randomUUID;
 
+@JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
 public class Player {
 
+    final String id = randomUUID().toString();
     final String name;
     final List<Card> cards = new ArrayList<>();
     final Map<Card, CardInfo> knownCards = new IdentityHashMap<>();
 
     public Player(String name) {
         this.name = name;
+    }
+
+    // Constructor for JSON deserialization
+    private Player() {
+        this("");
+    }
+
+    public String id() {
+        return id;
     }
 
     public String name() {
