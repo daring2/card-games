@@ -10,4 +10,10 @@ public enum Color {
 
     public static final List<Color> valueList = List.of(values());
 
+    public static Color findByShortName(String shortName) {
+        return valueList.stream()
+                .filter(it -> it.shortName.equals(shortName))
+                .findAny().orElse(null);
+    }
+
 }

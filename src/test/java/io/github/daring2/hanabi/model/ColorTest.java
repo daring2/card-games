@@ -12,4 +12,11 @@ class ColorTest {
         assertThat(Color.RED.shortName).isEqualTo("R");
     }
 
+    @Test
+    void testFindByShortName() {
+        assertThat(Color.findByShortName("W")).isEqualTo(Color.WHITE);
+        assertThat(Color.findByShortName("R")).isEqualTo(Color.RED);
+        assertThat(Color.findByShortName("A")).isNull();
+    }
+
 }
