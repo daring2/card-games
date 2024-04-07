@@ -24,20 +24,20 @@ class CommandProcessor {
 
     void process(Update update) {
         this.update = update;
-        buildCommandArgs();
+        var commandArgs = buildCommandArgs();
         if (commandArgs.isEmpty())
             return;
-        if (commandArgs.equals(session.commandArgs))
+        if (commandArgs.equals(this.commandArgs))
             return;
-        session.commandArgs = commandArgs;
         try {
+            this.commandArgs = commandArgs;
             processCommand();
         } catch (Exception e) {
             processCommandError(e);
         }
     }
 
-    void buildCommandArgs() {
+    CommandArguments buildCommandArgs() {
         var text = "";
         var message = update.getMessage();
         var callback = update.getCallbackQuery();
@@ -46,7 +46,7 @@ class CommandProcessor {
         } else if (message != null) {
             text = message.getText();
         }
-        commandArgs = parseCommand(text);
+        return parseCommand(text);
     }
 
     void processCommand() {

@@ -35,7 +35,6 @@ public class UserSession {
     Player player;
     GameEventProcessor eventProcessor;
 
-    CommandArguments commandArgs; //TODO remove
     Message turnInfoMessage;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
@@ -59,6 +58,10 @@ public class UserSession {
 
     public ActionMenu menu() {
         return menu;
+    }
+
+    CommandArguments commandArgs() {
+        return commandProcessor.commandArgs;
     }
 
     void processUpdate(Update update) {
@@ -124,7 +127,7 @@ public class UserSession {
     }
 
     void finishTurn() {
-        commandArgs = CommandArguments.EMPTY;
+        commandProcessor.commandArgs = CommandArguments.EMPTY;
         deleteMessage(turnInfoMessage);
         turnInfoMessage = null;
     }

@@ -43,7 +43,7 @@ public class ActionMenu {
             return;
         var name = command.name();
         var label = messages().getMessage("commands." + name);
-        var selected = name.equals(session.commandArgs.name());
+        var selected = name.equals(session.commandArgs().name());
         var button = command.isVisibleInKeyboard();
         addItem(0, new Item(name, label, selected, button));
     }
