@@ -15,7 +15,7 @@ class PlayCardActionTest {
 
     @Test
     void testExecute() {
-        checkGame(it -> {
+        checkGameStart(it -> {
             var game = spy(it);
             var player0 = game.players.get(0);
             game.started = false;
@@ -23,7 +23,7 @@ class PlayCardActionTest {
             game.started = true;
             checkCardIndexError(() -> game.discardCard(player0, -1));
         });
-        checkGame(it -> {
+        checkGameStart(it -> {
             var game = spy(it);
             game.events.clear();
             var player0 = game.players.get(0);
@@ -43,7 +43,7 @@ class PlayCardActionTest {
                     new StartTurnEvent(game, 2)
             );
         });
-        checkGame(it -> {
+        checkGameStart(it -> {
             var game = spy(it);
             game.events.clear();
             var player0 = game.players.get(0);

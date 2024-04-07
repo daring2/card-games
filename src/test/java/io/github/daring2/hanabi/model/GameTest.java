@@ -13,7 +13,6 @@ import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
 
 @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
 class GameTest {
@@ -266,7 +265,7 @@ class GameTest {
         var cards = rangeClosed(0, 5)
                 .mapToObj(i -> new Card(WHITE, i))
                 .toList();
-        checkGame(game -> {
+        checkGameStart(game -> {
             var card1 = cards.get(1);
             game.events.clear();
             game.addCardToTable(card1);
@@ -289,7 +288,7 @@ class GameTest {
                     new AddCardToTableEvent(game, card2)
             );
         });
-        checkGame(game -> {
+        checkGameStart(game -> {
             var card5 = cards.get(5);
             game.events.clear();
             game.addCardToTable(card5);
@@ -302,7 +301,7 @@ class GameTest {
                     new CreateFireworkEvent(game, card5)
             );
         });
-        checkGame(game -> {
+        checkGameStart(game -> {
             game.events.clear();
             game.fireworks = 4;
             game.addCardToTable(cards.get(5));

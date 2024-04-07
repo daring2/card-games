@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class GameTestUtils {
 
-    static Game newGame() {
+    public static Game newGame() {
         var cards = new ArrayList<Card>();
         for (Color color : Color.valueList) {
             for (int value = 1; value <= MAX_CARD_VALUE; value++) {
@@ -25,7 +25,7 @@ public class GameTestUtils {
         return game;
     }
 
-    static void checkGame(Consumer<Game> action) {
+    static void checkGameStart(Consumer<Game> action) {
         var game = newGame();
         game.start();
         action.accept(game);
