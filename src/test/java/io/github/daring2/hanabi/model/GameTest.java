@@ -51,13 +51,21 @@ class GameTest {
     }
 
     @Test
-    void testActive() {
+    void testIsActive() {
         var game = newGame();
         assertThat(game.isActive()).isFalse();
         game.started = true;
         assertThat(game.isActive()).isTrue();
         game.result = GameResult.CANCEL;
         assertThat(game.isActive()).isFalse();
+    }
+
+    @Test
+    void testIsFinished() {
+        var game = newGame();
+        assertThat(game.isFinished()).isFalse();
+        game.result = GameResult.CANCEL;
+        assertThat(game.isFinished()).isTrue();
     }
 
     @Test

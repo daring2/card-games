@@ -1,1 +1,2 @@
-
+hanabi-bot.state-manager:
+  state-file: data/hanabi-bot.json

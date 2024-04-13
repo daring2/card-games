@@ -66,6 +66,10 @@ public class Game {
         return started && result == null;
     }
 
+    public boolean isFinished() {
+        return result != null;
+    }
+
     public int deckSize() {
         return deck.size();
     }

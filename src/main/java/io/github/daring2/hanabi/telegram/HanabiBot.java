@@ -3,6 +3,7 @@ package io.github.daring2.hanabi.telegram;
 import io.github.daring2.hanabi.model.Game;
 import io.github.daring2.hanabi.model.GameFactory;
 import io.github.daring2.hanabi.model.GameMessages;
+import jakarta.annotation.PreDestroy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -79,6 +80,11 @@ public class HanabiBot extends TelegramLongPollingBot {
         }
     }
 
+    @PreDestroy
+    void preDestroy() {
+        context.stateManager.saveState(this);
+    }
+
     @ConfigurationProperties("hanabi-bot")
     public record Config(
             String token
@@ -89,7 +95,8 @@ public class HanabiBot extends TelegramLongPollingBot {
     public record Context(
             Config config,
             GameFactory gameFactory,
-            GameMessages gameMessages
+            GameMessages gameMessages,
+            BotStateManager stateManager
     ) {
     }
 
