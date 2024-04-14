@@ -14,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -89,8 +90,7 @@ public class HanabiBot extends TelegramLongPollingBot {
     @ConfigurationProperties("hanabi-bot")
     public record Config(
             String token
-    ) {
-    }
+    ) {}
 
     @Component
     public record Context(
@@ -98,7 +98,11 @@ public class HanabiBot extends TelegramLongPollingBot {
             GameFactory gameFactory,
             GameMessages gameMessages,
             BotStateManager stateManager
-    ) {
-    }
+    ) {}
+
+    record State(
+            List<Game> games,
+            List<UserSession.State> sessions
+    ) {}
 
 }

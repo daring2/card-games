@@ -1,10 +1,7 @@
 package io.github.daring2.hanabi.telegram;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.github.daring2.hanabi.model.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -33,7 +30,7 @@ class BotStateManager {
         if (!stateFile.exists())
             return;
         try {
-            var state = jsonMapper.readValue(stateFile, BotState.class);
+            var state = jsonMapper.readValue(stateFile, HanabiBot.State.class);
             for (var game : state.games()) {
                 bot.games.put(game.id(), game);
             }
@@ -47,7 +44,10 @@ class BotStateManager {
         var games = bot.games.values().stream()
                 .filter(it -> !it.isFinished())
                 .toList();
-        var state = new BotState(games);
+        var sessions = bot.sessions.values().stream()
+                .map(UserSession::createState)
+                .toList();
+        var state = new HanabiBot.State(games, sessions);
         try {
             jsonMapper.writeValue(stateFile, state);
         } catch (IOException e) {

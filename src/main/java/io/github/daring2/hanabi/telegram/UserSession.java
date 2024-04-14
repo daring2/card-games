@@ -180,8 +180,25 @@ public class UserSession {
         return players.get(index);
     }
 
+    State createState() {
+        var storeGame = game != null && !game.isFinished();
+        return new State(
+                user, chatId, playerName,
+                storeGame ? game : null,
+                storeGame ? player : null
+        );
+    }
+
     GameMessages messages() {
         return bot.context.gameMessages();
     }
+
+    record State(
+            User user,
+            Long chatId,
+            String playerName,
+            Game game,
+            Player player
+    ) {}
 
 }
