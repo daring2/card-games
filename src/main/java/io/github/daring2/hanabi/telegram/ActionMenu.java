@@ -58,10 +58,10 @@ public class ActionMenu {
         session.bot.executeSync(sendMessage);
     }
 
-    void updateKeyboard(Message message) {
+    void updateKeyboard(Integer messageId) {
         var editMessage = EditMessageReplyMarkup.builder()
                 .chatId(session.chatId)
-                .messageId(message.getMessageId())
+                .messageId(messageId)
                 .replyMarkup(buildKeyboard())
                 .build();
         session.bot.executeSync(editMessage);

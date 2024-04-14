@@ -34,7 +34,7 @@ public class UserSession {
     Player player;
     GameEventProcessor eventProcessor;
 
-    Message turnInfoMessage;
+    Integer turnInfoMessageId;
 
     UserSession(HanabiBot bot, User user, Long chatId) {
         this.bot = bot;
@@ -48,6 +48,7 @@ public class UserSession {
         game = state.game;
         player = state.player;
         playerName = state.playerName;
+        turnInfoMessageId = state.turnInfoMessageId;
         if (game != null) {
             registerGameListener();
         }
@@ -132,13 +133,13 @@ public class UserSession {
     }
 
     public void updateKeyboard() {
-        menu.updateKeyboard(turnInfoMessage);
+        menu.updateKeyboard(turnInfoMessageId);
     }
 
     void finishTurn() {
         commandProcessor.commandArgs = CommandArguments.EMPTY;
-        deleteMessage(turnInfoMessage);
-        turnInfoMessage = null;
+        deleteMessage(turnInfoMessageId);
+        turnInfoMessageId = null;
     }
 
     public void leaveCurrentGame() {
@@ -167,13 +168,13 @@ public class UserSession {
         return sendText(text, null);
     }
 
-    void deleteMessage(Message message) {
-        if (message == null)
+    void deleteMessage(Integer messageId) {
+        if (messageId == null)
             return;
         try {
             var deleteMessage = DeleteMessage.builder()
                     .chatId(chatId)
-                    .messageId(message.getMessageId())
+                    .messageId(messageId)
                     .build();
             bot.executeSync(deleteMessage);
         } catch (Exception e) {
@@ -194,7 +195,8 @@ public class UserSession {
         return new State(
                 user, chatId, playerName,
                 storeGame ? game : null,
-                storeGame ? player : null
+                storeGame ? player : null,
+                turnInfoMessageId
         );
     }
 
@@ -207,7 +209,8 @@ public class UserSession {
             Long chatId,
             String playerName,
             Game game,
-            Player player
+            Player player,
+            Integer turnInfoMessageId
     ) {}
 
 }

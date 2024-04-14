@@ -81,10 +81,8 @@ class GameEventProcessor implements AutoCloseable {
                 game.redTokens(),
                 buildCardTableText(maskCards)
         );
-        session.turnInfoMessage = session.sendText(
-                turnInfo,
-                "MarkdownV2"
-        );
+        var message = session.sendText(turnInfo, "MarkdownV2");
+        session.turnInfoMessageId = message.getMessageId();
     }
 
     String buildCardTableText(boolean maskCards) {
