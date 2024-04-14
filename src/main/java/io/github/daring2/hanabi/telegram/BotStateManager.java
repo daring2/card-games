@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.github.daring2.hanabi.model.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,6 +28,19 @@ class BotStateManager {
         jsonMapper = createJsonMapper();
     }
 
+    void loadState(HanabiBot bot) {
+        logger.info("Load HanabiBot state");
+        if (!stateFile.exists())
+            return;
+        try {
+            var state = jsonMapper.readValue(stateFile, BotState.class);
+            for (var game : state.games()) {
+                bot.games.put(game.id(), game);
+            }
+        } catch (IOException e) {
+            logger.warn("Cannot load HanabiBot state", e);
+        }
+    }
 
     void saveState(HanabiBot bot) {
         logger.info("Save HanabiBot state");
@@ -44,8 +58,6 @@ class BotStateManager {
     ObjectMapper createJsonMapper() {
         var mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.setVisibility(PropertyAccessor.ALL, Visibility.NONE);
-        mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
         return mapper;
     }
 

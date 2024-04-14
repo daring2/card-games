@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
 import io.github.daring2.hanabi.model.event.*;
+import io.github.daring2.hanabi.util.JsonAutoDetectFields;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -14,6 +15,7 @@ import static io.github.daring2.hanabi.model.GameUtils.validate;
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
+@JsonAutoDetectFields
 @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
 public class Game {
 

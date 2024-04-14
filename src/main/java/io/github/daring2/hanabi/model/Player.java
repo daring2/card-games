@@ -2,6 +2,7 @@ package io.github.daring2.hanabi.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
+import io.github.daring2.hanabi.util.JsonAutoDetectFields;
 
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
+@JsonAutoDetectFields
 @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
 public class Player {
 

@@ -29,6 +29,7 @@ public class HanabiBot extends TelegramLongPollingBot {
     public HanabiBot(Context context) {
         super(context.config.token);
         this.context = context;
+        context.stateManager.loadState(this);
     }
 
     @Override
