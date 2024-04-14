@@ -34,9 +34,15 @@ class BotStateManager {
             for (var game : state.games()) {
                 bot.games.put(game.id(), game);
             }
+            state.sessions().forEach(it -> loadSessionState(bot, it));
         } catch (IOException e) {
             logger.warn("Cannot load HanabiBot state", e);
         }
+    }
+
+    void loadSessionState(HanabiBot bot, UserSession.State state) {
+        var session = new UserSession(bot, state);
+        bot.sessions.put(session.chatId, session);
     }
 
     void saveState(HanabiBot bot) {

@@ -7,7 +7,6 @@ import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.model.event.CreateGameEvent;
 import io.github.daring2.hanabi.telegram.command.CommandArguments;
 import io.github.daring2.hanabi.telegram.command.CommandRegistry;
-import io.github.daring2.hanabi.telegram.command.UserCommand;
 import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
@@ -42,6 +41,16 @@ public class UserSession {
         this.user = user;
         this.chatId = chatId;
         this.playerName = buildUserName(user);
+    }
+
+    UserSession(HanabiBot bot, State state) {
+        this(bot, state.user, state.chatId);
+        game = state.game;
+        player = state.player;
+        playerName = state.playerName;
+        if (game != null) {
+            registerGameListener();
+        }
     }
 
     String buildUserName(User user) {
