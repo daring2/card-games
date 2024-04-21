@@ -11,24 +11,23 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Component
 class BotStateManager {
 
     static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 
     final Context context;
+    final WritableResource stateFile;
     final ObjectMapper jsonMapper;
 
     BotStateManager(Context context) {
         this.context = context;
+        stateFile = context.config.stateFile;
         jsonMapper = createJsonMapper();
     }
 
     void loadState(HanabiBot bot) {
         logger.info("Load HanabiBot state");
-        var stateFile = getStateFile();
         if (stateFile == null || !stateFile.exists())
             return;
         try (var stream = stateFile.getInputStream()){
@@ -49,7 +48,6 @@ class BotStateManager {
 
     void saveState(HanabiBot bot) {
         logger.info("Save HanabiBot state");
-        var stateFile = getStateFile();
         if (stateFile == null)
             return;
         var games = bot.games.values().stream()
@@ -72,16 +70,9 @@ class BotStateManager {
         return mapper;
     }
 
-    WritableResource getStateFile() {
-        var url = context.config.stateFile;
-        if (isBlank(url))
-            return null;
-        return (WritableResource) context.resourceLoader.getResource(url);
-    }
-
     @ConfigurationProperties("hanabi-bot.state-manager")
     public record Config(
-            String stateFile
+            WritableResource stateFile
     ) {
     }
 
