@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.WritableResource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 class BotStateManager {
@@ -16,21 +19,20 @@ class BotStateManager {
     static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 
     final Context context;
-    final File stateFile;
     final ObjectMapper jsonMapper;
 
     BotStateManager(Context context) {
         this.context = context;
-        stateFile = context.config.stateFile;
         jsonMapper = createJsonMapper();
     }
 
     void loadState(HanabiBot bot) {
         logger.info("Load HanabiBot state");
-        if (!stateFile.exists())
+        var stateFile = getStateFile();
+        if (stateFile == null || !stateFile.exists())
             return;
-        try {
-            var state = jsonMapper.readValue(stateFile, HanabiBot.State.class);
+        try (var stream = stateFile.getInputStream()){
+            var state = jsonMapper.readValue(stream, HanabiBot.State.class);
             for (var game : state.games()) {
                 bot.games.put(game.id(), game);
             }
@@ -47,6 +49,9 @@ class BotStateManager {
 
     void saveState(HanabiBot bot) {
         logger.info("Save HanabiBot state");
+        var stateFile = getStateFile();
+        if (stateFile == null)
+            return;
         var games = bot.games.values().stream()
                 .filter(it -> !it.isFinished())
                 .toList();
@@ -54,8 +59,8 @@ class BotStateManager {
                 .map(UserSession::createState)
                 .toList();
         var state = new HanabiBot.State(games, sessions);
-        try {
-            jsonMapper.writeValue(stateFile, state);
+        try (var stream = stateFile.getOutputStream()){
+            jsonMapper.writeValue(stream, state);
         } catch (IOException e) {
             logger.warn("Cannot save HanabiBot state", e);
         }
@@ -67,15 +72,23 @@ class BotStateManager {
         return mapper;
     }
 
+    WritableResource getStateFile() {
+        var url = context.config.stateFile;
+        if (isBlank(url))
+            return null;
+        return (WritableResource) context.resourceLoader.getResource(url);
+    }
+
     @ConfigurationProperties("hanabi-bot.state-manager")
     public record Config(
-            File stateFile
+            String stateFile
     ) {
     }
 
     @Component
     public record Context(
-            Config config
+            Config config,
+            ResourceLoader resourceLoader
     ) {
     }
 

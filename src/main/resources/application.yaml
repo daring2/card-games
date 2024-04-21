@@ -1,2 +1,6 @@
 hanabi-bot.state-manager:
-  state-file: data/hanabi-bot.json
+  state-file: "file:data/hanabi-bot.json"
+
+spring.cloud.aws:
+  endpoint: "https://hb.ru-msk.vkcs.cloud "
+  region.static: "ru-msk"
