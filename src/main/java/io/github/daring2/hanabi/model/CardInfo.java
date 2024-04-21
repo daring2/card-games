@@ -1,5 +1,6 @@
 package io.github.daring2.hanabi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nullable;
 
 public record CardInfo(
@@ -18,6 +19,7 @@ public record CardInfo(
                 this(null, value);
         }
 
+        @JsonIgnore
         public boolean isValidForSuggest() {
                 return color == null || value == NULL_VALUE;
         }
