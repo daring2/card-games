@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: hanabi-bot
-          image: docker.io/daring/hanabi-bot:0.0.3
+          image: docker.io/daring/hanabi-bot:0.0.4
           ports:
             - containerPort: 8080
           env:
