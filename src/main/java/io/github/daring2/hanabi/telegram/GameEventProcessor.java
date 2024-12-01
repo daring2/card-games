@@ -88,7 +88,7 @@ class GameEventProcessor implements AutoCloseable {
     String buildCardTableText(boolean maskCards) {
         var table = new CardTable(session.player, maskCards);
         game.players().forEach(table::addRow);
-        table.addRow("table", game.tableCards());
+        table.addRow(getMessage("table_player_name"), game.tableCards());
         return table.buildText();
     }
 

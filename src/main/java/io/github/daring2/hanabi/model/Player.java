@@ -7,7 +7,6 @@ import io.github.daring2.hanabi.util.JsonAutoDetectFields;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
@@ -19,7 +18,8 @@ public class Player {
     final String id = randomUUID().toString();
     final String name;
     final List<Card> cards = new ArrayList<>();
-    final Map<Card, CardInfo> knownCards = new IdentityHashMap<>();
+    //TODO fix json deserialization
+    final IdentityHashMap<Card, CardInfo> knownCards = new IdentityHashMap<>();
 
     public Player(String name) {
         this.name = name;
