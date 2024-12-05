@@ -5,6 +5,8 @@ import io.github.daring2.hanabi.model.GameException;
 import io.github.daring2.hanabi.model.Player;
 import io.github.daring2.hanabi.telegram.UserSession;
 
+import java.util.List;
+
 public abstract class BaseCommand implements UserCommand {
 
     final UserSession session;
@@ -21,6 +23,10 @@ public abstract class BaseCommand implements UserCommand {
 
     Game game() {
         return session.game();
+    }
+
+    List<Player> players() {
+        return game().players();
     }
 
     Player player() {

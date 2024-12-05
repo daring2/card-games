@@ -18,7 +18,7 @@ public class StartGameCommand extends BaseCommand {
     public boolean isVisibleInMenu() {
         if (game() == null || game().isStarted())
             return false;
-        var currentPlayers = game().players().size();
+        var currentPlayers = players().size();
         var minPlayers = game().settings().getMinPlayers();
         return currentPlayers >= minPlayers;
     }

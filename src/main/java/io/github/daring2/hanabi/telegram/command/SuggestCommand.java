@@ -16,11 +16,10 @@ public class SuggestCommand extends BaseCommand {
     @Override
     public void execute(CommandArguments arguments) {
         checkGameNotNull();
-        var argumentsCount = arguments.size();
-        if (argumentsCount < 3) {
+        if (arguments.size() < 3) {
             session.resetMenu();
             addPlayerSelectMenu(arguments);
-            if (argumentsCount == 2) {
+            if (arguments.size() == 2) {
                 addCardValueSelectMenu(arguments);
                 addColorSelectMenu(arguments);
             }
@@ -34,11 +33,11 @@ public class SuggestCommand extends BaseCommand {
     }
 
     void addPlayerSelectMenu(CommandArguments arguments) {
-        var players = session.game().players();
+        var players = game().players();
         var selectedIndex = arguments.getIndexValue(1);
         for (int i = 0, size = players.size(); i < size; i++) {
             var player = players.get(i);
-            if (player == session.player())
+            if (player == player())
                 continue;
             var data = name + " " + (i + 1);
             var isSelected = i == selectedIndex;
