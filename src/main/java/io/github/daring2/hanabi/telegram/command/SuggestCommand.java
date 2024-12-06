@@ -41,6 +41,10 @@ public class SuggestCommand extends BaseCommand {
                 continue;
             var data = name + " " + (i + 1);
             var isSelected = i == selectedIndex;
+            if (!isSelected && players.size() == 2) {
+                arguments.add("" + (i + 1));
+                isSelected = true;
+            }
             session.menu().addItem(1, new ActionMenu.Item(
                     data,  player.name(), isSelected, true
             ));

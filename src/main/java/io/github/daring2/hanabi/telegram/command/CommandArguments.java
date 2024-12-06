@@ -26,6 +26,10 @@ public record CommandArguments(
         return get(0);
     }
 
+    public void add(String argument) {
+        arguments.add(argument);
+    }
+
     public String get(int index) {
         if (index >= arguments.size())
             return null;
