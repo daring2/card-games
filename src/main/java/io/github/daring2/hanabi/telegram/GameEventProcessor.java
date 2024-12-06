@@ -57,7 +57,7 @@ class GameEventProcessor implements AutoCloseable {
     }
 
     void processCreateGameEvent(CreateGameEvent event) {
-        var link = "https://t.me/hanabi_pbot" +
+        var link = session.botConfig().botLink() +
                 "?start=" + event.game().id();
         sendMessage("game_created", link);
         updateChatMenu();

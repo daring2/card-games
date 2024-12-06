@@ -89,7 +89,8 @@ public class HanabiBot extends TelegramLongPollingBot {
 
     @ConfigurationProperties("hanabi-bot")
     public record Config(
-            String token
+            String token,
+            String botLink
     ) {}
 
     @Component

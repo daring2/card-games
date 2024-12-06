@@ -58,6 +58,10 @@ public class UserSession {
         return firstNonEmpty(user.getUserName(), user.getFirstName());
     }
 
+    public HanabiBot.Config botConfig() {
+        return bot.context.config();
+    }
+
     public Game game() {
         return game;
     }
